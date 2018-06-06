@@ -1,0 +1,50 @@
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: name-default
+spec:
+  destination:
+    name: name-service
+  precedence: 1
+  match:
+    request:
+      headers:
+        user-agent:
+          regex: "^.*$"
+  route:
+  - labels:
+      browser: default
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: name-chrome
+spec:
+  destination:
+    name: name-service
+  precedence: 2
+  match:
+    request:
+      headers:
+        user-agent:
+          regex: "^(.*?)?([C|c]hrome)(.*)?$"
+  route:
+  - labels:
+      browser: chrome
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: name-ff
+spec:
+  destination:
+    name: name-service
+  precedence: 2
+  match:
+    request:
+      headers:
+        user-agent:
+          regex: "^(.*?)?([F|f]irefox)(.*)?$"
+  route:
+  - labels:
+      browser: firefox

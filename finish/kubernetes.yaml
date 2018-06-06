@@ -1,0 +1,139 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/name
+        backend:
+          serviceName: name-service
+          servicePort: 9080
+      - path: /api/ping/.*
+        backend:
+          serviceName: ping-service
+          servicePort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: name-service
+  labels:
+    app: name
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: name
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-deployment-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: name
+      browser: chrome
+  template:
+    metadata:
+      labels:
+        app: name
+        browser: chrome
+    spec:
+      containers:
+      - name: name
+        image: name:1.0-SNAPSHOT
+        env:
+        - name: GREETING
+          value: "Hello Chrome..."
+        ports:
+        - containerPort: 9080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-deployment-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: name
+      browser: firefox
+  template:
+    metadata:
+      labels:
+        app: name
+        browser: firefox
+    spec:
+      containers:
+      - name: name
+        image: name:1.0-SNAPSHOT
+        env:
+        - name: GREETING
+          value: "Greetings Firefox..."
+        ports:
+        - containerPort: 9080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-deployment-c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: name
+      browser: default
+  template:
+    metadata:
+      labels:
+        app: name
+        browser: default
+    spec:
+      containers:
+      - name: name
+        image: name:1.0-SNAPSHOT
+        env:
+        - name: GREETING
+          value: "Hi."
+        ports:
+        - containerPort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ping-service
+  labels:
+    app: ping
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: ping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ping-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ping
+  template:
+    metadata:
+      labels:
+        app: ping
+    spec:
+      containers:
+      - name: ping
+        image: ping:1.0-SNAPSHOT
+        ports:
+        - containerPort: 9080

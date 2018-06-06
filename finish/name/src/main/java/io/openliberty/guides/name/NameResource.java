@@ -25,7 +25,13 @@ public class NameResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getContainerName() {
-        return "Hello! I'm container " + System.getenv("HOSTNAME");
+        String greeting = System.getenv("GREETING");
+        
+        if (greeting == null) {
+            greeting = "Hello!";
+        }
+
+        return greeting + " I'm container " + System.getenv("HOSTNAME");
     }
     
 }
