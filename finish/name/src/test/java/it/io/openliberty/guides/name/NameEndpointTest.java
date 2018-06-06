@@ -41,15 +41,9 @@ public class NameEndpointTest {
 
     @BeforeClass
     public static void oneTimeSetup() {
-        String clusterIp = System.getProperty("cluster.ip");
-        String ingressPath = System.getProperty("name.ingress.path");
-        String nodePort = System.getProperty("name.node.port");
-        
-        if (nodePort.isEmpty() || nodePort == null) {
-            clusterUrl = "https://" + clusterIp + ingressPath + "/";
-        } else {
-            clusterUrl = "http://" + clusterIp + ":" + nodePort + "/api/name/";
-        }
+        String testIp = System.getProperty("test.ip");
+        String testPort = System.getProperty("test.port");
+        clusterUrl = "http://" + testIp + ":" + testPort + "/api/name";
     }
     
     @Before

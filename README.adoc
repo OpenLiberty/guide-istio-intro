@@ -197,7 +197,14 @@ DEL tmp.yaml
 This will inject the sidecar containers into your configuration so that the Envoy proxy
 is deployed with each of your pods.
 
-Once all the pods are started, you should be able to navigate to http://tbd:port/api/name
+To get the base url, use the following command:
+```
+minikube service list | grep istio-ingress | awk "{ print $6 }"
+```
+
+This command will result in a url of the form `http://ip-address:port`.
+
+Once all the pods are started, you should be able to navigate to `http://ip-address:port/api/name`
 and view a different greeting whenever you refresh the page. This is because by default it will
 route traffic to either pod arbitrarily.
 
@@ -220,179 +227,11 @@ any other browser it will simply display a generic greeting.
 
 == Testing microservices that are running on {kube}
 
-A few tests are included for you to test the basic functionality of the microservices. If a test failure
-occurs, then you might have introduced a bug into the code. To run the tests, wait for all Pods to be
-in the ready state, then run the `mvn verify` command with the following list of properties:
-
-[cols="15, 100", options="header"]
-|===
-| *Property*        | *Description*
-| cluster.ip        | IP address of your Minikube cluster, `{minikube-ip}` by default.
-| name.ingress.path | Ingress path of the `name` microservice, `/name` by default.
-| ping.ingress.path | Ingress path of the `ping` microservice, `/ping` by default.
-| name.kube.service | Name of the {kube} Service wrapping the `name` Pods, `ol-name-ibm-open-liberty` by default.
-| name.node.port    | Node port of the {kube} Service wrapping the `name` Pods. Set this if you didn't
-setup an Ingress.
-| ping.node.port    | Node port of the {kube} Service wrapping the `ping` Pods. Set this if you didn't
-setup an Ingress.
-|===
-
-For example:
+Run the following command to start the tests:
 
 ```
-mvn verify -Ddockerfile.skip=true
+mvn verify -Ddockerfile.skip=true -Dtest.ip=ip-address -Dtest.port=port
 ```
-
-This command will run integration tests with all default properties. The `dockerfile.skip` parameter
-is set to `true` in order to skip building a new Docker image.
-
-Alternatively, if you didn't setup an Ingress, you can use set the `name.node.port` and `ping.node.port`
-properties like so to make requests through your {kube} Services instead:
-
-```
-mvn verify -Dname.node.port=<name-node-port> -Dping.node.port=<ping-node-port> -Ddockerfile.skip=true
-```
-
-If the tests pass, you'll see an output similar to the following for each service respectively:
-
-[source, role="no_copy"]
-----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running it.io.openliberty.guides.name.NameEndpointTest
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.673 sec - in it.io.openliberty.guides.name.NameEndpointTest
-
-Results :
-
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-----
-
-[source, role="no_copy"]
-----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running it.io.openliberty.guides.ping.PingEndpointTest
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.222 sec - in it.io.openliberty.guides.ping.PingEndpointTest
-
-Results :
-
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-----
-
-
-// =================================================================================================
-// Editing {kube} resources
-// =================================================================================================
-
-== Optional: Editing {kube} resources
-
-While you don't need to edit any of the {kube} resources in this guide, it might be helpful for
-you to know how this is done for any future projects that you have in mind.
-
-To make changes to a {kube} resource, you can either edit that resource's whole YAML file in a text
-editor or update particular parts of the YAML with the `kubectl` command.
-
-=== Direct editing
-
-Resource YAML files can be directly edited from the {kube} dashboard or a text editor of your choice.
-
-To edit a resource from the Minikube dashboard, run the `minikune dashboard` command to open the Minikube
-dashboard, then use the left navigational panel to select which resources to edit.
-
-To open and edit a resource in a text editor, run the `kubectl edit (RESOURCE/NAME | -f FILENAME) [options]`
-command, specifying the resource type and its name. Once you save your changes, they will be automatically
-picked up and applied to your resource.
-
-If you didn't create resources through charts, but rather implemented and created them yourself from
-YAML files by using the `kubectl create` command, then you can edit these YAMLs directly and then
-reapply them by running the `kubectl apply -f [FILENAME] options` command.
-
-To familiarize yourself with resource editing, edit the `ol-name-ibm-open-liberty` Ingress and change
-the `path` field in the `spec` object from `/name` to `/myname`. Use any editing method you prefer:
-
-[source, YAML]
-----
-{
-  "kind": "Ingress",
-  "apiVersion": "extensions/v1beta1",
-  "metadata": {
-    "name": "ol-name-ibm-open-liberty",
-    "namespace": "default",
-    "selfLink": "/apis/extensions/v1beta1/namespaces/default/ingresses/ol-name-ibm-open-liberty",
-    "uid": "18353cff-5fc5-11e8-af4d-08002784f87f",
-    "resourceVersion": "64202",
-    "generation": 1,
-    "creationTimestamp": "2018-05-25T02:41:15Z",
-    "labels": {
-      "app": "ol-name-ibm-open-liberty",
-      "chart": "ibm-open-liberty-1.2.0",
-      "heritage": "Tiller",
-      "release": "ol-name"
-    },
-    "annotations": {
-      "kubernetes.io/ingress.class": "nginx",
-      "nginx.ingress.kubernetes.io/affinity": "cookie",
-      "nginx.ingress.kubernetes.io/rewrite-target": "/api/name",
-      "nginx.ingress.kubernetes.io/session-cookie-hash": "sha1",
-      "nginx.ingress.kubernetes.io/session-cookie-name": "route"
-    }
-  },
-  "spec": {
-    "rules": [
-      {
-        "http": {
-          "paths": [
-            {
-              "path": "/myname",
-              "backend": {
-                "serviceName": "ol-name-ibm-open-liberty",
-                "servicePort": 9080
-              }
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "status": {
-    "loadBalancer": {
-      "ingress": [
-        {
-          "ip": "10.0.2.15"
-        }
-      ]
-    }
-  }
-}
-----
-
-When you're done editing, visit the new Ingress endpoint to verify that your changes have been applied.
-
-
-=== Indirect editing
-
-Indirect editing of resources can be done by using various `kubectl` commands. If you recall,
-you've already done this when you ran `kubectl set image` to update the image used by your Deployment
-to a newer version. `kubectl set` is convenient, but its limited to a small set of fields that you can
-change. Sometimes you might need to change parts of a resource that the `kubectl set` command simply
-doesn't cover. In those cases and as an alternative to the `kubectl set` command, you can use the
-`kubectl patch (-f FILENAME | TYPE NAME) -p PATCH [options]` command to make updates using strategic
-merging. The `kubectl patch` command works by supplying a piece of config in a form of a JSON or a YAML
-that matches another piece of similar config in the resource and overrides the fields that don't match.
-For example, to change the Ingress path from `/name` to `/myname` as in the previous section, run the
-following command:
-
-```
-# From Bash if you're on Linux or MacOS
-kubectl patch ingress/ol-name-ibm-open-liberty -p '{"spec": {"rules": [{"http": {"paths": [{"path": "/myname", "backend": {"serviceName": "ol-name-ibm-open-liberty", "servicePort": 9080}}]}}]}}'
-# From PowerShell or CMD if you're on Windows
-kubectl patch ingress/ol-name-ibm-open-liberty -p "{\"spec\": {\"rules\": [{\"http\": {\"paths\": [{\"path\": \"/myname\", \"backend\": {\"serviceName\": \"ol-name-ibm-open-liberty\", \"servicePort\": 9080}}]}}]}}"
-```
-
-{kube} will match your config pattern against the `spec` object defined in the `ol-name-ibm-open-liberty`
-Ingress and override the `path` field.
 
 
 // =================================================================================================
@@ -401,9 +240,8 @@ Ingress and override the `path` field.
 
 == Great work! You're done!
 
-You have just deployed two microservices to {kube} using Helm charts. You then scaled a microservice,
-rolled out deployment updates, ran integration tests against miroservices that are running in a {kube}
-cluster, and learned how to edit {kube} resources.
+You have deployed to services to {kube} and routed requests to different versions of the `name` service based on
+http headers.
 
 // uncomment this when Istio guide is released
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.

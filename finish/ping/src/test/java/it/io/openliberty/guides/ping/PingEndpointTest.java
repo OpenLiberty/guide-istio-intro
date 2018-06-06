@@ -41,17 +41,11 @@ public class PingEndpointTest {
 
     @BeforeClass
     public static void oneTimeSetup() {
-        String clusterIp = System.getProperty("cluster.ip");
-        String ingressPath = System.getProperty("ping.ingress.path");
-        String nodePort = System.getProperty("ping.node.port");
-        
+        String testIp = System.getProperty("test.ip");
+        String testPort = System.getProperty("test.port");
+
+        clusterUrl = "http://" + testIp + ":" + testPort + "/api/ping/";
         nameKubeService = System.getProperty("name.kube.service");
-        
-        if (nodePort.isEmpty() || nodePort == null) {
-            clusterUrl = "https://" + clusterIp + ingressPath + "/";
-        } else {
-            clusterUrl = "http://" + clusterIp + ":" + nodePort + "/api/ping/";
-        }
     }
     
     @Before
