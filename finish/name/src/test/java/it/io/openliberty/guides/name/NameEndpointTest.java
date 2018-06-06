@@ -14,6 +14,7 @@ package it.io.openliberty.guides.name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -38,6 +39,7 @@ public class NameEndpointTest {
     private static String clusterUrl;
 
     private Client client;
+    private final static int REPETITIONS = 3;
 
     @BeforeClass
     public static void oneTimeSetup() {
@@ -83,6 +85,39 @@ public class NameEndpointTest {
         assertNotNull("Container name should not be null but it was. The service is robably not running inside a container", containerName);
     }
 
+    @Test
+    public void testGenericMessage() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response r = this.getResponse(clusterUrl);
+            this.assertResponse(clusterUrl, r);
+
+            String greeting = r.readEntity(String.class);
+            this.assertStartsWith(greeting, "Hi.");
+        }
+    }
+
+    @Test
+    public void testChromeMessage() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response r = this.getResponseWithUserAgent(clusterUrl, "chrome");
+            this.assertResponse(clusterUrl, r);
+
+            String greeting = r.readEntity(String.class);
+            this.assertStartsWith(greeting, "Hello Chrome...");
+        }
+    }
+
+    @Test
+    public void testFirefoxMessage() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response r = this.getResponseWithUserAgent(clusterUrl, "firefox");
+            this.assertResponse(clusterUrl, r);
+
+            String greeting = r.readEntity(String.class);
+            this.assertStartsWith(greeting, "Greetings Firefox...");
+        }
+    }
+
     /**
      * <p>
      * Returns response information from the specified URL.
@@ -94,6 +129,10 @@ public class NameEndpointTest {
      */
     private Response getResponse(String url) {
         return client.target(url).request().get();
+    }
+
+    private Response getResponseWithUserAgent(String url, String userAgentValue) {
+        return client.target(url).request().header("User-Agent", userAgentValue).get();
     }
 
     /**
@@ -108,6 +147,10 @@ public class NameEndpointTest {
      */
     private void assertResponse(String url, Response response) {
         assertEquals("Incorrect response code from " + url, 200, response.getStatus());
+    }
+
+    private void assertStartsWith(String actual, String expected) {
+        assertTrue("Expected \"" + actual + "\" to start with \"" + expected + "\"", actual.startsWith(expected));
     }
 
 }
