@@ -98,22 +98,6 @@ include::{common-includes}/gitclone.adoc[]
 // no "try what you'll build" section in this guide since it would be too long due to all setup the user will have to do.
 
 // =================================================================================================
-// Modifying the name service to display a customized message
-// =================================================================================================
-
-== Modifying the name service to display a customized message
-
-Modify the file `start/name/src/main/java/io/openliberty/guides/name/NameResource`, to contain the following contents:
-
-[source, Java]
-----
-include::finish/name/src/main/java/io/openliberty/guides/name/NameResource.java[tags=**;!copyright;]
-----
-
-This will allow you to customize the message by creating an environment variable named `GREETING` inside of your container.
-
-
-// =================================================================================================
 // Staring and preparing your cluster for Deployment
 // =================================================================================================
 
@@ -157,23 +141,12 @@ You can verify that it was successful by running the following command to ensure
 kubectl get pods -n istio-system
 ```
 
-// =================================================================================================
-// Building and containerizing the microservices
-// =================================================================================================
-
-== Building and containerizing the microservices
-
-To build Docker images for your services run the following command from the `start` directory:
-
-```
-mvn package
-```
 
 // =================================================================================================
-// Deploying services to cluster
+// Deploying v1 of the services to cluster
 // =================================================================================================
 
-== Deploying services to cluster
+== Deploying v1 of the services to cluster
 
 First, create a file called `kubernetes.yaml` in the `start` directory:
 
@@ -204,26 +177,43 @@ minikube service list | grep istio-ingress | awk "{ print $6 }"
 
 This command will result in a url of the form `http://ip-address:port`.
 
-Once all the pods are started, you should be able to navigate to `http://ip-address:port/api/name`
-and view a different greeting whenever you refresh the page. This is because by default it will
-route traffic to either pod arbitrarily.
+Once all the pods are started, you should be able to navigate to `http://ip-address:port/api/name` to view
+v1 of the deployed application.
 
-Next, create the following file in the `start` directory:
+// =================================================================================================
+// Testing microservices that are running on {kube}
+// =================================================================================================
+
+
+// =================================================================================================
+// Modify the service
+// =================================================================================================
+
+== Modify and deploy v2 of the service
+
+* Modify the service
+* Increment the service version
+* Deploy the service
+* Make a request to the service and observe that requests go to both v1 and v2
+
+// =================================================================================================
+// Configure request routing
+// =================================================================================================
+
+== Configure request routing
+
+Create the file `routing.yaml` in the `start` directory:
 
 [source, yaml]
 ----
 include::finish/routing.yaml[tags=**;!copyright;]
 ----
 
-Add description of what each of the routing rules do.
+* Explanation of what the file does
+* `istioctl create -f routing.yaml` to apply routing rules
+* Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service
+* Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service
 
-Now if you navigate to the same page on Chrome, you will see a Chrome specific message, and if you
-navigate to it on Firefox you will see a Firefox specific message. If you navigate to the page from
-any other browser it will simply display a generic greeting.
-
-// =================================================================================================
-// Testing microservices that are running on {kube}
-// =================================================================================================
 
 == Testing microservices that are running on {kube}
 
