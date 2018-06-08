@@ -51,7 +51,7 @@ spec:
         image: name:1.0-SNAPSHOT
         env:
         - name: GREETING
-          value: "A!!!"
+          value: "Hello from V1!"
         ports:
         - containerPort: 9080
 ---
@@ -76,7 +76,7 @@ spec:
         image: name:1.0-SNAPSHOT
         env:
         - name: GREETING
-          value: "B..."
+          value: "Hi from V2..."
         ports:
         - containerPort: 9080
 ---
