@@ -39,19 +39,19 @@ spec:
   selector:
     matchLabels:
       app: name
-      browser: chrome
+      version: v1
   template:
     metadata:
       labels:
         app: name
-        browser: chrome
+        version: v1
     spec:
       containers:
       - name: name
         image: name:1.0-SNAPSHOT
         env:
         - name: GREETING
-          value: "Hello Chrome..."
+          value: "A!!!"
         ports:
         - containerPort: 9080
 ---
@@ -64,44 +64,19 @@ spec:
   selector:
     matchLabels:
       app: name
-      browser: firefox
+      version: v2
   template:
     metadata:
       labels:
         app: name
-        browser: firefox
+        version: v2
     spec:
       containers:
       - name: name
         image: name:1.0-SNAPSHOT
         env:
         - name: GREETING
-          value: "Greetings Firefox..."
-        ports:
-        - containerPort: 9080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: name-deployment-c
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: name
-      browser: default
-  template:
-    metadata:
-      labels:
-        app: name
-        browser: default
-    spec:
-      containers:
-      - name: name
-        image: name:1.0-SNAPSHOT
-        env:
-        - name: GREETING
-          value: "Hi."
+          value: "B..."
         ports:
         - containerPort: 9080
 ---
