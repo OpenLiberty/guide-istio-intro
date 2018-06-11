@@ -148,16 +148,7 @@ kubectl get pods -n istio-system
 
 == Deploying v1 of the services to cluster
 
-First, create a file called `kubernetes.yaml` in the `start` directory:
-
-[source, yaml]
-----
-include::finish/kubernetes.yaml[tags=**;!copyright;]
-----
-
-Add description of what resources this file will create when deployed.
-
-To deploy the services to the {kube} cluster, run the following commands:
+To deploy the services to the {kube} cluster, run the following commands from the `start` directory:
 ```
 # Unix
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
@@ -177,7 +168,7 @@ minikube service list | grep istio-ingress | awk "{ print $6 }"
 
 This command will result in a url of the form `http://ip-address:port`.
 
-Once all the pods are started, you should be able to navigate to `http://ip-address:port/api/name` to view
+Once all the pods are started, you should be able to navigate to `http://ip-address:port/inventory/systems` to view
 v1 of the deployed application.
 
 // =================================================================================================
@@ -191,10 +182,63 @@ v1 of the deployed application.
 
 == Modify and deploy v2 of the service
 
-* Modify the service
-* Increment the service version
-* Deploy the service
-* Make a request to the service and observe that requests go to both v1 and v2
+Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/InventoryResource.java` to `getCount()`:
+
+[source, Java]
+----
+include::finish/inventory/src/main/java/io/openliberty/guides/inventory/InventoryResource.java[tags=**;!copyright;]
+----
+
+This introduces a breaking change to the REST service because now the response will look like:
+```
+{
+    "systems": [],
+    "count": 0
+}
+```
+
+instead of:
+
+```
+{
+    "systems": [],
+    "total": 0
+}
+```
+
+Therefore, anyone clients consuming the service will now be broken since they are expecting a property called
+`total` instead of `count`. To solve this, we can actually have both versions of the service deployed
+and decide which one to use by having a header distinguish which version to use.
+
+To update the version of your service, run the following command in the `inventory` directory:
+
+```
+mvn versions:set -DnewVersion=2.0-SNAPSHOT
+```
+
+Rebuild the service using the following command in the `inventory` directory:
+```
+mvn package
+```
+
+Update the `kubernetes.yaml` file to add a new deployment:
+
+[source, yaml]
+----
+include::finish/kubernetes.yaml[tags=**;!copyright;]
+----
+
+Redeploy your services using the following commands:
+```
+# Unix
+kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
+# Windows
+istioctl kube-inject -f kubernetes.yaml > tmp.yaml
+kubectl apply -f tmp.yaml
+DEL tmp.yaml
+```
+
+Make a request to the service and observe that requests go to both v1 and v2.
 
 // =================================================================================================
 // Configure request routing
@@ -223,14 +267,13 @@ Run the following command to start the tests:
 mvn verify -Ddockerfile.skip=true -Dtest.ip=ip-address -Dtest.port=port
 ```
 
-
 // =================================================================================================
 // finish
 // =================================================================================================
 
 == Great work! You're done!
 
-You have deployed to services to {kube} and routed requests to different versions of the `name` service based on
+You have deployed to services to {kube} and routed requests to different versions of the `inventory` service based on
 http headers.
 
 // uncomment this when Istio guide is released
