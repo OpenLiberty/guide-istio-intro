@@ -17,12 +17,15 @@
         <version.download-maven-plugin>1.4.0</version.download-maven-plugin>
         <version.maven-surefire-plugin>2.18.1</version.maven-surefire-plugin>
         <version.maven-failsafe-plugin>2.18.1</version.maven-failsafe-plugin>
+        <version.dockerfile-maven-plugin>1.4.0</version.dockerfile-maven-plugin>
         <!-- OpenLiberty runtime -->
         <version.openliberty-runtime>RELEASE</version.openliberty-runtime>
         <sys.service.http.port>9080</sys.service.http.port>
         <sys.service.https.port>9443</sys.service.https.port>
         <inv.service.http.port>9081</inv.service.http.port>
         <inv.service.https.port>9444</inv.service.https.port>
+        <test.ip>127.0.0.1</test.ip>
+        <test.port>32000</test.port>
     </properties>
 
     <!-- Shared dependencies. -->
@@ -188,6 +191,24 @@
                     <configuration>
                         <summaryFile>${project.build.directory}/test-reports/it/failsafe-summary.xml</summaryFile>
                         <reportsDirectory>${project.build.directory}/test-reports/it</reportsDirectory>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>${version.dockerfile-maven-plugin}</version>
+                    <executions>
+                        <execution>
+                            <id>default</id>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <repository>${project.artifactId}</repository>
+                        <tag>${project.version}</tag>
                     </configuration>
                 </plugin>
             </plugins>

@@ -29,8 +29,9 @@ public class SystemEndpointTest {
 
     @Test
     public void testGetProperties() {
-        String port = System.getProperty("sys.http.port");
-        String url = "http://localhost:" + port + "/";
+        String port = System.getProperty("test.port");
+        String ip = System.getProperty("test.ip");
+        String url = "http://" + ip + ":" + port + "/";
 
         Client client = ClientBuilder.newClient();
         client.register(JsrJsonpProvider.class);
@@ -42,8 +43,8 @@ public class SystemEndpointTest {
 
         JsonObject obj = response.readEntity(JsonObject.class);
 
-        assertEquals("The system property for the local and remote JVM should match",
-                     System.getProperty("os.name"),
+        assertEquals("The OS name should be \"Linux\"",
+                     "Linux",
                      obj.getString("os.name"));
         
         response.close();
