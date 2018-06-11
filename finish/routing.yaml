@@ -1,0 +1,35 @@
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: inventory-v1
+spec:
+  destination:
+    name: inventory-service
+  precedence: 1
+  match:
+    request:
+      headers:
+        uri:
+          prefix: "/inventory"
+  route:
+  - labels:
+      version: v1
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: inventory-v2
+spec:
+  destination:
+    name: inventory-service
+  precedence: 2
+  match:
+    request:
+      headers:
+        uri:
+          prefix: "/inventory"
+        x-version:
+          regex: "^.*v2.*$"
+  route:
+  - labels:
+      version: v2
