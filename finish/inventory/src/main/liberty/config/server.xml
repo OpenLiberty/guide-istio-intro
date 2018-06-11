@@ -6,11 +6,8 @@
     <feature>cdi-1.2</feature>
   </featureManager>
 
-  <opentracingZipkin host="localhost"/>
-
   <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}"
       id="defaultHttpEndpoint" host="*" />
-
 
   <webApplication location="inventory-service.war" contextRoot="/" />
 

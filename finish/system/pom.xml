@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>io.openliberty.guides</groupId>
-        <artifactId>mp-opentracing</artifactId>
+        <artifactId>istio</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -43,14 +43,6 @@
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentracing</groupId>
-            <artifactId>opentracing-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.opentracing</groupId>
-            <artifactId>microprofile-opentracing-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -108,26 +100,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>${version.download-maven-plugin}</version>
-                <executions>
-                    <execution>
-                        <id>install-tracer</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://repo1.maven.org/maven2/net/wasdev/wlp/tracer/liberty-opentracing-zipkintracer/1.0/liberty-opentracing-zipkintracer-1.0-sample.zip</url>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.build.directory}/liberty/wlp/usr</outputDirectory>
-                            <!-- <md5></md5> -->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!-- Plugin to run unit tests -->
             <plugin>
@@ -141,6 +113,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
 
+            <!-- Build docker image -->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
