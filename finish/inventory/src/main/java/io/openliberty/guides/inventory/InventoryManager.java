@@ -18,11 +18,6 @@ import io.openliberty.guides.inventory.model.InventoryList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.eclipse.microprofile.opentracing.Traced;
-
-import io.opentracing.ActiveSpan;
-import io.opentracing.Tracer;
-
 @ApplicationScoped
 public class InventoryManager {
 
