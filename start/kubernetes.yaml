@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
       - name: inventory-conainer
-        image: inventory:1.0-SNAPSHOT
+        image: inventory-service:1.0-SNAPSHOT
         ports:
         - containerPort: 9081
 ---
@@ -81,6 +81,6 @@ spec:
     spec:
       containers:
       - name: system
-        image: system:1.0-SNAPSHOT
+        image: system-service:1.0-SNAPSHOT
         ports:
         - containerPort: 9080
