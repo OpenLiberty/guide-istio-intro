@@ -148,6 +148,11 @@ kubectl get pods -n istio-system
 
 == Deploying v1 of the services to cluster
 
+Build the project with the following command from the `start` directory:
+```
+mvn clean install package -DskipTests
+```
+
 To deploy the services to the {kube} cluster, run the following commands from the `start` directory:
 ```
 # Unix
@@ -218,7 +223,7 @@ mvn versions:set -DnewVersion=2.0-SNAPSHOT
 
 Rebuild the service using the following command in the `inventory` directory:
 ```
-mvn package
+mvn clean install package -DskipTests
 ```
 
 Update the `kubernetes.yaml` file to add a new deployment:
