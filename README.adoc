@@ -33,10 +33,8 @@ Explore how to route traffic to different versions of the same service using Ist
 You will learn how to deploy an application to a kubernetes cluster using {istio} and how to configure
 {istio} to route http requests based on the content of the headers.
 
-The two microservices that you will deploy are called `name` and `ping`, they are provided for you under
-the `start` directory. The `name` service displays a brief gretting, and the `ping` microservice pings the
-`name` service. You will modify the name service so that it can easily be configured to display
-a different greeting.
+The two microservices that you will deploy are called `inventory` and `system`, they are provided for you under
+the `start` directory. The `inventory` service stores information about systems that are running the `system` service.
 
 You will use Minikube as your local {kube} cluster. You will use {istio}'s Ingress, and the `istioctl`
 cli tool to deploy your application as well as configure the routing.
