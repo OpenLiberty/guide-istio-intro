@@ -19,7 +19,7 @@
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
-= Routing traffic with Istio
+= Versioning services with Istio
 
 Explore how to route traffic to different versions of the same service using Istio and Kubernetes.
 
@@ -141,19 +141,18 @@ You can verify that it was successful by running the following command to ensure
 kubectl get pods -n istio-system
 ```
 
-
 // =================================================================================================
 // Deploying v1 of the services to cluster
 // =================================================================================================
 
 == Deploying v1 of the services to cluster
 
-Build the project with the following command from the `start` directory:
+Navigate to the `start` directory and run the following command:
 ```
 mvn clean install package -DskipTests
 ```
 
-To deploy the services to the {kube} cluster, run the following commands from the `start` directory:
+To deploy the services to the {kube} cluster, run the following commands:
 ```
 # Unix
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
@@ -168,18 +167,13 @@ is deployed with each of your pods.
 
 To get the base url, use the following command:
 ```
-minikube service list | grep istio-ingress | awk "{ print $6 }"
+minikube service list | grep istio-ingress
 ```
 
-This command will result in a url of the form `http://ip-address:port`.
+This command will give you a url of the form `http://ip-address:port`.
 
 Once all the pods are started, you should be able to navigate to `http://ip-address:port/inventory/systems` to view
 v1 of the deployed application.
-
-// =================================================================================================
-// Testing microservices that are running on {kube}
-// =================================================================================================
-
 
 // =================================================================================================
 // Modify the service
@@ -215,18 +209,18 @@ Therefore, any clients consuming the service will now be broken since they are e
 `total` instead of `count`. To solve this, we can actually have both versions of the service deployed
 and decide which one to use by having a header distinguish which version to use.
 
-To update the version of your service, run the following command in the `inventory` directory:
+To update the version of your service, run the following command:
 
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
 ```
 
-Rebuild the service using the following command in the `inventory` directory:
+Rebuild the service by navigating to the `start/inventory` directory and running the following command:
 ```
 mvn clean install package -DskipTests
 ```
 
-Update the `kubernetes.yaml` file to add a new deployment:
+Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventory service:
 
 [source, yaml]
 ----
@@ -258,10 +252,17 @@ Create the file `routing.yaml` in the `start` directory:
 include::finish/routing.yaml[tags=**;!copyright;]
 ----
 
-* Explanation of what the file does
-* `istioctl create -f routing.yaml` to apply routing rules
-* Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service
-* Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service
+The `routing.yaml` file routes incoming requests based on the uri prefix `/inventory` and a header
+`x-version`. If the header has the value `v2`, then requests will be routed to the `v2` deployment and otherwise
+the requests are routed to `v1` as to avoid breaking existing clients.
+
+To apply your routing rules, run the following command:
+```
+istioctl create -f routing.yaml
+```
+
+Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service.
+Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service.
 
 
 == Testing microservices that are running on {kube}
