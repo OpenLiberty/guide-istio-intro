@@ -24,7 +24,7 @@ public class InventoryList {
     return systems;
   }
 
-  public int getTotal() {
+  public int getCount() {
     return systems.size();
   }
 

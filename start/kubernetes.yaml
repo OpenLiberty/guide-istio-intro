@@ -1,0 +1,86 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /inventory/.*
+        backend:
+          serviceName: inventory-service
+          servicePort: 9081
+      - path: /system/.*
+        backend:
+          serviceName: system-service
+          servicePort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service
+  labels:
+    app: inventory
+spec:
+  ports:
+  - port: 9081
+    name: http
+  selector:
+    app: inventory
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: inventory
+        version: v1
+    spec:
+      containers:
+      - name: inventory-conainer
+        image: inventory:v1
+        ports:
+        - containerPort: 9081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: system-service
+  labels:
+    app: system
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: system-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: system
+  template:
+    metadata:
+      labels:
+        app: system
+    spec:
+      containers:
+      - name: system
+        image: system:v1
+        ports:
+        - containerPort: 9080

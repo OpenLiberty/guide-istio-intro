@@ -29,8 +29,8 @@ import org.junit.Test;
 
 public class InventoryEndpointTest {
 
-    private static String sysPort;
-    private static String invPort;
+    private static String testIp;
+    private static String testPort;
     private static String sysUrl;
     private static String invUrl;
 
@@ -39,12 +39,16 @@ public class InventoryEndpointTest {
     private final String SYSTEM_PROPERTIES = "system/properties";
     private final String INVENTORY_SYSTEMS = "inventory/systems";
 
+    // Repeat tests to make sure that routing rules have actually been
+    // applied and that the test didn't pass by chance.
+    private final int REPETITIONS = 3;
+
     @BeforeClass
     public static void oneTimeSetup() {
-        sysPort = System.getProperty("sys.http.port");
-        sysUrl = "http://localhost:" + sysPort + "/";
-        invPort = System.getProperty("inv.http.port");
-        invUrl = "http://localhost:" + invPort + "/";
+        testIp = System.getProperty("test.ip");
+        testPort = System.getProperty("test.port");
+        sysUrl = "http://" + testIp + ":" + testPort + "/";
+        invUrl = "http://" + testIp + ":" + testPort + "/";
     }
 
     @Before
@@ -59,89 +63,39 @@ public class InventoryEndpointTest {
     }
 
     @Test
-    public void testSuite() {
-        this.testEmptyInventory();
-        this.testHostRegistration();
-        this.testSystemPropertiesMatch();
-        this.testUnknownHost();
+    public void testV1Default() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response response = this.getResponse(invUrl + INVENTORY_SYSTEMS);
+            this.assertResponse(invUrl, response);
+
+            JsonObject obj = response.readEntity(JsonObject.class);
+
+            assertTrue("Response does not contain \"total\" property", !obj.isNull("total"));
+        }
     }
 
-    public void testEmptyInventory() {
-        Response response = this.getResponse(invUrl + INVENTORY_SYSTEMS);
-        this.assertResponse(invUrl, response);
+    @Test
+    public void testV1Header() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response response = this.getResponseWithVersion(invUrl + INVENTORY_SYSTEMS, "v1");
+            this.assertResponse(invUrl, response);
 
-        JsonObject obj = response.readEntity(JsonObject.class);
+            JsonObject obj = response.readEntity(JsonObject.class);
 
-        int expected = 0;
-        int actual = obj.getInt("total");
-        assertEquals("The inventory should be empty on application start but it wasn't", 
-                     expected, actual);
-
-        response.close();
+            assertTrue("Response does not contain \"total\" property", !obj.isNull("total"));
+        }
     }
 
-    public void testHostRegistration() {
-        this.visitLocalhost();
+    @Test
+    public void testV2Header() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            Response response = this.getResponseWithVersion(invUrl + INVENTORY_SYSTEMS, "v2");
+            this.assertResponse(invUrl, response);
 
-        Response response = this.getResponse(invUrl + INVENTORY_SYSTEMS);
-        this.assertResponse(invUrl, response);
+            JsonObject obj = response.readEntity(JsonObject.class);
 
-        JsonObject obj = response.readEntity(JsonObject.class);
-
-        int expected = 1;
-        int actual = obj.getInt("total");
-        assertEquals("The inventory should have one entry for localhost", 
-                     expected, actual);
-
-        boolean localhostExists = obj.getJsonArray("systems").getJsonObject(0)
-                                                             .get("hostname").toString()
-                                                             .contains("localhost");
-        assertTrue("A host was registered, but it was not localhost", 
-                   localhostExists);
-
-        response.close();
-    }
-
-    public void testSystemPropertiesMatch() {
-        Response invResponse = this.getResponse(invUrl + INVENTORY_SYSTEMS);
-        Response sysResponse = this.getResponse(sysUrl + SYSTEM_PROPERTIES);
-
-        this.assertResponse(invUrl, invResponse);
-        this.assertResponse(sysUrl, sysResponse);
-
-        JsonObject jsonFromInventory = (JsonObject) invResponse.readEntity(JsonObject.class)
-                                                               .getJsonArray("systems")
-                                                               .getJsonObject(0)
-                                                               .get("properties");
-
-        JsonObject jsonFromSystem = sysResponse.readEntity(JsonObject.class);
-
-        String osNameFromInventory = jsonFromInventory.getString("os.name");
-        String osNameFromSystem = jsonFromSystem.getString("os.name");
-        this.assertProperty("os.name", "localhost", osNameFromSystem, osNameFromInventory);
-
-        String userNameFromInventory = jsonFromInventory.getString("user.name");
-        String userNameFromSystem = jsonFromSystem.getString("user.name");
-        this.assertProperty("user.name", "localhost", userNameFromSystem, userNameFromInventory);
-
-        invResponse.close();
-        sysResponse.close();
-    }
-
-    public void testUnknownHost() {
-        Response response = this.getResponse(invUrl + INVENTORY_SYSTEMS);
-        this.assertResponse(invUrl, response);
-
-        Response badResponse = client.target(invUrl + INVENTORY_SYSTEMS + "/"
-                + "badhostname").request(MediaType.APPLICATION_JSON).get();
-
-        String obj = badResponse.readEntity(String.class);
-
-        boolean isError = obj.contains("ERROR");
-        assertTrue("badhostname is not a valid host but it didn't raise an error", isError);
-
-        response.close();
-        badResponse.close();
+            assertTrue("Response does not contain \"count\" property", !obj.isNull("count"));
+        }
     }
 
     /**
@@ -157,6 +111,10 @@ public class InventoryEndpointTest {
         return client.target(url).request().get();
     }
 
+    private Response getResponseWithVersion(String url, String version) {
+        return client.target(url).request().header("x-version", version).get();
+    }
+
     /**
      * <p>
      * Asserts that the given URL has the correct response code of 200.
@@ -169,37 +127,5 @@ public class InventoryEndpointTest {
      */
     private void assertResponse(String url, Response response) {
         assertEquals("Incorrect response code from " + url, 200, response.getStatus());
-    }
-
-    /**
-     * Asserts that the specified JVM system property is equivalent in both the
-     * system and inventory services.
-     * 
-     * @param propertyName
-     *          - name of the system property to check.
-     * @param hostname
-     *          - name of JVM's host.
-     * @param expected
-     *          - expected name.
-     * @param actual
-     *          - actual name.
-     */
-    private void assertProperty(String propertyName, String hostname,
-            String expected, String actual) {
-        assertEquals("JVM system property [" + propertyName + "] "
-                + "in the system service does not match the one stored in "
-                + "the inventory service for " + hostname, expected, actual);
-    }
-
-    /**
-     * Makes a simple GET request to inventory/systems/localhost.
-     */
-    private void visitLocalhost() {
-        Response response = this.getResponse(sysUrl + SYSTEM_PROPERTIES);
-        this.assertResponse(sysUrl, response);
-        response.close();
-
-        Response targetResponse = client.target(invUrl + INVENTORY_SYSTEMS + "/localhost").request().get();
-        targetResponse.close();
     }
 }

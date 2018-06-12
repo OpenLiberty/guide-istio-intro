@@ -182,11 +182,11 @@ v1 of the deployed application.
 
 == Modify and deploy v2 of the service
 
-Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/InventoryResource.java` to `getCount()`:
+Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java` to `getCount()`:
 
 [source, Java]
 ----
-include::finish/inventory/src/main/java/io/openliberty/guides/inventory/InventoryResource.java[tags=**;!copyright;]
+include::finish/inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java[tags=**;!copyright;]
 ----
 
 This introduces a breaking change to the REST service because now the response will look like:
@@ -206,7 +206,7 @@ instead of:
 }
 ```
 
-Therefore, anyone clients consuming the service will now be broken since they are expecting a property called
+Therefore, any clients consuming the service will now be broken since they are expecting a property called
 `total` instead of `count`. To solve this, we can actually have both versions of the service deployed
 and decide which one to use by having a header distinguish which version to use.
 
