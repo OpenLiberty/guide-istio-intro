@@ -147,7 +147,7 @@ kubectl get pods -n istio-system
 
 Navigate to the `start` directory and run the following command:
 ```
-mvn clean install package -DskipTests
+mvn clean package -DskipTests
 ```
 
 To deploy the services to the {kube} cluster, run the following commands:
@@ -215,7 +215,7 @@ mvn versions:set -DnewVersion=2.0-SNAPSHOT
 
 Rebuild the service by navigating to the `start/inventory` directory and running the following command:
 ```
-mvn clean install package -DskipTests
+mvn clean package -DskipTests
 ```
 
 Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventory service:
