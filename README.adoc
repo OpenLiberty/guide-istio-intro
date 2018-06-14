@@ -103,14 +103,16 @@ include::{common-includes}/gitclone.adoc[]
 
 You must start Minikube with these flags to use {istio}:
 
+Unix:
 ```
-# Unix
 minikube start \
     --extra-config=controller-manager.ClusterSigningCertFile="/var/lib/localkube/certs/ca.crt" \
     --extra-config=controller-manager.ClusterSigningKeyFile="/var/lib/localkube/certs/ca.key" \
     --extra-config=apiserver.Admission.PluginNames=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
+```
 
-# Windows
+Windows:
+```
 minikube start ^
     --bootstrapper=localkube ^
     --vm-driver=hyperv ^
@@ -121,10 +123,14 @@ minikube start ^
 ```
 
 Run this command to connect the Docker CLI to use Minikube's Docker Daemon:
+
+Bash:
 ```
-# From Bash if you're on Linux or MacOS
 eval $(minikube docker-env)
-# From PowerShell or CMD if you're on Windows
+```
+
+Windows:
+```
 minikube docker-env > tmp.cmd && call tmp.cmd && DEL tmp.cmd
 ```
 
@@ -138,23 +144,37 @@ You can verify that it was successful by running the following command to ensure
 ```
 kubectl get pods -n istio-system
 ```
+ 
+You can verify when the istio pods are all ready:
+[source, role="no_copy"]
+----
+NAME                             READY     STATUS    RESTARTS   AGE
+istio-ca-75fb7dc8d5-zv5km        1/1       Running   0          2m
+istio-ingress-577d7b7fc7-tggs6   1/1       Running   0          2m
+istio-mixer-859796c6bf-4j6nv     3/3       Running   0          2m
+istio-pilot-65648c94fb-9pnpr     2/2       Running   0          2m
+----
 
 // =================================================================================================
 // Deploying v1 of the services to cluster
 // =================================================================================================
 
-== Deploying v1 of the services to cluster
+== Deploying version 1 of the services to cluster
 
-Navigate to the `start` directory and run the following command:
+Navigate to the `start` directory and run the following command, it may take a few minutes to build:
 ```
-mvn clean package -DskipTests
+mvn clean package
 ```
 
 To deploy the services to the {kube} cluster, run the following commands:
+
+Bash:
 ```
-# Unix
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
-# Windows
+```
+
+Windows:
+```
 istioctl kube-inject -f kubernetes.yaml > tmp.yaml
 kubectl apply -f tmp.yaml
 DEL tmp.yaml
@@ -162,6 +182,16 @@ DEL tmp.yaml
 
 This will inject the sidecar containers into your configuration so that the Envoy proxy
 is deployed with each of your pods.
+
+You can see that your resources are created after running the `kubectl apply -f ...` command:
+[source, role="no_copy"]
+----
+ingress "gateway" created
+service "inventory-service" created
+deployment "inventory-deployment-v1" created
+service "system-service" created
+deployment "system-deployment" created
+----
 
 To get the base url, use the following command:
 ```
@@ -177,7 +207,7 @@ v1 of the deployed application.
 // Modify the service
 // =================================================================================================
 
-== Modify and deploy v2 of the service
+== Modify and deploy version 2 of the service
 
 Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java` to `getCount()`:
 
@@ -215,7 +245,7 @@ mvn versions:set -DnewVersion=2.0-SNAPSHOT
 
 Rebuild the service by navigating to the `start/inventory` directory and running the following command:
 ```
-mvn clean package -DskipTests
+mvn clean package
 ```
 
 Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventory service:
@@ -226,14 +256,29 @@ include::finish/kubernetes.yaml[tags=**;!copyright;]
 ----
 
 Redeploy your services using the following commands:
+
+Bash:
 ```
-# Unix
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
-# Windows
+```
+
+Windows:
+```
 istioctl kube-inject -f kubernetes.yaml > tmp.yaml
 kubectl apply -f tmp.yaml
 DEL tmp.yaml
 ```
+
+You can see that version 2 of the inventory application has been deployed:
+[source, role="no_copy"]
+----
+ingress "gateway" unchanged
+service "inventory-service" unchanged
+deployment "inventory-deployment-v1" configured
+deployment "inventory-deployment-v2" created
+service "system-service" unchanged
+deployment "system-deployment" configured
+----
 
 Make a request to the service and observe that requests go to both v1 and v2.
 
@@ -264,6 +309,17 @@ Make a request `curl http://ip-address:port/api/name`, observe that request defa
 
 
 == Testing microservices that are running on {kube}
+
+Create the following file `inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java`:
+[source, Java]
+----
+include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java[tags=**;!copyright;]
+----
+
+The tests verify that:
+* If no `x-version` header is present then it defaults to version 1
+* If `x-version` has value `v1` then it uses version 1
+* If `x-version` has value `v2` then it uses version 2
 
 Run the following command to start the tests:
 
