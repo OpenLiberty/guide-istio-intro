@@ -39,11 +39,7 @@ the `start` directory. The `inventory` service stores information about systems 
 You will use Minikube as your local {kube} cluster. You will use {istio}'s Ingress, and the `istioctl`
 cli tool to deploy your application as well as configure the routing.
 
-// =================================================================================================
-// What is {istio}
-// =================================================================================================
-
-== What is {istio}?
+=== What is {istio}?
 
 {istio} is a platform that provides several features that allow you manage various aspects
 of how your microservices interact with eachother and the outside world. It works by deploying
@@ -55,7 +51,7 @@ can also be used with other environments.
 
 === Why use {istio}?
 
-{istio} provides a collection of features that allow you to several aspects of your services
+{istio} provides a collection of features that allow you to manage several aspects of your services
 such as: Routing, Logging, and Security. These features can easily be enabled by applying the appropriate
 {istio} files to your {kube} cluster. This guide will specifically focus on routing.
 
@@ -79,7 +75,7 @@ such as: Routing, Logging, and Security. These features can easily be enabled by
 // as this is what this guide will focus on.
 
 
-Before you being, make sure to have the following tools installed:
+Before you begin, make sure to have the following tools installed:
 
 - `kubernetes-cli` - a command line interface for {kube} called `kubectl`. This is your primary
 tool for communicating with and managing your {kube} cluster.
@@ -101,7 +97,7 @@ include::{common-includes}/gitclone.adoc[]
 
 == Starting and preparing your cluster for Deployment
 
-You must start Minikube with these flags to use {istio}:
+Start Minikube with these flags to use {istio}:
 
 Unix:
 ```
@@ -124,7 +120,7 @@ minikube start ^
 
 Run this command to connect the Docker CLI to use Minikube's Docker Daemon:
 
-Bash:
+Unix:
 ```
 eval $(minikube docker-env)
 ```
@@ -134,18 +130,21 @@ Windows:
 minikube docker-env > tmp.cmd && call tmp.cmd && DEL tmp.cmd
 ```
 
-Next, you must deploy {istio} to your cluster. From the directory where you installed {istio}, run the following command:
+As a result of this command, if you issue docker commands they will affect the docker environment
+in the Minikube VM rather than the one you likely have installed on your computer.
+
+Next, deploy {istio} to your cluster. From the directory where you installed {istio}, run the following command:
 ```
 kubectl apply -f install/kubernetes/istio.yaml
 ```
 If you observe any errors, run the command one more time and it should succeed without any errors.
 
-You can verify that it was successful by running the following command to ensure that {istio} was deployed:
+Verify that {istio} was successfully deployed.
 ```
 kubectl get pods -n istio-system
 ```
  
-You can verify when the istio pods are all ready:
+Ensure that all istio pods are all ready before you continue.
 [source, role="no_copy"]
 ----
 NAME                             READY     STATUS    RESTARTS   AGE
@@ -168,7 +167,7 @@ mvn clean package
 
 To deploy the services to the {kube} cluster, run the following commands:
 
-Bash:
+Unix:
 ```
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
 ```
@@ -193,6 +192,16 @@ service "system-service" created
 deployment "system-deployment" created
 ----
 
+*The deployed resources*
+
+|=========================
+| gateway | An Ingress that will route traffic to your services
+| inventory-service | Stores information about systems that are running system-service
+| inventory-deployment-v1 | Contains the containers that will run version 1 of the inventory application
+| system-service | Responds with information about the system that the service is running on
+| system-deployment | Contains the containers responsible for system-service
+|=========================
+
 To get the base url, use the following command:
 ```
 minikube service list | grep istio-ingress
@@ -209,23 +218,16 @@ v1 of the deployed application.
 
 == Modify and deploy version 2 of the service
 
-Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java` to `getCount()`:
+Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java` to `getCount()`.
 
 [source, Java]
 ----
 include::finish/inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java[tags=**;!copyright;]
 ----
 
-This introduces a breaking change to the REST service because now the response will look like:
-```
-{
-    "systems": [],
-    "count": 0
-}
-```
+This will introduce a breaking change to the REST service because the response will have renamed properties after deployment.
 
-instead of:
-
+Before version 2 is deployed:
 ```
 {
     "systems": [],
@@ -233,22 +235,30 @@ instead of:
 }
 ```
 
-Therefore, any clients consuming the service will now be broken since they are expecting a property called
-`total` instead of `count`. To solve this, we can actually have both versions of the service deployed
-and decide which one to use by having a header distinguish which version to use.
+After version 2 is deployed:
+```
+{
+    "systems": [],
+    "count": 0
+}
+```
 
-To update the version of your service, run the following command:
+
+Therefore, any clients consuming the updated service will now be broken since they are expecting a property called
+`total` instead of `count`. Instead of running only the new service, both services can be run simulatenously.
+
+Run this command to update the version of your service.
 
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
 ```
 
-Rebuild the service by navigating to the `start/inventory` directory and running the following command:
+Navigate to the `start/inventory` directory and run the given command to rebuild the inventory service.
 ```
 mvn clean package
 ```
 
-Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventory service:
+Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventory service.
 
 [source, yaml]
 ----
@@ -257,7 +267,7 @@ include::finish/kubernetes.yaml[tags=**;!copyright;]
 
 Redeploy your services using the following commands:
 
-Bash:
+Unix:
 ```
 kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
 ```
@@ -269,7 +279,7 @@ kubectl apply -f tmp.yaml
 DEL tmp.yaml
 ```
 
-You can see that version 2 of the inventory application has been deployed:
+You can see that version 2 of the inventory application has been deployed.
 [source, role="no_copy"]
 ----
 ingress "gateway" unchanged
@@ -280,7 +290,10 @@ service "system-service" unchanged
 deployment "system-deployment" configured
 ----
 
-Make a request to the service and observe that requests go to both v1 and v2.
+Make a request to the service and observe that requests go to both v1 and v2. This is not what
+a client consuming this service wants because it is unpredictable and the client would get
+an incorrect response half of the time. To solve this you can use request routing to default
+to version 1 and allow the client to access version 2 when specifically requested.
 
 // =================================================================================================
 // Configure request routing
@@ -299,13 +312,13 @@ The `routing.yaml` file routes incoming requests based on the uri prefix `/inven
 `x-version`. If the header has the value `v2`, then requests will be routed to the `v2` deployment and otherwise
 the requests are routed to `v1` as to avoid breaking existing clients.
 
-To apply your routing rules, run the following command:
+Apply your routing rules by running the given command.
 ```
 istioctl create -f routing.yaml
 ```
 
-Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service.
-Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service.
+Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service where you see "count".
+Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service where you see "total".
 
 
 == Testing microservices that are running on {kube}
@@ -320,6 +333,8 @@ The tests verify that:
 * If no `x-version` header is present then it defaults to version 1
 * If `x-version` has value `v1` then it uses version 1
 * If `x-version` has value `v2` then it uses version 2
+
+Each test is repeated three times to ensure that it didn't pass by chance if the routing was not applied correctly.
 
 Run the following command to start the tests:
 
