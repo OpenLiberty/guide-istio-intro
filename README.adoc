@@ -125,6 +125,11 @@ First, prepare your {istio} deployment using Helm:
 helm template path/to/istio/install/kubernetes/helm/istio --name istio --namespace istio-system --set sidecarInjectorWebhook.enabled=false > istio.yaml
 ```
 
+Next, create the `istio-system` namespace:
+```
+kubectl create namespace istio-system
+```
+
 Next, deploy {istio} to your cluster.
 ```
 kubectl apply -f istio.yaml
@@ -133,17 +138,22 @@ If you observe any errors, run the command one more time and it should succeed w
 
 Verify that {istio} was successfully deployed.
 ```
-kubectl get pods -n istio-system
+kubectl get deployments -n istio-system
 ```
  
-Ensure that all istio pods are all ready before you continue.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available.
 [source, role="no_copy"]
 ----
-NAME                             READY     STATUS    RESTARTS   AGE
-istio-ca-75fb7dc8d5-zv5km        1/1       Running   0          2m
-istio-ingress-577d7b7fc7-tggs6   1/1       Running   0          2m
-istio-mixer-859796c6bf-4j6nv     3/3       Running   0          2m
-istio-pilot-65648c94fb-9pnpr     2/2       Running   0          2m
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+istio-citadel              1         1         1            1           5m
+istio-egressgateway        1         1         1            1           5m
+istio-ingress              1         1         1            1           5m
+istio-ingressgateway       1         1         1            1           5m
+istio-pilot                1         1         1            1           5m
+istio-policy               1         1         1            1           5m
+istio-statsd-prom-bridge   1         1         1            1           5m
+istio-telemetry            1         1         1            1           5m
+prometheus                 1         1         1            1           5m
 ----
 
 // =================================================================================================
