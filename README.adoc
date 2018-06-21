@@ -42,7 +42,7 @@ cli tool to deploy your application as well as configure the routing.
 === What is {istio}?
 
 {istio} is a platform that provides several features that allow you manage various aspects
-of how your microservices interact with eachother and the outside world. It works by deploying
+of how your microservices interact with each other and the outside world. It works by deploying
 a few extra services and injecting an additional container into each of your pods that contains
 the https://www.envoyproxy.io/[Envoy] proxy.
 
@@ -61,27 +61,14 @@ such as: Routing, Logging, and Security. These features can easily be enabled by
 
 == Prerequisites
 
-// Before you begin, make sure to have the following tools installed:
-
-// - `kubernetes-cli` - a command line interface for {kube} called `kubectl`. This is your primary
-// tool for communicating with and managing your {kube} cluster.
-// - `kubernetes-helm` - a package manager for {kube} called Helm. Helm allows you to install packages
-// or "charts", which are sets of preconfigured {kube} resources. Installing charts is much more
-// convenient than creating and configuring the resources yourself.
-// - `minikube` - a local, single-node {kube} cluster that runs in a virtual machine.
-
-// Finally, you will need a containerization software for building containers. {kube} supports a variety
-// of container types and while you're not limited to any of them in particular, you should use Docker
-// as this is what this guide will focus on.
-
-
 Before you begin, make sure to have the following tools installed:
 
 - `kubernetes-cli` - a command line interface for {kube} called `kubectl`. This is your primary
 tool for communicating with and managing your {kube} cluster.
 - `minikube` - a local, single-node {kube} cluster that runs in a virtual machine.
 - `istioctl` - a command line interface for {istio} to deploy {istio} to your {kube} cluster
-and to manage your {istio} configurations. Installation instructions can be found here:  https://istio.io/docs/setup/kubernetes/quick-start/
+and to manage your {istio} configurations. Installation instructions can be found here: https://istio.io/docs/setup/kubernetes/quick-start/#download-and-prepare-for-the-installation
+- `helm` - a package manager for kubernetes, installation instructions can be found here: https://docs.helm.sh/using_helm/#installing-helm
 
 // =================================================================================================
 // Getting Started
@@ -133,9 +120,14 @@ minikube docker-env > tmp.cmd && call tmp.cmd && DEL tmp.cmd
 As a result of this command, if you issue docker commands they will affect the docker environment
 in the Minikube VM rather than the one you likely have installed on your computer.
 
-Next, deploy {istio} to your cluster. From the directory where you installed {istio}, run the following command:
+First, prepare your {istio} deployment using Helm:
 ```
-kubectl apply -f install/kubernetes/istio.yaml
+helm template path/to/istio/install/kubernetes/helm/istio --name istio --namespace istio-system --set sidecarInjectorWebhook.enabled=false > istio.yaml
+```
+
+Next, deploy {istio} to your cluster.
+```
+kubectl apply -f istio.yaml
 ```
 If you observe any errors, run the command one more time and it should succeed without any errors.
 
@@ -245,7 +237,7 @@ After version 2 is deployed:
 
 
 Therefore, any clients consuming the updated service will now be broken since they are expecting a property called
-`total` instead of `count`. Instead of running only the new service, both services can be run simulatenously.
+`total` instead of `count`. Instead of running only the new service, both services can be run simultaneously.
 
 Run this command to update the version of your service.
 
