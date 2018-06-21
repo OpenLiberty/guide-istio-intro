@@ -52,8 +52,8 @@ can also be used with other environments.
 === Why use {istio}?
 
 {istio} provides a collection of features that allow you to manage several aspects of your services
-such as: Routing, Logging, and Security. These features can easily be enabled by applying the appropriate
-{istio} files to your {kube} cluster. This guide will specifically focus on routing.
+such as: Routing, Logging, and Security. These features can be easilyconfigured independently of your
+application's code.
 
 // =================================================================================================
 // Prerequisites
@@ -105,6 +105,10 @@ minikube start ^
     --extra-config=apiserver.Admission.PluginNames=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
 ```
 
+Running the `minikube start ...` command will create and start a virtual machine that will be used
+for a local kubernetes cluster. The extra flags are needed for minikube to work correctly
+with {istio}.
+
 Run this command to connect the Docker CLI to use Minikube's Docker Daemon:
 
 Unix:
@@ -129,6 +133,11 @@ Next, create the `istio-system` namespace:
 ```
 kubectl create namespace istio-system
 ```
+
+You can think of the `istio-system` namespace as a place to keep all of the
+{istio} resources in your cluster separate from the rest of your deployments and services.
+If you desire, then you can similarly create a namespace for the resources we'll be deploying later.
+If no namespace is specified it will use the `default` namespace by default.
 
 Next, deploy {istio} to your cluster.
 ```
@@ -167,6 +176,33 @@ Navigate to the `start` directory and run the following command, it may take a f
 mvn clean package
 ```
 
+After running the command, it should build a docker image for the `inventory` service and an image for the `system` service.
+You can verify that these images were created by running the command `docker images` and you should see images called
+`inventory-service:1.0-SNAPSHOT` and `system-service:1.0-SNAPSHOT`.
+
+[source, role="no_copy"]
+----
+REPOSITORY                                TAG                 IMAGE ID            CREATED              SIZE
+inventory-service                         1.0-SNAPSHOT        b90385c20c52        7 seconds ago        487MB
+system-service                            1.0-SNAPSHOT        498fe1db2e75        About a minute ago   487MB
+prom/prometheus                           latest              b82ef1f3aa07        2 days ago           119MB
+open-liberty                              latest              ba15c5b7d54d        2 weeks ago          487MB
+istio/citadel                             0.8.0               3d382d44e0b9        2 weeks ago          51.1MB
+istio/mixer                               0.8.0               c5237a3d27ac        2 weeks ago          60.6MB
+istio/proxyv2                             0.8.0               a43f156372a7        2 weeks ago          291MB
+istio/proxy                               0.8.0               25195d33b0b3        2 weeks ago          174MB
+istio/pilot                               0.8.0               8c69f3b2ff64        2 weeks ago          286MB
+k8s.gcr.io/kube-addon-manager             v8.6                9c16409588eb        4 months ago         78.4MB
+prom/statsd-exporter                      latest              304735eab4e4        5 months ago         14.1MB
+k8s.gcr.io/pause-amd64                    3.1                 da86e6ba6ca1        6 months ago         742kB
+k8s.gcr.io/kubernetes-dashboard-amd64     v1.8.1              e94d2f21bc0c        6 months ago         121MB
+gcr.io/k8s-minikube/storage-provisioner   v1.8.1              4689081edb10        7 months ago         80.8MB
+k8s.gcr.io/k8s-dns-sidecar-amd64          1.14.5              fed89e8b4248        8 months ago         41.8MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64         1.14.5              512cd7425a73        8 months ago         49.4MB
+k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64    1.14.5              459944ce8cc4        8 months ago         41.4MB
+quay.io/coreos/hyperkube                  v1.7.6_coreos.0     2faf6f7a322f        9 months ago         699MB
+----
+
 To deploy the services to the {kube} cluster, run the following commands:
 
 Unix:
@@ -181,20 +217,7 @@ kubectl apply -f tmp.yaml
 DEL tmp.yaml
 ```
 
-This will inject the sidecar containers into your configuration so that the Envoy proxy
-is deployed with each of your pods.
-
-You can see that your resources are created after running the `kubectl apply -f ...` command:
-[source, role="no_copy"]
-----
-ingress "gateway" created
-service "inventory-service" created
-deployment "inventory-deployment-v1" created
-service "system-service" created
-deployment "system-deployment" created
-----
-
-*The deployed resources*
+The `kubernetes.yaml` file defines some resources including two deployments, two services, and an ingress.
 
 |=========================
 | gateway | An Ingress that will route traffic to your services
@@ -204,15 +227,39 @@ deployment "system-deployment" created
 | system-deployment | Contains the containers responsible for system-service
 |=========================
 
+By using the command `istioctl kube-inject -f kubernetes.yaml`, it prints a modified version
+of the `kubernetes.yaml` file to stdout containing any modifications needed by {istio} such as adding
+{istio}'s envoy containers.
+
+You can see that your resources are created after running the `kubectl apply -f ...` command:
+
+[source, role="no_copy"]
+----
+ingress "gateway" created
+service "inventory-service" created
+deployment "inventory-deployment-v1" created
+service "system-service" created
+deployment "system-deployment" created
+----
+
 To get the base url, use the following command:
 ```
-minikube service list | grep istio-ingress
+minikube service list | grep istio-ingress | head -1 | awk '{ print $6 }'
 ```
 
 This command will give you a url of the form `http://ip-address:port`.
 
-Once all the pods are started, you should be able to navigate to `http://ip-address:port/inventory/systems` to view
+Once all the deployments are available, you should be able to navigate to `http://ip-address:port/inventory/systems` to view
 v1 of the deployed application.
+
+You can check that all of the deployments are available using the command `kubectl get deployments`.
+
+[source, role="no_copy"]
+----
+NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+inventory-deployment-v1   1         1         1            1           1m
+system-deployment         1         1         1            1           1m
+----
 
 // =================================================================================================
 // Modify the service
@@ -246,8 +293,10 @@ After version 2 is deployed:
 ```
 
 
-Therefore, any clients consuming the updated service will now be broken since they are expecting a property called
+Therefore, any clients consuming the updated service will be broken since they are expecting a property called
 `total` instead of `count`. Instead of running only the new service, both services can be run simultaneously.
+The reason behind running both services is so that old clients do not have to upgrade to use the new api,
+they can simply continue to use the old one.
 
 Run this command to update the version of your service.
 
@@ -267,7 +316,12 @@ Update the `kubernetes.yaml` file to add a new deployment for v2 of the inventor
 include::finish/kubernetes.yaml[tags=**;!copyright;]
 ----
 
-Redeploy your services using the following commands:
+Notice the `version` labels we use to denote which deployment is for version 1 of the application and
+which deployment is for version 2. This will give us the ability to select which version of the inventory
+service to forward requests to.
+
+
+Redeploy your services using the same commands from before.
 
 Unix:
 ```
@@ -292,10 +346,15 @@ service "system-service" unchanged
 deployment "system-deployment" configured
 ----
 
-Make a request to the service and observe that requests go to both v1 and v2. This is not what
+Use the following curl command a few times to make multiple requests `curl http://ip-address:port/inventory/systems`
+
+Observe that requests go to both v1 and v2. This is not what
 a client consuming this service wants because it is unpredictable and the client would get
 an incorrect response half of the time. To solve this you can use request routing to default
-to version 1 and allow the client to access version 2 when specifically requested.
+to version 1 and allow the client to access version 2 when specifically requested. This way,
+existing client won't be broken and any new clients that would like to use v2 can easily
+request it.
+
 
 // =================================================================================================
 // Configure request routing
@@ -312,15 +371,17 @@ include::finish/routing.yaml[tags=**;!copyright;]
 
 The `routing.yaml` file routes incoming requests based on the uri prefix `/inventory` and a header
 `x-version`. If the header has the value `v2`, then requests will be routed to the `v2` deployment and otherwise
-the requests are routed to `v1` as to avoid breaking existing clients.
+the requests are routed to `v1` as to avoid breaking existing clients. In the `kubernetes.yaml` file we specified
+some `version` labels, in this `routing.yaml` file we make use of the `version` label to route requests to the appropriate
+deployment.
 
 Apply your routing rules by running the given command.
 ```
 istioctl create -f routing.yaml
 ```
 
-Make a request `curl http://ip-address:port/api/name -H "x-version: v2"`, observe that request goes to v2 of the service where you see "count".
-Make a request `curl http://ip-address:port/api/name`, observe that request default to v1 of the service where you see "total".
+Make a request `curl http://ip-address:port/inventory/systems -H "x-version: v2"`, observe that request goes to v2 of the service where you see "count".
+Make a request `curl http://ip-address:port/inventory/systems`, observe that request default to v1 of the service where you see "total".
 
 
 == Testing microservices that are running on {kube}
