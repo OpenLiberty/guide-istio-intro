@@ -9,6 +9,10 @@
 // Contributors:
 //     IBM Corporation
 //
+
+[.hidden]
+NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/istio.html[Open Liberty website]
+
 :projectid: istio
 :page-layout: guide
 :page-duration: 30 minutes
@@ -19,11 +23,11 @@
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
-:link-to-published-guide: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
+//:link-to-published-guide: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
 = Versioning services with Istio
 
-[.hidden]
-NOTE: {link-to-published-guide}
+// [.hidden]
+// NOTE: {link-to-published-guide}
 
 Explore how to route traffic to different versions of the same service using Istio and Kubernetes.
 
