@@ -9,7 +9,6 @@
 // Contributors:
 //     IBM Corporation
 //
-
 :projectid: istio
 :page-layout: guide
 :page-duration: 30 minutes
