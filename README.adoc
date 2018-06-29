@@ -23,7 +23,7 @@
 = Versioning services with Istio
 
 [.hidden]
-NOTE: {link-to-published-guide}
+NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
 
 Explore how to route traffic to different versions of the same service using Istio and Kubernetes.
 
