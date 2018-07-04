@@ -98,6 +98,7 @@ public class InventoryVersionTest {
         }
     }
 
+    // tag::doc[]
     /**
      * <p>
      * Returns response information from the specified URL.
@@ -107,6 +108,7 @@ public class InventoryVersionTest {
      *          - target URL.
      * @return Response object with the response from the specified URL.
      */
+    // end::doc[]
     private Response getResponse(String url) {
         return client.target(url).request().get();
     }
@@ -115,6 +117,7 @@ public class InventoryVersionTest {
         return client.target(url).request().header("x-version", version).get();
     }
 
+    // tag::doc[]
     /**
      * <p>
      * Asserts that the given URL has the correct response code of 200.
@@ -125,6 +128,7 @@ public class InventoryVersionTest {
      * @param response
      *          - response received from the target URL.
      */
+    // end::doc[]
     private void assertResponse(String url, Response response) {
         assertEquals("Incorrect response code from " + url, 200, response.getStatus());
     }

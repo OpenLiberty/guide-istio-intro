@@ -167,7 +167,7 @@ Next, deploy {istio}'s resources to your cluster. This will create some services
 ```
 kubectl apply -f istio.yaml
 ```
-If you observe any errors, run the command one more time and it should succeed without any errors.
+
 `kubectl apply ...` creates new resources, or modifies existing ones.
 
 Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` once
@@ -205,8 +205,14 @@ mvn clean package
 ```
 
 After running the command, it builds a docker image for the `inventory` service and an image for the `system` service.
-You can verify that these images were created by running the command `docker images` and you should see images called
-`inventory-service:1.0-SNAPSHOT` and `system-service:1.0-SNAPSHOT`.
+You can verify that these images were created by running the given command. 
+
+```
+docker images
+```
+
+You will see images called `inventory-service:1.0-SNAPSHOT` and `system-service:1.0-SNAPSHOT` listed in a table
+similar to the output below.
 
 [source, role="no_copy"]
 ----
@@ -220,15 +226,6 @@ istio/mixer                               0.8.0               c5237a3d27ac      
 istio/proxyv2                             0.8.0               a43f156372a7        2 weeks ago          291MB
 istio/proxy                               0.8.0               25195d33b0b3        2 weeks ago          174MB
 istio/pilot                               0.8.0               8c69f3b2ff64        2 weeks ago          286MB
-k8s.gcr.io/kube-addon-manager             v8.6                9c16409588eb        4 months ago         78.4MB
-prom/statsd-exporter                      latest              304735eab4e4        5 months ago         14.1MB
-k8s.gcr.io/pause-amd64                    3.1                 da86e6ba6ca1        6 months ago         742kB
-k8s.gcr.io/kubernetes-dashboard-amd64     v1.8.1              e94d2f21bc0c        6 months ago         121MB
-gcr.io/k8s-minikube/storage-provisioner   v1.8.1              4689081edb10        7 months ago         80.8MB
-k8s.gcr.io/k8s-dns-sidecar-amd64          1.14.5              fed89e8b4248        8 months ago         41.8MB
-k8s.gcr.io/k8s-dns-kube-dns-amd64         1.14.5              512cd7425a73        8 months ago         49.4MB
-k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64    1.14.5              459944ce8cc4        8 months ago         41.4MB
-quay.io/coreos/hyperkube                  v1.7.6_coreos.0     2faf6f7a322f        9 months ago         699MB
 ----
 
 To deploy the `inventory` and `system` services to the {kube} cluster, run the following commands:
@@ -245,7 +242,8 @@ kubectl apply -f tmp.yaml
 DEL tmp.yaml
 ```
 
-The `kubernetes.yaml` file defines some resources including two deployments, two services, and an ingress.
+The kubernetes.yaml configuration file contains configuration for various {kube} resources. In this case, it contains
+an ingress, two deployments, and two services, which can be broken down as so:
 
 |=========================
 | gateway | An Ingress that will route traffic to your services
@@ -270,17 +268,35 @@ service "system-service" created
 deployment "system-deployment" created
 ----
 
-To get the base url, use the following command:
+To get the base url, first get the ip address of the cluster.
 ```
-minikube service list | grep istio-ingress | head -1 | awk '{ print $6 }'
+minikube ip
 ```
 
-This command will give you a url of the form `http://<ip-address>:<port>`.
+Next, find out what port the `istio-ingress` service is running on.
+```
+kubectl get service istio-ingress -n istio-system
+```
+
+You will see output similar to the following:
+
+[source, role="no_copy"]
+----
+NAME            TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+istio-ingress   LoadBalancer   10.109.13.94   <pending>     80:32000/TCP,443:31624/TCP   5m
+----
+
+So the port in this specific scenario would be `3200`. To get the base url of the service
+combine the port with the ip address you found earlier using the format `http://<ip-address>:<port>`.
 
 Once all the deployments are available, you should be able to navigate to `http://<ip-address>:<port>/inventory/systems` to view
 v1 of the deployed application.
 
-You can check that all of the deployments are available using the command `kubectl get deployments`.
+You can check that all of the deployments are available using the following command.
+
+```
+kubectl get deployments
+```
 
 [source, role="no_copy"]
 ----
@@ -386,7 +402,8 @@ service "system-service" unchanged
 deployment "system-deployment" configured
 ----
 
-Use the following curl command a few times to make multiple requests `curl http://ip-address:port/inventory/systems`
+Use the following curl command a few times to make multiple requests `curl http://<ip-address>:<port>/inventory/systems`
+Alternatively, you can use https://www.getpostman.com/[Postman] if you prefer a more traditional UI to make requests.
 
 Observe that requests go to both v1 and v2. This is not what
 a client consuming this service wants because it is unpredictable and the client would get
@@ -446,13 +463,13 @@ routing has been correctly configured. If the tests fail, then you may have made
 Create the following file `inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java`:
 [source, Java]
 ----
-include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java[tags=**;!copyright;]
+include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java[tags=**;!copyright;!doc]
 ----
 
-The tests verify that:
-* If no `x-version` header is present then it defaults to version 1
-* If `x-version` has value `v1` then it uses version 1
-* If `x-version` has value `v2` then it uses version 2
+The `testV1Default` test case verifies that if no `x-version` header is present, then it defaults to version 1.
+Similarly the `testV1Header` test case verifies that requests are routed to version if the `x-version` header
+has a value of `v1`. The final test case `testV2Header` checks that requests are routed to version 2 when
+the `x-version` header is set to `v2`.
 
 Each test is repeated three times to ensure that it didn't pass by chance if the routing was not applied correctly.
 If the routing rules are not applied, then on some requests you will see `v1` and on other requests you will see `v2`.
