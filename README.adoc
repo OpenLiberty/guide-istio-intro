@@ -19,8 +19,8 @@
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
-:page-seo-title: Istio OpenLiberty Tutorial
-:page-seo-description: How to run microservices on Istio and OpenLiberty
+:page-seo-title: Istio routing tutorial
+:page-seo-description: How to run microservices in Istio
 = Versioning services with Istio
 
 [.hidden]
