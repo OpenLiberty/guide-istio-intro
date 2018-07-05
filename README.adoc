@@ -19,6 +19,8 @@
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
+:page-seo-title: Istio OpenLiberty Tutorial
+:page-seo-description: How to run microservices on Istio and OpenLiberty
 = Versioning services with Istio
 
 [.hidden]
@@ -60,12 +62,17 @@ request routing, access control, distributed tracing. The focus of this guide wi
 === Why use {istio}?
 
 {istio} provides a collection of features that allow you to manage several aspects of your services
-such as: Routing, Logging, and Security. These features can be easily configured independently of your
+such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
 application's code.
 
 One use case for {istio} which will be covered in this guide is that it can be used to route between
 two different versions of an application. One other reason to use {istio} is that it can be used to enable
 https between pods.
+
+A possible use case for {istio}'s Telemetry feature can be to enable distributed tracing which allows you
+to visualize how HTTP requests travel between different services in your cluster using a tool such as [https://zipkin.io/]Zipkin.
+One of the items {istio} offers under its collection of security features is to enable HTTPS between pods
+in your cluster to secure communication internally.
 
 // =================================================================================================
 // Prerequisites
@@ -162,12 +169,12 @@ You can think of the `istio-system` namespace as a place to keep all of the
 If you desire, then you can similarly create a namespace for the resources we'll be deploying later.
 If no namespace is specified it will use the `default` namespace by default.
 
-Next, deploy {istio}'s resources to your cluster. This will create some services and deployments that are needed by {istio}.
+Next, deploy {istio}'s resource to your cluster by running the `kubectl apply` command, which creates/updates
+{kube} resources defined in a yaml file. This will create some services and deployments that are needed by {istio}.
+
 ```
 kubectl apply -f istio.yaml
 ```
-
-`kubectl apply ...` creates new resources, or modifies existing ones.
 
 Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` once
 the deployment is complete.
@@ -241,10 +248,12 @@ kubectl apply -f tmp.yaml
 DEL tmp.yaml
 ```
 
-The kubernetes.yaml configuration file contains configuration for various {kube} resources. In this case, it contains
+The `kubernetes.yaml` configuration file contains configuration for various {kube} resources. In this case, it contains
 an ingress, two deployments, and two services, which can be broken down as so:
 
+[options="header"]
 |=========================
+| Service | Description
 | gateway | An Ingress that will route traffic to your services
 | inventory-service | Stores information about systems that are running system-service
 | inventory-deployment-v1 | Contains the containers that will run version 1 of the inventory application
@@ -297,6 +306,8 @@ You can check that all of the deployments are available using the following comm
 kubectl get deployments
 ```
 
+Which produces a list of deployments for your microservices.
+
 [source, role="no_copy"]
 ----
 NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -327,20 +338,24 @@ Any client using your service will be expecting to see a property called `total`
 This is not good for your API's consumers since the response would be somewhat unpredictable from their end.
 
 Before version 2 is deployed, the `/inventory/systems` endpoint responds with a JSON in the following form:
-```
+
+[source, role="no_copy"]
+----
 {
     "systems": [],
     "total": 0
 }
-```
+----
 
 After version 2 is deployed, the same endpoint can respond with JSON in the following form:
-```
+
+[source, role="no_copy"]
+----
 {
     "systems": [],
     "count": 0
 }
-```
+----
 
 
 Therefore, any clients consuming the updated service will be broken since they are expecting a property called
@@ -435,7 +450,7 @@ the requests are routed to `v1` as to avoid breaking existing clients. In the `k
 in the `routing.yaml` file the `version` label is used to route requests to the appropriate
 deployment.
 
-Apply the routing rules you created in the routing.yaml file by running the given command.
+Apply the routing rules you created in the `routing.yaml` file by running the given command.
 ```
 istioctl create -f routing.yaml
 ```
@@ -499,7 +514,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 ----
 
 
-== Teardown
+== Tearing down your deployments and {istio}
 
 Finally, you may want to teardown all the deployed resources as a cleanup step.
 
