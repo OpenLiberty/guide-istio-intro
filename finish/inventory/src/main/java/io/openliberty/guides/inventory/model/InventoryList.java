@@ -18,50 +18,17 @@ import java.util.Properties;
 
 public class InventoryList {
 
-  private List<System> systems = new ArrayList<System>();
+    private List<SystemData> systems;
 
-  public List<System> getSystems() {
-    return systems;
-  }
-
-  public int getCount() {
-    return systems.size();
-  }
-
-  public void addToInventoryList(String hostname, Properties systemProps) {
-    Properties props = new Properties();
-    props.setProperty("os.name", systemProps.getProperty("os.name"));
-    props.setProperty("user.name", systemProps.getProperty("user.name"));
-
-    System host = new System(hostname, props);
-    if (!systems.contains(host))
-      systems.add(host);
-  }
-
-  class System {
-
-    private final String hostname;
-    private final Properties properties;
-
-    public System(String hostname, Properties properties) {
-      this.hostname = hostname;
-      this.properties = properties;
+    public InventoryList(List<SystemData> systems) {
+        this.systems = systems;
     }
 
-    public String getHostname() {
-      return hostname;
+    public List<SystemData> getSystems() {
+        return systems;
     }
 
-    public Properties getProperties() {
-      return properties;
+    public int getCount() {
+        return systems.size();
     }
-
-    @Override
-    public boolean equals(Object host) {
-      if (host instanceof System) {
-        return hostname.equals(((System) host).getHostname());
-      }
-      return false;
-    }
-  }
 }
