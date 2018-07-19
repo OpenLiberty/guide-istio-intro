@@ -70,9 +70,8 @@ public class InventoryVersionTest {
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue(
-                "Response does not contain \"total\" property",
-                !obj.isNull("total"));
+            assertTrue("Response does not contain \"total\" property",
+                       !obj.isNull("total"));
         }
     }
 
@@ -87,9 +86,8 @@ public class InventoryVersionTest {
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue(
-                "Response does not contain \"total\" property",
-                !obj.isNull("total"));
+            assertTrue("Response does not contain \"total\" property",
+                       !obj.isNull("total"));
         }
     }
 
@@ -104,9 +102,8 @@ public class InventoryVersionTest {
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue(
-                "Response does not contain \"count\" property",
-                !obj.isNull("count"));
+            assertTrue("Response does not contain \"count\" property",
+                       !obj.isNull("count"));
         }
     }
 
