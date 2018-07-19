@@ -70,31 +70,40 @@ public class InventoryVersionTest {
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue("Response does not contain \"total\" property", !obj.isNull("total"));
+            assertTrue("Response does not contain \"total\" property",
+                       !obj.isNull("total"));
         }
     }
 
     @Test
     public void testV1Header() {
         for (int i = 0; i < REPETITIONS; i++) {
-            Response response = this.getResponseWithVersion(invUrl + INVENTORY_SYSTEMS, "v1");
+            Response response = this.getResponseWithVersion(
+                invUrl + INVENTORY_SYSTEMS,
+                "v1");
+
             this.assertResponse(invUrl, response);
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue("Response does not contain \"total\" property", !obj.isNull("total"));
+            assertTrue("Response does not contain \"total\" property",
+                       !obj.isNull("total"));
         }
     }
 
     @Test
     public void testV2Header() {
         for (int i = 0; i < REPETITIONS; i++) {
-            Response response = this.getResponseWithVersion(invUrl + INVENTORY_SYSTEMS, "v2");
+            Response response = this.getResponseWithVersion(
+                invUrl + INVENTORY_SYSTEMS,
+                "v2");
+
             this.assertResponse(invUrl, response);
 
             JsonObject obj = response.readEntity(JsonObject.class);
 
-            assertTrue("Response does not contain \"count\" property", !obj.isNull("count"));
+            assertTrue("Response does not contain \"count\" property",
+                       !obj.isNull("count"));
         }
     }
 
