@@ -32,6 +32,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.openliberty.features</groupId>
+                <artifactId>features-bom</artifactId>
+                <version>RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
@@ -54,27 +61,6 @@
                 <artifactId>javax.json</artifactId>
                 <version>1.0.4</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.openliberty.features</groupId>
-                <artifactId>jaxrs-2.1</artifactId>
-                <type>esa</type>
-                <scope>provided</scope>
-                <version>RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>io.openliberty.features</groupId>
-                <artifactId>jsonp-1.1</artifactId>
-                <type>esa</type>
-                <scope>provided</scope>
-                <version>RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>io.openliberty.features</groupId>
-                <artifactId>cdi-2.0</artifactId>
-                <type>esa</type>
-                <scope>provided</scope>
-                <version>RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
