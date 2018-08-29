@@ -11,38 +11,11 @@ spec:
   - match:
     - uri:
         prefix: /inventory
-      headers:
-        x-version:
-          exact: v2
     route:
     - destination:
         port:
           number: 9081
         host: inventory-service
-        subset: v2
-  - match:
-    - uri:
-        prefix: /inventory
-    route:
-    - destination:
-        port:
-          number: 9081
-        host: inventory-service
-        subset: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: inventory-destination-rule
-spec:
-  host: inventory-service
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

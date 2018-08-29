@@ -45,6 +45,9 @@ public class InventoryVersionTest {
 
     @BeforeClass
     public static void oneTimeSetup() {
+        // Allows the "Host" header to be set
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
         testIp = System.getProperty("test.ip");
         testPort = System.getProperty("test.port");
         sysUrl = "http://" + testIp + ":" + testPort + "/";
@@ -119,11 +122,11 @@ public class InventoryVersionTest {
      */
     // end::doc[]
     private Response getResponse(String url) {
-        return client.target(url).request().get();
+        return client.target(url).request().header("Host", "my-inventory.com").get();
     }
 
     private Response getResponseWithVersion(String url, String version) {
-        return client.target(url).request().header("x-version", version).get();
+        return client.target(url).request().header("Host", "my-inventory.com").header("x-version", version).get();
     }
 
     // tag::doc[]
