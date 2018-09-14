@@ -14,6 +14,7 @@ package it.io.openliberty.guides.inventory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
@@ -50,6 +51,9 @@ public class InventoryVersionTest {
 
         testIp = System.getProperty("test.ip");
         testPort = System.getProperty("test.port");
+
+        assertFalse("The test.ip and test.port properties must be set for the tests to execute successfully!", testIp == null || testPort == null);
+
         sysUrl = "http://" + testIp + ":" + testPort + "/";
         invUrl = "http://" + testIp + ":" + testPort + "/";
     }

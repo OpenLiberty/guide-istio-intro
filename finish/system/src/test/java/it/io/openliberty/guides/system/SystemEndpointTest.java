@@ -13,6 +13,7 @@
 package it.io.openliberty.guides.system;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
@@ -34,6 +35,9 @@ public class SystemEndpointTest {
 
         String port = System.getProperty("test.port");
         String ip = System.getProperty("test.ip");
+
+        assertFalse("The test.ip and test.port properties must be set for the tests to execute successfully!", ip == null || port == null);
+
         String url = "http://" + ip + ":" + port + "/system/properties";
 
         Client client = ClientBuilder.newClient();
