@@ -17,7 +17,7 @@
         <version.download-maven-plugin>1.4.0</version.download-maven-plugin>
         <version.maven-surefire-plugin>2.18.1</version.maven-surefire-plugin>
         <version.maven-failsafe-plugin>2.18.1</version.maven-failsafe-plugin>
-        <version.dockerfile-maven-plugin>1.4.0</version.dockerfile-maven-plugin>
+        <version.dockerfile-maven-plugin>1.4.4</version.dockerfile-maven-plugin>
         <!-- OpenLiberty runtime -->
         <version.openliberty-runtime>RELEASE</version.openliberty-runtime>
         <sys.service.http.port>9080</sys.service.http.port>

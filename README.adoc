@@ -14,7 +14,7 @@
 :page-duration: 15 minutes
 :page-releasedate: 2018-06-30
 :page-description: Explore how to route traffic to different versions of the same service using Istio and Kubernetes.
-:page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'istioctl', 'Minikube', 'Istio']
+:page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'Minikube', 'Istio']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
@@ -34,30 +34,28 @@ Explore how to leverage content-based routing to route HTTP traffic to different
 
 == What you'll learn
 
-You will learn how to deploy an application to a Kubernetes cluster using {istio} and how to configure
-{istio} to route http requests based on the content of the headers.
+You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
+{istio} to route http requests based on the uri and content of the headers.
 
 The two microservices that you will deploy are called `inventory` and `system`. The `inventory` service stores information about systems that are running the `system` service.
 The `system` service retrieves system properties about the system that it is running on. Specifically, it retrieves
 the hostname, username, and operating system.
 
-You will use Minikube as your local {kube} cluster. You will use {istio}'s Ingress, and the `istioctl`
-CLI tool to deploy your application as well as configure the routing. You will use the `istioctl` tool
-to apply routing rules to determine which version of the `inventory` microservice will be accepting requests.
+You will use Minikube as your local {kube} cluster. You will use {istio}'s Ingress, and the `kubectl`
+CLI tool to deploy your application as well as configure the routing.
 
 === What is {istio}?
 
 {istio} is a platform for managing how microservices interact with each other as well as the outside world.
-It works by deploying a few extra services and injecting an additional container into each of your pods that contains
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a layer that sits in front of your container
-and forwards requests to your container. It is specialized for a service mesh architecture since it offers useful features
+It works by deploying istio control plane and injecting an additional container into each of your pods that contains
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It is specialized for a service mesh architecture since it offers useful features
 such as load balancing and support for distributed tracing.
 
 While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
 can also be used with other environments such as Docker Compose. {istio} has many features, some of them are
 request routing, access control, distributed tracing. The focus of this guide will be request routing.
 
-=== Why use {istio}?
+=== Why {istio}?
 
 {istio} provides a collection of features that allow you to manage several aspects of your services
 such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
@@ -84,8 +82,6 @@ Before you begin, make sure to have these tools installed:
 tool for communicating with and managing your {kube} cluster. Installation instruction can be found here: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 - `minikube` - a local, single-node {kube} cluster that runs in a virtual machine. Installation instructions can be found
 here: https://github.com/kubernetes/minikube
-- `istioctl` - a command line interface for {istio} to deploy {istio} to your {kube} cluster
-and to manage your {istio} configurations. Installation instructions can be found here: https://istio.io/docs/setup/kubernetes/quick-start/#download-and-prepare-for-the-installation
 - `helm` - a package manager for kubernetes, installation instructions can be found here: https://docs.helm.sh/using_helm/#installing-helm
 
 Since this guide will be using {kube} and Docker, you will also want Docker set up on your computer. You can find installation instructions here: https://docs.docker.com/install/.
@@ -104,17 +100,14 @@ include::{common-includes}/gitclone.adoc[]
 
 == Starting and preparing your cluster for Deployment
 
-Minikube is a tool that can start and manage a virtual machine on your computer.
-The virtual machine is used to run a kubernetes cluster locally.
+Minikube is a tool to run a kubernetes cluster locally on your computer, inside a virtual machine.
 To begin working with your cluster, first start Minikube with these flags to use {istio}:
 
 Unix:
 ```
-minikube start \
+minikube start --kubernetes-version=v1.10.0 \
     --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" \
-    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key" \
-    --extra-config=apiserver.admission-control="NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota" \
-    --kubernetes-version=v1.10.0
+    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
 ```
 
 Windows:
@@ -123,9 +116,9 @@ minikube start ^
     --bootstrapper=localkube ^
     --vm-driver=hyperv ^
     --hyperv-virtual-switch=minikube-virtual-switch ^
-    --extra-config=controller-manager.ClusterSigningCertFile="/var/lib/localkube/certs/ca.crt" ^
-    --extra-config=controller-manager.ClusterSigningKeyFile="/var/lib/localkube/certs/ca.key" ^
-    --extra-config=apiserver.Admission.PluginNames=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
+    --kubernetes-version=v1.10.0 ^
+    --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" ^
+    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
 ```
 
 Running the `minikube start ...` command will create and start a virtual machine that will be used
@@ -149,12 +142,17 @@ in the Minikube VM rather than the one you likely have installed on your compute
 case because when building the docker containers they need to be available to your cluster since for the purpose
 of this guide the images are not being pushed to a docker registry.
 
-First, prepare your {istio} deployment using Helm. Helm is used only for templating, in this situation Helm is not used for
-managing the resources as that feature currently not considered stable. Navigate to the directory where you downloaded and installed
-{istio} and use the given command to produce an `istio.yaml` file that will be setup to work in the `istio-system` namespace, and have sidecar injection disabled. Enabling sidecar injection allows you to deploy your resources without using the `istio-inject` command later
-in the guide, but it'll be done manually in this guide just so that what is happening can be easily observed.
+First, deploy the {istio} custom resource defintion. Custom resource definitions allows {istio} to define custom {kube} resources that you can use in your resource defintion files.
+
 ```
-helm template install/kubernetes/helm/istio --name istio --namespace istio-system --set sidecarInjectorWebhook.enabled=false > istio.yaml
+kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
+```
+
+Next, prepare your {istio} deployment using Helm. Helm is used only for templating, in this situation Helm is not used for
+managing the resources. Navigate to the directory where you downloaded and extracted
+{istio} and use the given command to produce an `istio.yaml` file that will be setup to work in the `istio-system` namespace.
+```
+helm template install/kubernetes/helm/istio --name istio --namespace istio-system > istio.yaml
 ```
 
 Next, create the `istio-system` namespace because {istio}'s resources need to be deployed to this namespace.
@@ -168,7 +166,7 @@ If you desire, then you can similarly create a namespace for the resources we'll
 If no namespace is specified it will use the `default` namespace by default.
 
 Next, deploy {istio}'s resource to your cluster by running the `kubectl apply` command, which creates or updates
-{kube} resources defined in a yaml file. This will create some services and deployments that are needed by {istio}.
+{kube} resources defined in a yaml file. This command will deploy {istio}.
 
 ```
 kubectl apply -f istio.yaml
@@ -186,10 +184,11 @@ Ensure that the istio deployments are all available before continuing, it may ta
 NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 istio-citadel              1         1         1            1           5m
 istio-egressgateway        1         1         1            1           5m
-istio-ingress              1         1         1            1           5m
+istio-galley               1         1         1            1           5m
 istio-ingressgateway       1         1         1            1           5m
 istio-pilot                1         1         1            1           5m
 istio-policy               1         1         1            1           5m
+istio-sidecar-injector     1         1         1            1           5m
 istio-statsd-prom-bridge   1         1         1            1           5m
 istio-telemetry            1         1         1            1           5m
 prometheus                 1         1         1            1           5m
@@ -199,9 +198,9 @@ prometheus                 1         1         1            1           5m
 // Deploying v1 of the services to cluster
 // =================================================================================================
 
-== Deploying version 1 of the services to cluster
+== Deploying version 1 of the services to the cluster
 
-Navigate to the `start` directory and run the given command, it may take a few minutes to build.
+Navigate to the `start` directory and run the following command, it may take a few minutes to build.
 It will build the application and then package it into two docker images, one for each service.
 To build the docker images it uses a maven plugin called `dockerfile-maven-plugin`.
 ```
@@ -220,58 +219,48 @@ similar to the output.
 
 [source, role="no_copy"]
 ----
-REPOSITORY                                TAG                 IMAGE ID            CREATED              SIZE
-inventory-service                         1.0-SNAPSHOT        b90385c20c52        7 seconds ago        487MB
-system-service                            1.0-SNAPSHOT        498fe1db2e75        About a minute ago   487MB
-prom/prometheus                           latest              b82ef1f3aa07        2 days ago           119MB
-open-liberty                              latest              ba15c5b7d54d        2 weeks ago          487MB
-istio/citadel                             0.8.0               3d382d44e0b9        2 weeks ago          51.1MB
-istio/mixer                               0.8.0               c5237a3d27ac        2 weeks ago          60.6MB
-istio/proxyv2                             0.8.0               a43f156372a7        2 weeks ago          291MB
-istio/proxy                               0.8.0               25195d33b0b3        2 weeks ago          174MB
-istio/pilot                               0.8.0               8c69f3b2ff64        2 weeks ago          286MB
+REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
+inventory-service                          1.0-SNAPSHOT        d316c2c2c6ba        9 seconds ago       501MB
+system-service                             1.0-SNAPSHOT        5f48add7c0da        30 seconds ago      501MB
+istio/galley                               1.0.1               7ac6c7be3d3e        5 days ago          65.8MB
+istio/citadel                              1.0.1               abcc721c2454        5 days ago          51.7MB
+istio/mixer                                1.0.1               0d97b4000ed5        5 days ago          64.5MB
+istio/sidecar_injector                     1.0.1               a122adc160b7        5 days ago          45.3MB
+istio/proxyv2                              1.0.1               f1bf7b920fe1        5 days ago          352MB
+istio/pilot                                1.0.1               46d3b4e95fc3        5 days ago          290MB
+open-liberty                               latest              ed1ca62c4bd5        7 days ago          501MB
+prom/prometheus                            v2.3.1              b82ef1f3aa07        2 months ago        119MB
 ----
 
 To deploy the `inventory` and `system` services to the {kube} cluster, run the commands:
 
-Unix:
 ```
-kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
+kubectl apply -f inventory-app.yaml
 ```
-
-Windows:
-```
-istioctl kube-inject -f kubernetes.yaml > tmp.yaml
-kubectl apply -f tmp.yaml
-DEL tmp.yaml
-```
-
-The `kubernetes.yaml` configuration file contains configuration for various {kube} resources. In this case, it contains
-an ingress, two deployments, and two services, which can be broken down as so:
-
-[options="header"]
-|=========================
-| Service | Description
-| gateway | An Ingress that will route traffic to your services
-| inventory-service | Stores information about systems that are running system-service
-| inventory-deployment-v1 | Contains the containers that will run version 1 of the inventory application
-| system-service | Responds with information about the system that the service is running on
-| system-deployment | Contains the containers responsible for system-service
-|=========================
-
-By using the command `istioctl kube-inject -f kubernetes.yaml`, it prints a modified version
-of the `kubernetes.yaml` file to stdout containing any modifications needed by {istio} such as adding
-{istio}'s envoy containers.
 
 You can see that your resources are created after running the `kubectl apply -f ...` command:
 
 [source, role="no_copy"]
 ----
-ingress "gateway" created
-service "inventory-service" created
-deployment "inventory-deployment-v1" created
-service "system-service" created
-deployment "system-deployment" created
+gateway.networking.istio.io/inventory-gateway created
+service/inventory-service created
+deployment.apps/inventory-deployment-v1 created
+service/system-service created
+deployment.apps/system-deployment created
+----
+
+Next deploy the virtual services for the `inventory` and `system` service. A VirtualService defines how requests are routed to your applications through the gateway.
+
+```
+kubectl apply -f routing.yaml
+```
+
+The `routing.yaml` configuration file contains configuration for two VirtualService resources, they specify that requests to `/inventory` be forwarded to the `inventory` service and requests to `/system` are forwarded to the `system` service. Similarly to `inventory-app.yaml` you can see the results of the `kubectl apply -f ...` command for `routing.yaml`:
+
+[source, role="no_copy"]
+----
+virtualservice.networking.istio.io/inventory-virtual-service created
+virtualservice.networking.istio.io/system-virtual-service created
 ----
 
 To get the base url, first get the ip address of the cluster.
@@ -279,24 +268,28 @@ To get the base url, first get the ip address of the cluster.
 minikube ip
 ```
 
-Next, find out what port the `istio-ingress` service is running on.
+Next, find out what port the `istio-ingressgateway` service is running on. This gateway is the entry point for any HTTP requests that you make to your services.
 ```
-kubectl get service istio-ingress -n istio-system
+kubectl get service istio-ingressgateway -n istio-system
 ```
 
 You will see similar output to this:
 
 [source, role="no_copy"]
 ----
-NAME            TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
-istio-ingress   LoadBalancer   10.109.13.94   <pending>     80:32000/TCP,443:31624/TCP   5m
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                                                   AGE
+istio-ingressgateway   LoadBalancer   10.100.214.161   <pending>     80:31380/TCP,443:31390/TCP,31400:31400/TCP,15011:32250/TCP,8060:31731/TCP,853:31999/TCP,15030:30030/TCP,15031:32585/TCP   2h
 ----
 
-So the port in this specific scenario would be `3200`. To get the base url of the service
+So the port in this specific scenario would be `31380` since it maps to the internal port `80`. To get the base url of the service
 combine the port with the ip address you found earlier using the format `http://<ip-address>:<port>`.
 
-Once all the deployments are available, you should be able to navigate to `http://<ip-address>:<port>/inventory/systems` to view
-v1 of the deployed application.
+Once all the deployments are available, you should be able to navigate to make a request to `http://<ip-address>:<port>/inventory/systems` to view
+v1 of the deployed application, as defined in `inventory-app.yaml` the gateway is expecting the host to be `my-inventory.com` so ensure to set the `Host` header appropriately.
+
+```
+curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems
+```
 
 You can check that all of the deployments are available using the command.
 
@@ -374,14 +367,14 @@ Navigate to the `start/inventory` directory and run the given command to rebuild
 mvn clean package
 ```
 
-Update the `kubernetes.yaml` file to add a new deployment `inventory-deployment-v2`.
+Update the `inventory-app.yaml` file to add a new deployment `inventory-deployment-v2`.
 Adding a new deployment under the same service with no additional configuration means that it will be load balanced and
 requests will be sent to both deployments.
 
 
 [source, yaml]
 ----
-include::finish/kubernetes.yaml[tags=**]
+include::finish/inventory-app.yaml[tags=**]
 ----
 
 Notice the `version` labels used to denote which deployment is for version 1 of the application and
@@ -389,32 +382,24 @@ which deployment is for version 2. This will give us the ability to select which
 service to forward requests to.
 
 
-Redeploy your services using the same commands from before.
+Redeploy your services using the same command from before.
 
-Unix:
 ```
-kubectl apply -f <(istioctl kube-inject -f kubernetes.yaml)
-```
-
-Windows:
-```
-istioctl kube-inject -f kubernetes.yaml > tmp.yaml
-kubectl apply -f tmp.yaml
-DEL tmp.yaml
+kubectl apply -f inventory-app.yaml
 ```
 
 You can see that version 2 of the `inventory` application has been deployed.
 [source, role="no_copy"]
 ----
-ingress "gateway" unchanged
-service "inventory-service" unchanged
-deployment "inventory-deployment-v1" configured
-deployment "inventory-deployment-v2" created
-service "system-service" unchanged
-deployment "system-deployment" configured
+gateway.networking.istio.io/inventory-gateway unchanged
+service/inventory-service unchanged
+deployment.apps/inventory-deployment-v1 unchanged
+deployment.apps/inventory-deployment-v2 created
+service/system-service unchanged
+deployment.apps/system-deployment unchanged
 ----
 
-Use this curl command a few times to make multiple requests `curl http://<ip-address>:<port>/inventory/systems`
+Use this curl command a few times to make multiple requests `curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems`
 Alternatively, you can use https://www.getpostman.com/[Postman] if you prefer a more traditional UI to make requests.
 
 Observe that requests go to both v1 and v2. This is not what
@@ -444,23 +429,23 @@ include::finish/routing.yaml[tags=**;]
 The `routing.yaml` file routes incoming requests based on the uri prefix `/inventory` and an HTTP header
 `x-version`. The header is used to identify which version of the `inventory` service that the client would like
 the requests to go to. If the header has the value `v2`, then requests will be routed to the `v2` deployment and otherwise
-the requests are routed to `v1` as to avoid breaking existing clients. In the `kubernetes.yaml` file some `version` labels are specified,
+the requests are routed to `v1` to avoid breaking existing clients. In the `inventory-app.yaml` file some `version` labels are specified,
 in the `routing.yaml` file the `version` label is used to route requests to the appropriate
 deployment.
 
 Apply the routing rules you created in the `routing.yaml` file by running the given command.
 ```
-istioctl create -f routing.yaml
+kubectl apply -f routing.yaml
 ```
 
 Make a request and observe that the request goes to v2 of the service where you see "count".
 ```
-curl http://<ip-address>:<port>/inventory/systems -H "x-version: v2"
+curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com -Hx-version:v2
 ```
 
 Make a request and observe that the request defaults to v1 of the service where you see "total".
 ```
-curl http://<ip-address>:<port>/inventory/systems
+curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com
 ```
 
 With the help of {istio} you now have request routing configured to direct requests appropriately to the correct
@@ -479,8 +464,8 @@ include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/Inven
 ----
 
 The `testV1Default` test case verifies that if no `x-version` header is present, then it defaults to version 1.
-Similarly the `testV1Header` test case verifies that requests are routed to version if the `x-version` header
-has a value of `v1`. The final test case `testV2Header` checks that requests are routed to version 2 when
+Similarly the `testV1Header` test case verifies that requests are routed to version v1 if the `x-version` header
+has a value of `v1`. The final test case `testV2Header` checks that requests are routed to version v2 when
 the `x-version` header is set to `v2`.
 
 Each test is repeated three times to ensure that it didn't pass by chance if the routing was not applied correctly.
@@ -518,7 +503,8 @@ Finally, you may want to teardown all the deployed resources as a cleanup step.
 
 Delete your resources from the cluster.
 ```
-kubectl delete -f kubernetes.yaml
+kubectl delete -f inventory-app.yaml
+kubectl delete -f routing.yaml
 ```
 
 Delete the {istio} resources from the cluster.

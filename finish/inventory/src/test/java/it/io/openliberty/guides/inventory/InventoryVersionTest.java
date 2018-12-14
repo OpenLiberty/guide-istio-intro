@@ -14,6 +14,7 @@ package it.io.openliberty.guides.inventory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
@@ -45,8 +46,14 @@ public class InventoryVersionTest {
 
     @BeforeClass
     public static void oneTimeSetup() {
+        // Allows the "Host" header to be set
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
         testIp = System.getProperty("test.ip");
         testPort = System.getProperty("test.port");
+
+        assertFalse("The test.ip and test.port properties must be set for the tests to execute successfully!", testIp == null || testPort == null);
+
         sysUrl = "http://" + testIp + ":" + testPort + "/";
         invUrl = "http://" + testIp + ":" + testPort + "/";
     }
@@ -119,11 +126,11 @@ public class InventoryVersionTest {
      */
     // end::doc[]
     private Response getResponse(String url) {
-        return client.target(url).request().get();
+        return client.target(url).request().header("Host", "my-inventory.com").get();
     }
 
     private Response getResponseWithVersion(String url, String version) {
-        return client.target(url).request().header("x-version", version).get();
+        return client.target(url).request().header("Host", "my-inventory.com").header("x-version", version).get();
     }
 
     // tag::doc[]

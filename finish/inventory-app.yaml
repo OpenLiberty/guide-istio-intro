@@ -1,21 +1,17 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
 metadata:
-  name: gateway
-  annotations:
-    kubernetes.io/ingress.class: "istio"
+  name: inventory-gateway
 spec:
-  rules:
-  - http:
-      paths:
-      - path: /inventory/.*
-        backend:
-          serviceName: inventory-service
-          servicePort: 9081
-      - path: /system/.*
-        backend:
-          serviceName: system-service
-          servicePort: 9080
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "my-inventory.com"
 ---
 apiVersion: v1
 kind: Service
@@ -49,6 +45,28 @@ spec:
       containers:
       - name: inventory-conainer
         image: inventory-service:1.0-SNAPSHOT
+        ports:
+        - containerPort: 9081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-deployment-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: inventory
+        version: v2
+    spec:
+      containers:
+      - name: inventory-conainer
+        image: inventory-service:2.0-SNAPSHOT
         ports:
         - containerPort: 9081
 ---
