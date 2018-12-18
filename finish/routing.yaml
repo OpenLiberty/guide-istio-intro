@@ -29,6 +29,14 @@ spec:
           number: 9081
         host: inventory-service
         subset: v1
+  - match:
+    - uri:
+        prefix: /system
+    route:
+    - destination:
+        port:
+          number: 9080
+        host: system-service
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
@@ -43,22 +51,3 @@ spec:
   - name: v2
     labels:
       version: v2
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: system-virtual-service
-spec:
-  hosts:
-  - "my-inventory.com"
-  gateways:
-  - inventory-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /system
-    route:
-    - destination:
-        port:
-          number: 9080
-        host: system-service
