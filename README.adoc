@@ -30,6 +30,9 @@ Explore how to leverage content-based routing to route HTTP traffic to different
 
 :kube: Kubernetes
 :istio: Istio
+:win: WINDOWS
+:mac: MAC
+:linux: LINUX
 
 
 == What you'll learn
@@ -74,17 +77,7 @@ https between pods.
 // Prerequisites
 // =================================================================================================
 
-== Prerequisites
-
-Before you begin, make sure to have these tools installed:
-
-- `kubernetes-cli` - a command line interface for {kube} called `kubectl`. This is your primary
-tool for communicating with and managing your {kube} cluster. Installation instruction can be found here: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-- `minikube` - a local, single-node {kube} cluster that runs in a virtual machine. Installation instructions can be found
-here: https://github.com/kubernetes/minikube
-- `helm` - a package manager for kubernetes, installation instructions can be found here: https://docs.helm.sh/using_helm/#installing-helm
-
-Since this guide will be using {kube} and Docker, you will also want Docker set up on your computer. You can find installation instructions here: https://docs.docker.com/install/.
+include::{common-includes}/kube-prereq.adoc[]
 
 // =================================================================================================
 // Getting Started
@@ -95,85 +88,36 @@ include::{common-includes}/gitclone.adoc[]
 // no "try what you'll build" section in this guide since it would be too long due to all setup the user will have to do.
 
 // =================================================================================================
-// Staring and preparing your cluster for Deployment
+// Staring and preparing your cluster for deployment
 // =================================================================================================
 
-== Starting and preparing your cluster for Deployment
+include::{common-includes}/kube-start.adoc[]
 
-Minikube is a tool to run a kubernetes cluster locally on your computer, inside a virtual machine.
-To begin working with your cluster, first start Minikube with these flags to use {istio}:
 
-Unix:
-```
-minikube start --kubernetes-version=v1.10.0 \
-    --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" \
-    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
-```
+// =================================================================================================
+// Deploying Istio
+// =================================================================================================
 
-Windows:
-```
-minikube start ^
-    --bootstrapper=localkube ^
-    --vm-driver=hyperv ^
-    --hyperv-virtual-switch=minikube-virtual-switch ^
-    --kubernetes-version=v1.10.0 ^
-    --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" ^
-    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
-```
+== Deploying Istio
 
-Running the `minikube start ...` command will create and start a virtual machine that will be used
-for a local kubernetes cluster. The extra flags are needed for minikube to work correctly
-with {istio}.
+First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory containing the extracted files. Add the `bin/` directory to your `PATH`.
 
-Connect your Docker CLI to your cluster's Docker Daemon by running the given command.
-
-Unix:
-```
-eval $(minikube docker-env)
-```
-
-Windows:
-```
-minikube docker-env > tmp.cmd && call tmp.cmd && DEL tmp.cmd
-```
-
-As a result of this command, if you issue docker commands they will affect the docker environment
-in the Minikube VM rather than the one you likely have installed on your computer. This needs to be the
-case because when building the docker containers they need to be available to your cluster since for the purpose
-of this guide the images are not being pushed to a docker registry.
-
-First, deploy the {istio} custom resource defintion. Custom resource definitions allows {istio} to define custom {kube} resources that you can use in your resource defintion files.
+Next, deploy the {istio} custom resource definitions. Custom resource definitions allows {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 ```
 kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
 
-Next, prepare your {istio} deployment using Helm. Helm is used only for templating, in this situation Helm is not used for
-managing the resources. Navigate to the directory where you downloaded and extracted
-{istio} and use the given command to produce an `istio.yaml` file that will be setup to work in the `istio-system` namespace.
-```
-helm template install/kubernetes/helm/istio --name istio --namespace istio-system > istio.yaml
-```
-
-Next, create the `istio-system` namespace because {istio}'s resources need to be deployed to this namespace.
-```
-kubectl create namespace istio-system
-```
-
-You can think of the `istio-system` namespace as a place to keep all of the
-{istio} resources in your cluster separate from the rest of your deployments and services.
-If you desire, then you can similarly create a namespace for the resources we'll be deploying later.
-If no namespace is specified it will use the `default` namespace by default.
-
-Next, deploy {istio}'s resource to your cluster by running the `kubectl apply` command, which creates or updates
+Next, deploy {istio}'s resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command will deploy {istio}.
 
 ```
-kubectl apply -f istio.yaml
+kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
 
 Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` once
 the deployment is complete.
+
 ```
 kubectl get deployments -n istio-system
 ```
@@ -181,17 +125,19 @@ kubectl get deployments -n istio-system
 Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available.
 [source, role="no_copy"]
 ----
-NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-istio-citadel              1         1         1            1           5m
-istio-egressgateway        1         1         1            1           5m
-istio-galley               1         1         1            1           5m
-istio-ingressgateway       1         1         1            1           5m
-istio-pilot                1         1         1            1           5m
-istio-policy               1         1         1            1           5m
-istio-sidecar-injector     1         1         1            1           5m
-istio-statsd-prom-bridge   1         1         1            1           5m
-istio-telemetry            1         1         1            1           5m
-prometheus                 1         1         1            1           5m
+NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+grafana                  1         1         1            1           44s
+istio-citadel            1         1         1            1           44s
+istio-egressgateway      1         1         1            1           44s
+istio-galley             1         1         1            1           44s
+istio-ingressgateway     1         1         1            1           44s
+istio-pilot              1         1         1            1           44s
+istio-policy             1         1         1            1           44s
+istio-sidecar-injector   1         1         1            1           44s
+istio-telemetry          1         1         1            1           44s
+istio-tracing            1         1         1            1           43s
+prometheus               1         1         1            1           44s
+servicegraph             1         1         1            1           44s
 ----
 
 // =================================================================================================
@@ -203,6 +149,7 @@ prometheus                 1         1         1            1           5m
 Navigate to the `start` directory and run the following command, it may take a few minutes to build.
 It will build the application and then package it into two docker images, one for each service.
 To build the docker images it uses a maven plugin called `dockerfile-maven-plugin`.
+
 ```
 mvn clean package
 ```
@@ -232,13 +179,13 @@ open-liberty                               latest              ed1ca62c4bd5     
 prom/prometheus                            v2.3.1              b82ef1f3aa07        2 months ago        119MB
 ----
 
-To deploy the `inventory` and `system` services to the {kube} cluster, run the commands:
+To deploy the `inventory` and `system` services to the {kube} cluster, run the command:
 
 ```
-kubectl apply -f inventory-app.yaml
+istioctl kube-inject -f inventory-app.yaml | kubectl apply -f -
 ```
 
-You can see that your resources are created after running the `kubectl apply -f ...` command:
+You can see that your resources are created:
 
 [source, role="no_copy"]
 ----
@@ -249,47 +196,21 @@ service/system-service created
 deployment.apps/system-deployment created
 ----
 
-Next deploy the virtual services for the `inventory` and `system` service. A VirtualService defines how requests are routed to your applications through the gateway.
+Next deploy the virtual service for the `inventory` and `system` service. A virtual service defines how requests are routed to your applications through the gateway.
 
 ```
 kubectl apply -f routing.yaml
 ```
 
-The `routing.yaml` configuration file contains configuration for two VirtualService resources, they specify that requests to `/inventory` be forwarded to the `inventory` service and requests to `/system` are forwarded to the `system` service. Similarly to `inventory-app.yaml` you can see the results of the `kubectl apply -f ...` command for `routing.yaml`:
+The `routing.yaml` configuration file contains configuration for a virtual service resource, it specifies that requests to `/inventory` be forwarded to the `inventory` service and requests to `/system` are forwarded to the `system` service. Similarly to `inventory-app.yaml` you can see the results of the `kubectl apply -f ...` command for `routing.yaml`:
 
 [source, role="no_copy"]
 ----
 virtualservice.networking.istio.io/inventory-virtual-service created
-virtualservice.networking.istio.io/system-virtual-service created
 ----
 
-To get the base url, first get the ip address of the cluster.
-```
-minikube ip
-```
-
-Next, find out what port the `istio-ingressgateway` service is running on. This gateway is the entry point for any HTTP requests that you make to your services.
-```
-kubectl get service istio-ingressgateway -n istio-system
-```
-
-You will see similar output to this:
-
-[source, role="no_copy"]
-----
-NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                                                   AGE
-istio-ingressgateway   LoadBalancer   10.100.214.161   <pending>     80:31380/TCP,443:31390/TCP,31400:31400/TCP,15011:32250/TCP,8060:31731/TCP,853:31999/TCP,15030:30030/TCP,15031:32585/TCP   2h
-----
-
-So the port in this specific scenario would be `31380` since it maps to the internal port `80`. To get the base url of the service
-combine the port with the ip address you found earlier using the format `http://<ip-address>:<port>`.
-
-Once all the deployments are available, you should be able to navigate to make a request to `http://<ip-address>:<port>/inventory/systems` to view
+Once all the deployments are available, you should be able to navigate to make a request to `\http://<ip-address>:<port>/inventory/systems` to view
 v1 of the deployed application, as defined in `inventory-app.yaml` the gateway is expecting the host to be `my-inventory.com` so ensure to set the `Host` header appropriately.
-
-```
-curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems
-```
 
 You can check that all of the deployments are available using the command.
 
@@ -305,6 +226,24 @@ NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 inventory-deployment-v1   1         1         1            1           1m
 system-deployment         1         1         1            1           1m
 ----
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl or https://www.getpostman.com/[Postman] if curl is unavailable.
+
+```
+curl -HHost:my-inventory.com http://localhost/inventory/systems
+```
+
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:my-inventory.com http://`minikube ip`:31380/inventory/systems
+```
+****
 
 // =================================================================================================
 // Modify the service
@@ -385,7 +324,7 @@ service to forward requests to.
 Redeploy your services using the same command from before.
 
 ```
-kubectl apply -f inventory-app.yaml
+istioctl kube-inject -f inventory-app.yaml | kubectl apply -f -
 ```
 
 You can see that version 2 of the `inventory` application has been deployed.
@@ -399,8 +338,24 @@ service/system-service unchanged
 deployment.apps/system-deployment unchanged
 ----
 
-Use this curl command a few times to make multiple requests `curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems`
-Alternatively, you can use https://www.getpostman.com/[Postman] if you prefer a more traditional UI to make requests.
+****
+[system]#*{win} | {mac}*#
+
+Make a few requests to the service by using curl or https://www.getpostman.com/[Postman] if curl is unavailable.
+
+```
+curl -HHost:my-inventory.com http://localhost/inventory/systems
+```
+
+[system]#*{linux}*#
+
+Make a few requests to the service by using curl.
+
+```
+curl -HHost:my-inventory.com http://`minikube ip`:31380/inventory/systems
+```
+****
+
 
 Observe that requests go to both v1 and v2. This is not what
 a client consuming this service wants because it is unpredictable and the client would get
@@ -411,15 +366,15 @@ request it.
 
 
 // =================================================================================================
-// Configure request routing
+// Configuring request routing
 // =================================================================================================
 
-== Configure request routing
+== Configuring request routing
 
 To solve the issue where the requests are forwarded seemingly at random, you'll configure request
 routing and apply the configuration to your cluster.
 
-Create the `routing.yaml` file in the `start` directory:
+Replace the `routing.yaml` file in the `start` directory:
 
 [source, yaml]
 ----
@@ -438,15 +393,27 @@ Apply the routing rules you created in the `routing.yaml` file by running the gi
 kubectl apply -f routing.yaml
 ```
 
-Make a request and observe that the request goes to v2 of the service where you see "count".
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl or https://www.getpostman.com/[Postman] if curl is unavailable.
+
 ```
-curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com -Hx-version:v2
+curl -HHost:my-inventory.com http://localhost/inventory/systems -Hx-version:v2
+curl -HHost:my-inventory.com http://localhost/inventory/systems
 ```
 
-Make a request and observe that the request defaults to v1 of the service where you see "total".
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
 ```
-curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com
+curl -HHost:my-inventory.com http://`minikube ip`:31380/inventory/systems -Hx-version:v2
+curl -HHost:my-inventory.com http://`minikube ip`:31380/inventory/systems
 ```
+****
+
+Observe that requests with the `v2` header are routed to version 2 of the inventory microservice and requests without the header are routed to version 1 of the microservice.
 
 With the help of {istio} you now have request routing configured to direct requests appropriately to the correct
 version of an application. This is just one of the many uses for {istio}, and it solves the versioning issue
@@ -472,11 +439,23 @@ Each test is repeated three times to ensure that it didn't pass by chance if the
 If the routing rules are not applied, then on some requests you will see `v1` and on other requests you will see `v2`.
 This is why the tests need to be run multiple times.
 
+****
+[system]#*{win} | {mac}*#
+
 Run the command to start the tests:
 
 ```
-mvn verify -Ddockerfile.skip=true -Dtest.ip=<ip-address> -Dtest.port=<port>
+mvn verify -Ddockerfile.skip=true -Dtest.ip=localhost -Dtest.port=80
 ```
+
+[system]#*{linux}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true -Dtest.ip=`minikube ip` -Dtest.port=31380
+```
+****
 
 The `dockerfile.skip=true` flag skips re-building the docker images. The `test.ip` and `test.port`
 parameters refer to the ip address and port for the {istio} gateway.
@@ -497,7 +476,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 ----
 
 
-== Tearing down your deployments and {istio}
+== Tearing down your environment
 
 Finally, you may want to teardown all the deployed resources as a cleanup step.
 
@@ -507,10 +486,13 @@ kubectl delete -f inventory-app.yaml
 kubectl delete -f routing.yaml
 ```
 
-Delete the {istio} resources from the cluster.
+Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
 ```
-kubectl delete -f istio.yaml
+kubectl delete -f install/kubernetes/istio-demo.yaml
+kubectl delete -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
+
+include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
