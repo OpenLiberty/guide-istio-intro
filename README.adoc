@@ -91,8 +91,8 @@ include::{common-includes}/gitclone.adoc[]
 // Staring and preparing your cluster for deployment
 // =================================================================================================
 
+:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.10.0
 include::{common-includes}/kube-start.adoc[]
-
 
 // =================================================================================================
 // Deploying Istio
