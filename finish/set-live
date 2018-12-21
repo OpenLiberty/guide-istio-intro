@@ -1,0 +1,83 @@
+#!/bin/bash
+
+LIVE_DEPLOYMENT=$1
+
+if [ "$LIVE_DEPLOYMENT" = "blue" ]; then
+	WEIGHT_BLUE=100
+	WEIGHT_GREEN=0
+	TEST_WEIGHT_BLUE=0
+	TEST_WEIGHT_GREEN=100
+	echo "Setting blue as live..."
+else
+	WEIGHT_BLUE=0
+	WEIGHT_GREEN=100
+	TEST_WEIGHT_BLUE=100
+	TEST_WEIGHT_GREEN=0
+	echo "Setting green as live..."
+fi
+
+
+kubectl apply -f <(cat << EOM
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hello-virtual-service
+spec:
+  hosts:
+  - "example.com"
+  gateways:
+  - hello-gateway
+  http:
+  - route:
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: blue
+      weight: $WEIGHT_BLUE
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: green
+      weight: $WEIGHT_GREEN
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hello-test-virtual-service
+spec:
+  hosts:
+  - "test.example.com"
+  gateways:
+  - hello-gateway
+  http:
+  - route:
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: blue
+      weight: $TEST_WEIGHT_BLUE
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: green
+      weight: $TEST_WEIGHT_GREEN
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: hello-destination-rule
+spec:
+  host: hello-service
+  subsets:
+  - name: blue
+    labels:
+      version: blue
+  - name: green
+    labels:
+      version: green
+EOM)
+
