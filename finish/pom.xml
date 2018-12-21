@@ -140,6 +140,7 @@
                         <default.http.port>${testServerHttpPort}</default.http.port>
                         <default.https.port>${testServerHttpsPort}</default.https.port>
                         <app.context.root>${warContext}</app.context.root>
+                        <app.version>${project.version}</app.version>
                     </bootstrapProperties>
                 </configuration>
                 <executions>

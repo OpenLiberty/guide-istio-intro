@@ -13,14 +13,14 @@
  package io.openliberty.guides.rest;
 
 public class HelloModel {
-    private static final int VERSION = 1;
+    private static final String VERSION = System.getProperty("app.version");
     private String greeting;
 
     public HelloModel(String greeting) {
         this.greeting = greeting;
     }
 
-    public int getVersion() {
+    public String getVersion() {
         return VERSION;
     }
 
