@@ -23,6 +23,30 @@ spec:
       weight: 0
 ---
 apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hello-test-virtual-service
+spec:
+  hosts:
+  - "test.example.com"
+  gateways:
+  - hello-gateway
+  http:
+  - route:
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: blue
+      weight: 0
+    - destination:
+        port:
+          number: 9080
+        host: hello-service
+        subset: green
+      weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: hello-destination-rule
