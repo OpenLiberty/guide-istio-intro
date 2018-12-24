@@ -428,7 +428,6 @@ Move the live traffic over to the blue deployment.
 ```
 set-live.bat blue
 ```
-
 ****
 
 Ensure that the live traffic is now being routed to version 3 of the microservice.
@@ -453,23 +452,13 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 == Testing microservices that are running on {kube}
 
-A few tests are provided to check that the two `inventory` versions have been deployed correctly and that request
-routing has been correctly configured. If the tests fail, then you may have made a mistake at one of the steps.
-
-Create the inventory version test in the `inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java` file:
+Create the endpoint test in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
 [source, Java]
 ----
-include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java[tags=**;!copyright;!doc]
+include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright;!doc]
 ----
 
-The `testV1Default` test case verifies that if no `x-version` header is present, then it defaults to version 1.
-Similarly the `testV1Header` test case verifies that requests are routed to version v1 if the `x-version` header
-has a value of `v1`. The final test case `testV2Header` checks that requests are routed to version v2 when
-the `x-version` header is set to `v2`.
-
-Each test is repeated three times to ensure that it didn't pass by chance if the routing was not applied correctly.
-If the routing rules are not applied, then on some requests you will see `v1` and on other requests you will see `v2`.
-This is why the tests need to be run multiple times.
+The `testGetGreeting` test case verifies that the correct greeting and version number are returned from the rest service.
 
 ****
 [system]#*{win} | {mac}*#
@@ -477,7 +466,7 @@ This is why the tests need to be run multiple times.
 Run the command to start the tests:
 
 ```
-mvn verify -Ddockerfile.skip=true -Dtest.ip=localhost -Dtest.port=80
+mvn verify -Ddockerfile.skip=true
 ```
 
 [system]#*{linux}*#
@@ -485,11 +474,11 @@ mvn verify -Ddockerfile.skip=true -Dtest.ip=localhost -Dtest.port=80
 Run the command to start the tests:
 
 ```
-mvn verify -Ddockerfile.skip=true -Dtest.ip=`minikube ip` -Dtest.port=31380
+mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 ****
 
-The `dockerfile.skip=true` flag skips re-building the docker images. The `test.ip` and `test.port`
+The `dockerfile.skip=true` flag skips re-building the docker images. The `cluster.ip` and `port`
 parameters refer to the ip address and port for the {istio} gateway.
 
 If the tests pass, then you should see output similar to this:
@@ -499,14 +488,49 @@ If the tests pass, then you should see output similar to this:
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running it.io.openliberty.guides.inventory.InventoryVersionTest
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.98 sec - [ ] in it.io.openliberty.guides.inventory.InventoryVersionTest
+Running it.io.openliberty.guides.rest.EndpointTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.648 s - in it.io.openliberty.guides.rest.EndpointTest
 
-Results :
+Results:
 
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
+Roll back to the old version of the microservice and run the tests again.
+
+****
+[system]#*{mac} | {linux}*#
+
+```
+./set-live green
+```
+
+[system]#*{win}*#
+
+```
+set-live.bat green
+```
+****
+
+****
+[system]#*{win} | {mac}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true
+```
+
+[system]#*{linux}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+```
+****
+
+Observe that the tests fail because the version number that the tests expect and the version of the running microservice are now different. 
 
 == Tearing down your environment
 

@@ -174,7 +174,7 @@
                         </configuration>
                     </execution>
                     <!-- Test start and stop server -->
-                    <execution>
+                    <!-- <execution>
                         <id>start-server</id>
                         <phase>pre-integration-test</phase>
                         <goals>
@@ -187,7 +187,7 @@
                         <goals>
                             <goal>test-stop-server</goal>
                         </goals>
-                    </execution>
+                    </execution> -->
                 </executions>
             </plugin>
             <!-- Plugin to run functional tests -->
@@ -209,6 +209,10 @@
                             <systemPropertyVariables>
                                 <liberty.test.port>${testServerHttpPort}</liberty.test.port>
                                 <war.name>${warContext}</war.name>
+                                <app.name>${project.version}</app.name>
+                                <cluster.ip>localhost</cluster.ip>
+                                <port>80</port>
+                                <host-header>example.com</host-header>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>

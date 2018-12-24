@@ -17,49 +17,47 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import javax.json.JsonObject;
-import javax.json.JsonArray;
-import javax.json.Json;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.client.Entity;
 
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
 public class EndpointTest {
 
     @Test
-    public void testGetProperties() {
-        // tag::systemProperties[]
-        String port = System.getProperty("liberty.test.port");
-        String war = System.getProperty("war.name");
-        String url = "http://localhost:" + port + "/" + war + "/";
-        // end::systemProperties[]
+    public void testGetGreeting() {
+        // Allows for overriding the "Host" http header
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
-        // tag::clientSetup[]
+        String hostname = System.getProperty("cluster.ip");
+        String port = System.getProperty("port");
+        String url = String.format("http://%s:%s/hello", hostname, port);
+
         Client client = ClientBuilder.newClient();
         client.register(JsrJsonpProvider.class);
-        // end::clientSetup[]
 
-        // tag::request[]
-        WebTarget target = client.target(url + "System/properties");
-        Response response = target.request().get();
-        // end::request[]
+        WebTarget target = client.target(url);
+        Response response = target
+            .request()
+            .header("Host", System.getProperty("host-header"))
+            .get();
 
-        // tag::response[]
-        assertEquals("Incorrect response code from " + url, 200, response.getStatus());
-        // end::response[]
+        assertEquals("Incorrect response code from " + url,
+                     200,
+                     response.getStatus());
 
-        // tag::body[]
         JsonObject obj = response.readEntity(JsonObject.class);
+        assertEquals("The greeting property must have message \"hello\"",
+                     "hello",
+                     obj.getString("greeting"));
 
-        assertEquals("The system property for the local and remote JVM should match",
-                     System.getProperty("os.name"),
-                     obj.getString("os.name"));
-        // end::body[]
+        assertEquals("The version must match the pom.xml file",
+                     System.getProperty("app.name"),
+                     obj.getString("version"));
+
         response.close();
     }
 }
