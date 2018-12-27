@@ -40,19 +40,19 @@ Explore how to leverage content-based routing to route HTTP traffic to different
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
 {istio} to shift traffic to implement blue-green deployments.
 
-The microservice that you will deploy is called `hello`. It responds with a JSON object containing a version number and a greeting.
+The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting.
 
-You will use the `kubectl` CLI tool to deploy and manage your {kube} resources. You will use the `istioctl` CLI tool to inject {istio} sidecars into your pods.
+You will use the `kubectl` CLI tool to deploy and manage your {kube} resources. You'll use the `istioctl` CLI tool to inject {istio} sidecars into your pods.
 
 === What is {istio}?
 
-{istio} is a platform for managing how microservices interact with each other as well as the outside world.
-It works by deploying istio control plane and injecting an additional container into each of your pods that contains
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It is specialized for a service mesh architecture since it offers useful features
-such as load balancing and support for distributed tracing.
+{istio} is a platform for managing how microservices interact with each other and the outside world.
+It works by deploying istio control plane. Then, it injects an extra container into each of your pods that contains
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It's specialized for a service mesh architecture since it offers many useful features.
+Features it offers such as load balancing and support for distributed tracing help creating a service mesh.
 
-While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
-can also be used with other environments such as Docker Compose. {istio} has many features, some of them are
+While {istio} supports {kube} and that will be the focus of this guide. Note that {istio}
+can also be used with other environments such as Docker Compose. {istio} has many features. Some of these features are
 traffic shifting, request routing, access control, and distributed tracing. The focus of this guide will be traffic shifting.
 
 === Why {istio}?
@@ -61,10 +61,10 @@ traffic shifting, request routing, access control, and distributed tracing. The 
 such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
 application's code.
 
-A possible use case for {istio}'s Telemetry feature can be to enable distributed tracing which allows you
+A possible use case for {istio}'s Telemetry feature is to enable distributed tracing. Distributed tracing allows you
 to visualize how HTTP requests travel between different services in your cluster using a tool such as https://zipkin.io/[Zipkin].
 One of the items {istio} offers under its collection of security features is to enable HTTPS between pods
-in your cluster to secure communication internally.
+in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
 
 You will use {istio}'s traffic shifting features to implement blue-green deployments.
 
@@ -95,7 +95,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory containing the extracted files. Add the `bin/` directory to your `PATH`.
+First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add the `bin/` directory to your `PATH`.
 
 ****
 [system]#*{linux} | {mac}*#
@@ -115,7 +115,7 @@ cd ..
 ```
 ****
 
-Next, deploy the {istio} custom resource definitions. Custom resource definitions allows {istio} to define custom {kube} resources that you can use in your resource definition files.
+Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 ```
 kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
@@ -159,9 +159,9 @@ servicegraph             1         1         1            1           44s
 
 == Deploying version 1 of the service to the cluster
 
-Navigate to the `start` directory and run the following command, it may take a few minutes to build.
+Navigate to the `start` directory and run the following command. It may take a few minutes to complete.
 It will build the application and then package it into a docker image.
-To build the docker image it uses a maven plugin called `dockerfile-maven-plugin`.
+To build the docker image, it uses a maven plug-in called `dockerfile-maven-plugin`.
 
 ```
 mvn clean package
@@ -174,7 +174,7 @@ You can verify that this image was created by running the given command.
 docker images
 ```
 
-You will see image called `hello:1.0-SNAPSHOT` listed in a table similar to the output.
+You'll see an image called `hello:1.0-SNAPSHOT` listed in a table similar to the output.
 
 [source, role="no_copy"]
 ----
@@ -190,7 +190,7 @@ open-liberty                               latest              ed1ca62c4bd5     
 prom/prometheus                            v2.3.1              b82ef1f3aa07        2 months ago        119MB
 ----
 
-To deploy the `hello` microservice to the {kube} cluster, run the command:
+To deploy the `hello` microservice to the {kube} cluster, use the `istioctl` command to inject the sidecars into your deployments and use `kubectl` to deploy the microservice.
 
 ****
 [system]#*{linux} | {mac}*#
@@ -231,8 +231,8 @@ virtualservice.networking.istio.io/hello-test-virtual-service created
 destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-Once all the deployments are available, you should be able to navigate to make a request to `\http://<ip-address>:<port>/hello` to view
-v1 of the deployed application, as defined in `hello.yaml` the gateway is expecting the host to be `example.com` so ensure to set the `Host` header appropriately.
+Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
+v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
 
 You can check that all of the deployments are available using the command.
 
@@ -273,7 +273,7 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 == Deploying version 2 of the hello microservice
 
-The `hello` microservice is setup to respond with the version that is set in the `pom.xml` file. The tag for the docker image is also dependant on the version specified in the `pom.xml` file. Use the maven command to bump the version of the microservice to `2.0-SNAPSHOT`.
+The `hello` microservice is set up to respond with the version that is set in the `pom.xml` file. The tag for the docker image is also dependent on the version specified in the `pom.xml` file. Use the maven command to bump the version of the microservice to `2.0-SNAPSHOT`.
 
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
@@ -311,7 +311,7 @@ curl -HHost:test.example.com http://`minikube ip`:31380/hello
 ```
 ****
 
-Once you see that the microservice is working on the testing site, modify the `traffic.yaml` file to shift 100% of the live traffic to the green deployment.
+Once you see that the microservice is working on the testing site, modify the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
 [source, Java]
 ----
@@ -368,7 +368,7 @@ Deploy the new image to the blue deployment.
 kubectl set image deployment/hello-deployment-blue hello-container=hello:3.0-SNAPSHOT
 ```
 
-Test the updated microservice by making requests to the testing site. You will see the `version` field of the JSON response is equal to `3.0-SNAPSHOT`.
+Test the updated microservice by making requests to the testing site. You'll see the `version` field of the JSON response is equal to `3.0-SNAPSHOT`.
 
 ****
 [system]#*{win} | {mac}*#
@@ -479,7 +479,7 @@ mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ****
 
 The `dockerfile.skip=true` flag skips re-building the docker images. The `cluster.ip` and `port`
-parameters refer to the ip address and port for the {istio} gateway.
+parameters refer to the IP address and port for the {istio} gateway.
 
 If the tests pass, then you should see output similar to this:
 
