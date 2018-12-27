@@ -273,7 +273,7 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 == Deploying version 2 of the hello microservice
 
-Bump the version of the microservice to `2.0-SNAPSHOT`.
+The `hello` microservice is setup to respond with the version that is set in the `pom.xml` file. The tag for the docker image is also dependant on the version specified in the `pom.xml` file. Use the maven command to bump the version of the microservice to `2.0-SNAPSHOT`.
 
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
@@ -291,7 +291,7 @@ Deploy the new image to the green deployment.
 kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 ```
 
-Test the updated microservice by making requests to the testing site.
+Test the updated microservice by making requests to the testing site. The `version` field in the response JSON is now `2.0-SNAPSHOT` on the testing site and it is still `1.0-SNAPSHOT` on the live site.
 
 ****
 [system]#*{win} | {mac}*#
@@ -350,7 +350,7 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 == Automating the blue-green switch
 
-Bump the version of the microservice to `3.0-SNAPSHOT`.
+Manually changing the weights in the `traffic.yaml` to deploy a new version of your microservice can be a tedious process. Thankfully this can be easily automated with some scripting. You'll deploy version 3 of the `hello` microservice and create a script to automate the switch over. Use the maven command to bump the version of the microservice to `3.0-SNAPSHOT`.
 
 ```
 mvn versions:set -DnewVersion=3.0-SNAPSHOT
@@ -368,7 +368,7 @@ Deploy the new image to the blue deployment.
 kubectl set image deployment/hello-deployment-blue hello-container=hello:3.0-SNAPSHOT
 ```
 
-Test the updated microservice by making requests to the testing site.
+Test the updated microservice by making requests to the testing site. You will see the `version` field of the JSON response is equal to `3.0-SNAPSHOT`.
 
 ****
 [system]#*{win} | {mac}*#
@@ -556,7 +556,7 @@ include::{common-includes}/kube-minikube-teardown.adoc[]
 
 == Great work! You're done!
 
-You have just deployed two microservice to a Kubernetes cluster and created routing rules to route between two different version of one of the microservice using Istio.
+You have deployed a microservice to a Kubernetes cluster and used Istio to implement a blue-green deployment scheme.
 
 // uncomment this when Istio guide is released
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
