@@ -212,21 +212,13 @@ You can see that your resources are created:
 
 [source, role="no_copy"]
 ----
-gateway.networking.istio.io/inventory-gateway created
-service/inventory-service created
-deployment.apps/inventory-deployment-v1 created
-service/system-service created
-deployment.apps/system-deployment created
+gateway.networking.istio.io/hello-gateway created
+service/hello-service created
+deployment.apps/hello-deployment-blue created
+deployment.apps/hello-deployment-green created
 ----
 
-Create the `traffic.yaml` file:
-
-[source, Java]
-----
-include::finish/traffic.yaml[tags=**;!copyright;]
-----
-
-A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. Deploy the resources defined in `traffic.yaml`.
+The `traffic.yaml` file contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. Deploy the resources defined in `traffic.yaml`.
 
 ```
 kubectl apply -f traffic.yaml
@@ -325,6 +317,12 @@ Once you see that the microservice is working on the testing site, modify the `t
 ----
 include::finish/traffic.yaml[tags=**;!copyright;]
 ----
+
+Deploy the updated `traffic.yaml` file.
+
+```
+kubectl apply -f traffic.yaml
+```
 
 Ensure that the live traffic is now being routed to version 2 of the microservice.
 
@@ -450,6 +448,8 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
 
+The `set-live` script generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Then it deploys the updated virtual services to route traffic accordingly.
+
 == Testing microservices that are running on {kube}
 
 Create the endpoint test in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
@@ -538,8 +538,8 @@ Finally, you may want to teardown all the deployed resources as a cleanup step.
 
 Delete your resources from the cluster.
 ```
-kubectl delete -f inventory-app.yaml
-kubectl delete -f routing.yaml
+kubectl delete -f hello.yaml
+kubectl delete -f traffic.yaml
 ```
 
 Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
