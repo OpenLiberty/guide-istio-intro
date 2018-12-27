@@ -82,5 +82,5 @@ spec:
   - name: green
     labels:
       version: green
-EOM)
-
+EOM
+)
