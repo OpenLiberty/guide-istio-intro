@@ -315,7 +315,7 @@ Once you see that the microservice is working on the testing site, modify the `t
 
 [source, Java]
 ----
-include::finish/traffic.yaml[tags=**;!copyright;]
+include::finish/traffic.yaml[tags=**;]
 ----
 
 Deploy the updated `traffic.yaml` file.
@@ -397,7 +397,7 @@ Create the `set-live` file.
 
 [source, bash]
 ----
-include::finish/set-live[tags=**;!copyright;]
+include::finish/set-live[tags=**;]
 ----
 
 Make the `set-live` file executable.
@@ -418,7 +418,7 @@ Create the `set-live.bat` file.
 
 [source, batch]
 ----
-include::finish/set-live.bat[tags=**;!copyright;]
+include::finish/set-live.bat[tags=**;]
 ----
 
 Move the live traffic over to the blue deployment.
@@ -455,7 +455,7 @@ The `set-live` script generates its own `traffic.yaml` contents with the appropr
 Create the endpoint test in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
 [source, Java]
 ----
-include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright;!doc]
+include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright]
 ----
 
 The `testGetGreeting` test case verifies that the correct greeting and version number are returned from the rest service.
