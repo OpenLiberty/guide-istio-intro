@@ -478,7 +478,7 @@ mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 ****
 
-The `dockerfile.skip=true` flag skips re-building the docker images. The `cluster.ip` and `port`
+The `dockerfile.skip=true` flag skips rebuilding the docker images. The `cluster.ip` and `port`
 parameters refer to the IP address and port for the {istio} gateway.
 
 If the tests pass, then you should see output similar to this:
