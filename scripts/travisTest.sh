@@ -39,9 +39,6 @@ mvn -q clean package
 printf "\nkubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT"
 kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 
-printf "\nkubectl apply -f ../finish/traffic.yaml\n"
-kubectl apply -f ../finish/traffic.yaml
-
 printf "\nsleep 120\n"
 sleep 120
 
@@ -53,6 +50,12 @@ echo `minikube ip`
 
 printf "\ncurl http://`minikube ip`:31380/hello -HHost:test.example.com\n"
 curl http://`minikube ip`:31380/hello -HHost:test.example.com
+
+printf "\nkubectl apply -f ../finish/traffic.yaml\n"
+kubectl apply -f ../finish/traffic.yaml
+
+printf "\ncurl http://`minikube ip`:31380/hello -HHost:example.com\n"
+curl http://`minikube ip`:31380/hello -HHost:example.com
 
 # Run tests
 
