@@ -1,0 +1,72 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: hello-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "example.com"
+    - "test.example.com"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+  labels:
+    app: hello
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: hello
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: blue
+    spec:
+      containers:
+      - name: hello-container
+        image: hello:1.0-SNAPSHOT
+        ports:
+        - containerPort: 9080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+      version: green
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: green
+    spec:
+      containers:
+      - name: hello-container
+        image: hello:1.0-SNAPSHOT
+        ports:
+        - containerPort: 9080

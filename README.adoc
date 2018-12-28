@@ -30,30 +30,30 @@ Explore how to leverage content-based routing to route HTTP traffic to different
 
 :kube: Kubernetes
 :istio: Istio
+:win: WINDOWS
+:mac: MAC
+:linux: LINUX
 
 
 == What you'll learn
 
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
-{istio} to route http requests based on the uri and content of the headers.
+{istio} to shift traffic to implement blue-green deployments.
 
-The two microservices that you will deploy are called `inventory` and `system`. The `inventory` service stores information about systems that are running the `system` service.
-The `system` service retrieves system properties about the system that it is running on. Specifically, it retrieves
-the hostname, username, and operating system.
+The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting.
 
-You will use Minikube as your local {kube} cluster. You will use {istio}'s Ingress, and the `kubectl`
-CLI tool to deploy your application as well as configure the routing.
+You will use the `kubectl` CLI tool to deploy and manage your {kube} resources. You'll use the `istioctl` CLI tool to inject {istio} sidecars into your pods.
 
 === What is {istio}?
 
-{istio} is a platform for managing how microservices interact with each other as well as the outside world.
-It works by deploying istio control plane and injecting an additional container into each of your pods that contains
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It is specialized for a service mesh architecture since it offers useful features
-such as load balancing and support for distributed tracing.
+{istio} is a platform for managing how microservices interact with each other and the outside world.
+It works by deploying istio control plane. Then, it injects an extra container into each of your pods that contains
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It's specialized for a service mesh architecture since it offers many useful features.
+Features it offers such as load balancing and support for distributed tracing help creating a service mesh.
 
-While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
-can also be used with other environments such as Docker Compose. {istio} has many features, some of them are
-request routing, access control, distributed tracing. The focus of this guide will be request routing.
+While {istio} supports {kube} and that will be the focus of this guide. Note that {istio}
+can also be used with other environments such as Docker Compose. {istio} has many features. Some of these features are
+traffic shifting, request routing, access control, and distributed tracing. The focus of this guide will be traffic shifting.
 
 === Why {istio}?
 
@@ -61,30 +61,18 @@ request routing, access control, distributed tracing. The focus of this guide wi
 such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
 application's code.
 
-A possible use case for {istio}'s Telemetry feature can be to enable distributed tracing which allows you
+A possible use case for {istio}'s Telemetry feature is to enable distributed tracing. Distributed tracing allows you
 to visualize how HTTP requests travel between different services in your cluster using a tool such as https://zipkin.io/[Zipkin].
 One of the items {istio} offers under its collection of security features is to enable HTTPS between pods
-in your cluster to secure communication internally.
+in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
 
-The use case for {istio} which will be covered in this guide is that it can be used to route between
-two different versions of an application. One other reason to use {istio} is that it can be used to enable
-https between pods.
+You will use {istio}'s traffic shifting features to implement blue-green deployments.
 
 // =================================================================================================
 // Prerequisites
 // =================================================================================================
 
-== Prerequisites
-
-Before you begin, make sure to have these tools installed:
-
-- `kubernetes-cli` - a command line interface for {kube} called `kubectl`. This is your primary
-tool for communicating with and managing your {kube} cluster. Installation instruction can be found here: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-- `minikube` - a local, single-node {kube} cluster that runs in a virtual machine. Installation instructions can be found
-here: https://github.com/kubernetes/minikube
-- `helm` - a package manager for kubernetes, installation instructions can be found here: https://docs.helm.sh/using_helm/#installing-helm
-
-Since this guide will be using {kube} and Docker, you will also want Docker set up on your computer. You can find installation instructions here: https://docs.docker.com/install/.
+include::{common-includes}/kube-prereq.adoc[]
 
 // =================================================================================================
 // Getting Started
@@ -95,85 +83,54 @@ include::{common-includes}/gitclone.adoc[]
 // no "try what you'll build" section in this guide since it would be too long due to all setup the user will have to do.
 
 // =================================================================================================
-// Staring and preparing your cluster for Deployment
+// Staring and preparing your cluster for deployment
 // =================================================================================================
 
-== Starting and preparing your cluster for Deployment
+:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.10.0
+include::{common-includes}/kube-start.adoc[]
 
-Minikube is a tool to run a kubernetes cluster locally on your computer, inside a virtual machine.
-To begin working with your cluster, first start Minikube with these flags to use {istio}:
+// =================================================================================================
+// Deploying Istio
+// =================================================================================================
 
-Unix:
-```
-minikube start --kubernetes-version=v1.10.0 \
-    --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" \
-    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
-```
+== Deploying Istio
 
-Windows:
+First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add the `bin/` directory to your `PATH`.
+
+****
+[system]#*{linux} | {mac}*#
+
 ```
-minikube start ^
-    --bootstrapper=localkube ^
-    --vm-driver=hyperv ^
-    --hyperv-virtual-switch=minikube-virtual-switch ^
-    --kubernetes-version=v1.10.0 ^
-    --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" ^
-    --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key"
+cd bin
+export PATH=$PATH:$PWD
+cd ..
 ```
 
-Running the `minikube start ...` command will create and start a virtual machine that will be used
-for a local kubernetes cluster. The extra flags are needed for minikube to work correctly
-with {istio}.
+[system]#*{win}*#
 
-Connect your Docker CLI to your cluster's Docker Daemon by running the given command.
-
-Unix:
 ```
-eval $(minikube docker-env)
+cd bin
+set PATH=%PATH%;%cd%
+cd ..
 ```
+****
 
-Windows:
-```
-minikube docker-env > tmp.cmd && call tmp.cmd && DEL tmp.cmd
-```
-
-As a result of this command, if you issue docker commands they will affect the docker environment
-in the Minikube VM rather than the one you likely have installed on your computer. This needs to be the
-case because when building the docker containers they need to be available to your cluster since for the purpose
-of this guide the images are not being pushed to a docker registry.
-
-First, deploy the {istio} custom resource defintion. Custom resource definitions allows {istio} to define custom {kube} resources that you can use in your resource defintion files.
+Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 ```
 kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
 
-Next, prepare your {istio} deployment using Helm. Helm is used only for templating, in this situation Helm is not used for
-managing the resources. Navigate to the directory where you downloaded and extracted
-{istio} and use the given command to produce an `istio.yaml` file that will be setup to work in the `istio-system` namespace.
-```
-helm template install/kubernetes/helm/istio --name istio --namespace istio-system > istio.yaml
-```
-
-Next, create the `istio-system` namespace because {istio}'s resources need to be deployed to this namespace.
-```
-kubectl create namespace istio-system
-```
-
-You can think of the `istio-system` namespace as a place to keep all of the
-{istio} resources in your cluster separate from the rest of your deployments and services.
-If you desire, then you can similarly create a namespace for the resources we'll be deploying later.
-If no namespace is specified it will use the `default` namespace by default.
-
-Next, deploy {istio}'s resource to your cluster by running the `kubectl apply` command, which creates or updates
+Next, deploy {istio}'s resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command will deploy {istio}.
 
 ```
-kubectl apply -f istio.yaml
+kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
 
 Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` once
 the deployment is complete.
+
 ```
 kubectl get deployments -n istio-system
 ```
@@ -181,47 +138,48 @@ kubectl get deployments -n istio-system
 Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available.
 [source, role="no_copy"]
 ----
-NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-istio-citadel              1         1         1            1           5m
-istio-egressgateway        1         1         1            1           5m
-istio-galley               1         1         1            1           5m
-istio-ingressgateway       1         1         1            1           5m
-istio-pilot                1         1         1            1           5m
-istio-policy               1         1         1            1           5m
-istio-sidecar-injector     1         1         1            1           5m
-istio-statsd-prom-bridge   1         1         1            1           5m
-istio-telemetry            1         1         1            1           5m
-prometheus                 1         1         1            1           5m
+NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+grafana                  1         1         1            1           44s
+istio-citadel            1         1         1            1           44s
+istio-egressgateway      1         1         1            1           44s
+istio-galley             1         1         1            1           44s
+istio-ingressgateway     1         1         1            1           44s
+istio-pilot              1         1         1            1           44s
+istio-policy             1         1         1            1           44s
+istio-sidecar-injector   1         1         1            1           44s
+istio-telemetry          1         1         1            1           44s
+istio-tracing            1         1         1            1           43s
+prometheus               1         1         1            1           44s
+servicegraph             1         1         1            1           44s
 ----
 
 // =================================================================================================
-// Deploying v1 of the services to cluster
+// Deploying v1 of the service to cluster
 // =================================================================================================
 
-== Deploying version 1 of the services to the cluster
+== Deploying version 1 of the service to the cluster
 
-Navigate to the `start` directory and run the following command, it may take a few minutes to build.
-It will build the application and then package it into two docker images, one for each service.
-To build the docker images it uses a maven plugin called `dockerfile-maven-plugin`.
+Navigate to the `start` directory and run the following command. It may take a few minutes to complete.
+It will build the application and then package it into a docker image.
+To build the docker image, it uses a maven plug-in called `dockerfile-maven-plugin`.
+
 ```
 mvn clean package
 ```
 
-After running the command, it builds a docker image for the `inventory` service and an image for the `system` service.
-You can verify that these images were created by running the given command. 
+After running the command, it builds a docker image for the `hello` microservice.
+You can verify that this image was created by running the given command. 
 
 ```
 docker images
 ```
 
-You will see images called `inventory-service:1.0-SNAPSHOT` and `system-service:1.0-SNAPSHOT` listed in a table
-similar to the output.
+You'll see an image called `hello:1.0-SNAPSHOT` listed in a table similar to the output.
 
 [source, role="no_copy"]
 ----
 REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
-inventory-service                          1.0-SNAPSHOT        d316c2c2c6ba        9 seconds ago       501MB
-system-service                             1.0-SNAPSHOT        5f48add7c0da        30 seconds ago      501MB
+hello                                      1.0-SNAPSHOT        d316c2c2c6ba        9 seconds ago       501MB
 istio/galley                               1.0.1               7ac6c7be3d3e        5 days ago          65.8MB
 istio/citadel                              1.0.1               abcc721c2454        5 days ago          51.7MB
 istio/mixer                                1.0.1               0d97b4000ed5        5 days ago          64.5MB
@@ -232,64 +190,49 @@ open-liberty                               latest              ed1ca62c4bd5     
 prom/prometheus                            v2.3.1              b82ef1f3aa07        2 months ago        119MB
 ----
 
-To deploy the `inventory` and `system` services to the {kube} cluster, run the commands:
+To deploy the `hello` microservice to the {kube} cluster, use the `istioctl` command to inject the sidecars into your deployments and use `kubectl` to deploy the microservice.
+
+****
+[system]#*{linux} | {mac}*#
 
 ```
-kubectl apply -f inventory-app.yaml
+istioctl kube-inject -f hello.yaml | kubectl apply -f -
 ```
 
-You can see that your resources are created after running the `kubectl apply -f ...` command:
+[system]#*{win}*#
+
+```
+istioctl kube-inject -f hello.yaml > tmp-hello.yaml
+kubectl apply -f tmp-hello.yaml
+del tmp-hello.yaml
+```
+****
+
+You can see that your resources are created:
 
 [source, role="no_copy"]
 ----
-gateway.networking.istio.io/inventory-gateway created
-service/inventory-service created
-deployment.apps/inventory-deployment-v1 created
-service/system-service created
-deployment.apps/system-deployment created
+gateway.networking.istio.io/hello-gateway created
+service/hello-service created
+deployment.apps/hello-deployment-blue created
+deployment.apps/hello-deployment-green created
 ----
 
-Next deploy the virtual services for the `inventory` and `system` service. A VirtualService defines how requests are routed to your applications through the gateway.
+The `traffic.yaml` file contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. Deploy the resources defined in `traffic.yaml`.
 
 ```
-kubectl apply -f routing.yaml
+kubectl apply -f traffic.yaml
 ```
-
-The `routing.yaml` configuration file contains configuration for two VirtualService resources, they specify that requests to `/inventory` be forwarded to the `inventory` service and requests to `/system` are forwarded to the `system` service. Similarly to `inventory-app.yaml` you can see the results of the `kubectl apply -f ...` command for `routing.yaml`:
 
 [source, role="no_copy"]
 ----
-virtualservice.networking.istio.io/inventory-virtual-service created
-virtualservice.networking.istio.io/system-virtual-service created
+virtualservice.networking.istio.io/hello-virtual-service created
+virtualservice.networking.istio.io/hello-test-virtual-service created
+destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-To get the base url, first get the ip address of the cluster.
-```
-minikube ip
-```
-
-Next, find out what port the `istio-ingressgateway` service is running on. This gateway is the entry point for any HTTP requests that you make to your services.
-```
-kubectl get service istio-ingressgateway -n istio-system
-```
-
-You will see similar output to this:
-
-[source, role="no_copy"]
-----
-NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                                                   AGE
-istio-ingressgateway   LoadBalancer   10.100.214.161   <pending>     80:31380/TCP,443:31390/TCP,31400:31400/TCP,15011:32250/TCP,8060:31731/TCP,853:31999/TCP,15030:30030/TCP,15031:32585/TCP   2h
-----
-
-So the port in this specific scenario would be `31380` since it maps to the internal port `80`. To get the base url of the service
-combine the port with the ip address you found earlier using the format `http://<ip-address>:<port>`.
-
-Once all the deployments are available, you should be able to navigate to make a request to `http://<ip-address>:<port>/inventory/systems` to view
-v1 of the deployed application, as defined in `inventory-app.yaml` the gateway is expecting the host to be `my-inventory.com` so ensure to set the `Host` header appropriately.
-
-```
-curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems
-```
+Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
+v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
 
 You can check that all of the deployments are available using the command.
 
@@ -301,185 +244,242 @@ Which produces a list of deployments for your microservices.
 
 [source, role="no_copy"]
 ----
-NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-inventory-deployment-v1   1         1         1            1           1m
-system-deployment         1         1         1            1           1m
+NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+hello-deployment-blue    1         1         1            1           1m
+hello-deployment-green   1         1         1            1           1m
 ----
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+
+```
+curl -HHost:example.com http://localhost/hello
+```
+
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:example.com http://`minikube ip`:31380/hello
+```
+****
 
 // =================================================================================================
-// Modify the service
+// Deploy v2
 // =================================================================================================
 
-== Modify and deploy version 2 of the service
+== Deploying version 2 of the hello microservice
 
-If you make a breaking change to your REST api, existing clients may be broken. This is particularly an issue if your API is public
-for anyone to use. Typically you will want a way to keep existing clients working as intended, while new clients use the updated API.
-To simulate this scenario, you will introduce a breaking change to the `inventory` service and then redeploy it to the
-kubernetes cluster as `v2`.
+The `hello` microservice is set up to respond with the version that is set in the `pom.xml` file. The tag for the docker image is also dependent on the version specified in the `pom.xml` file. Use the maven command to bump the version of the microservice to `2.0-SNAPSHOT`.
 
-Rename the `getTotal()` method in `inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java` to `getCount()`.
-
-[source, Java]
-----
-include::finish/inventory/src/main/java/io/openliberty/guides/inventory/model/InventoryList.java[tags=**;!copyright;]
-----
-
-Renaming this method will introduce a breaking change to the REST service because the response will have renamed properties after deployment.
-Any client using your service will be expecting to see a property called `total`, but sometimes they'll see `count` instead.
-This is not good for your API's consumers since the response would be somewhat unpredictable from their end.
-
-Before version 2 is deployed, the `/inventory/systems` endpoint responds with a JSON in the form:
-
-[source, role="no_copy"]
-----
-{
-    "systems": [],
-    "total": 0
-}
-----
-
-After version 2 is deployed, the same endpoint can respond with JSON in the form:
-
-[source, role="no_copy"]
-----
-{
-    "systems": [],
-    "count": 0
-}
-----
-
-
-Therefore, any clients consuming the updated service will be broken since they are expecting a property called
-`total` instead of `count`. Instead of running only the new service, both services can be run simultaneously.
-The reason behind running both services is so that old clients do not have to upgrade to use the new api,
-they can simply continue to use the old one. For example, if someone has created a frontend for the `inventory` service
-and the frontend expects to receive a response in the form of `v1` but gets a response in the form of `v2` then issues can arise.
-To mitigate this you can run both versions simultaneously and route requests appropriately to the relevant version, therefore
-you avoid breaking existing clients.
-
-Run this command to update the version of your service.
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
 ```
 
-Navigate to the `start/inventory` directory and run the given command to rebuild the `inventory` service.
+Build the new version of the docker container.
+
 ```
 mvn clean package
 ```
 
-Update the `inventory-app.yaml` file to add a new deployment `inventory-deployment-v2`.
-Adding a new deployment under the same service with no additional configuration means that it will be load balanced and
-requests will be sent to both deployments.
-
-
-[source, yaml]
-----
-include::finish/inventory-app.yaml[tags=**]
-----
-
-Notice the `version` labels used to denote which deployment is for version 1 of the application and
-which deployment is for version 2. This will give us the ability to select which version of the `inventory`
-service to forward requests to.
-
-
-Redeploy your services using the same command from before.
+Deploy the new image to the green deployment.
 
 ```
-kubectl apply -f inventory-app.yaml
+kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 ```
 
-You can see that version 2 of the `inventory` application has been deployed.
-[source, role="no_copy"]
+Test the updated microservice by making requests to the testing site. The `version` field in the response JSON is now `2.0-SNAPSHOT` on the testing site and it is still `1.0-SNAPSHOT` on the live site.
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+
+```
+curl -HHost:test.example.com http://localhost/hello
+```
+
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:test.example.com http://`minikube ip`:31380/hello
+```
+****
+
+Once you see that the microservice is working on the testing site, modify the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+
+[source, Java]
 ----
-gateway.networking.istio.io/inventory-gateway unchanged
-service/inventory-service unchanged
-deployment.apps/inventory-deployment-v1 unchanged
-deployment.apps/inventory-deployment-v2 created
-service/system-service unchanged
-deployment.apps/system-deployment unchanged
+include::finish/traffic.yaml[tags=**;]
 ----
 
-Use this curl command a few times to make multiple requests `curl -HHost:my-inventory.com http://<ip-address>:<port>/inventory/systems`
-Alternatively, you can use https://www.getpostman.com/[Postman] if you prefer a more traditional UI to make requests.
+Deploy the updated `traffic.yaml` file.
 
-Observe that requests go to both v1 and v2. This is not what
-a client consuming this service wants because it is unpredictable and the client would get
-an incorrect response half of the time. To solve this you can use request routing to default
-to version 1 and allow the client to access version 2 when specifically requested. This way,
-existing client won't be broken and any new clients that would like to use v2 can easily
-request it.
+```
+kubectl apply -f traffic.yaml
+```
 
+Ensure that the live traffic is now being routed to version 2 of the microservice.
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+
+```
+curl -HHost:example.com http://localhost/hello
+```
+
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:example.com http://`minikube ip`:31380/hello
+```
+****
 
 // =================================================================================================
-// Configure request routing
+// Deploy v3
 // =================================================================================================
 
-== Configure request routing
+== Automating the blue-green switch
 
-To solve the issue where the requests are forwarded seemingly at random, you'll configure request
-routing and apply the configuration to your cluster.
+Manually changing the weights in the `traffic.yaml` to deploy a new version of your microservice can be a tedious process. Thankfully this can be easily automated with some scripting. You'll deploy version 3 of the `hello` microservice and create a script to automate the switch over. Use the maven command to bump the version of the microservice to `3.0-SNAPSHOT`.
 
-Create the `routing.yaml` file in the `start` directory:
+```
+mvn versions:set -DnewVersion=3.0-SNAPSHOT
+```
 
-[source, yaml]
+Build the new version of the docker container.
+
+```
+mvn clean package
+```
+
+Deploy the new image to the blue deployment.
+
+```
+kubectl set image deployment/hello-deployment-blue hello-container=hello:3.0-SNAPSHOT
+```
+
+Test the updated microservice by making requests to the testing site. You'll see the `version` field of the JSON response is equal to `3.0-SNAPSHOT`.
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+
+```
+curl -HHost:test.example.com http://localhost/hello
+```
+
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:test.example.com http://`minikube ip`:31380/hello
+```
+****
+
+Once you see that the microservice is working on the testing site, you will create a script to automate shifting the traffic.
+
+****
+[system]#*{mac} | {linux}*#
+
+Create the `set-live` file.
+
+[source, bash]
 ----
-include::finish/routing.yaml[tags=**;]
+include::finish/set-live[tags=**;]
 ----
 
-The `routing.yaml` file routes incoming requests based on the uri prefix `/inventory` and an HTTP header
-`x-version`. The header is used to identify which version of the `inventory` service that the client would like
-the requests to go to. If the header has the value `v2`, then requests will be routed to the `v2` deployment and otherwise
-the requests are routed to `v1` to avoid breaking existing clients. In the `inventory-app.yaml` file some `version` labels are specified,
-in the `routing.yaml` file the `version` label is used to route requests to the appropriate
-deployment.
+Make the `set-live` file executable.
 
-Apply the routing rules you created in the `routing.yaml` file by running the given command.
 ```
-kubectl apply -f routing.yaml
+chmod +x set-live
 ```
 
-Make a request and observe that the request goes to v2 of the service where you see "count".
+Move the live traffic over to the blue deployment.
+
 ```
-curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com -Hx-version:v2
+./set-live blue
 ```
 
-Make a request and observe that the request defaults to v1 of the service where you see "total".
+[system]#*{win}*#
+
+Create the `set-live.bat` file.
+
+[source, batch]
+----
+include::finish/set-live.bat[tags=**;]
+----
+
+Move the live traffic over to the blue deployment.
+
 ```
-curl http://<ip-address>:<port>/inventory/systems -HHost:my-inventory.com
+set-live.bat blue
+```
+****
+
+Ensure that the live traffic is now being routed to version 3 of the microservice.
+
+****
+[system]#*{win} | {mac}*#
+
+Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+
+```
+curl -HHost:example.com http://localhost/hello
 ```
 
-With the help of {istio} you now have request routing configured to direct requests appropriately to the correct
-version of an application. This is just one of the many uses for {istio}, and it solves the versioning issue
-in a convenient way that requires no code changes on the developer's part.
+[system]#*{linux}*#
+
+Make a request to the service by using curl.
+
+```
+curl -HHost:example.com http://`minikube ip`:31380/hello
+```
+****
+
+The `set-live` script generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Then it deploys the updated virtual services to route traffic accordingly.
 
 == Testing microservices that are running on {kube}
 
-A few tests are provided to check that the two `inventory` versions have been deployed correctly and that request
-routing has been correctly configured. If the tests fail, then you may have made a mistake at one of the steps.
-
-Create the inventory version test in the `inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java` file:
+Create the endpoint test in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
 [source, Java]
 ----
-include::finish/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryVersionTest.java[tags=**;!copyright;!doc]
+include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright]
 ----
 
-The `testV1Default` test case verifies that if no `x-version` header is present, then it defaults to version 1.
-Similarly the `testV1Header` test case verifies that requests are routed to version v1 if the `x-version` header
-has a value of `v1`. The final test case `testV2Header` checks that requests are routed to version v2 when
-the `x-version` header is set to `v2`.
+The `testGetGreeting` test case verifies that the correct greeting and version number are returned from the rest service.
 
-Each test is repeated three times to ensure that it didn't pass by chance if the routing was not applied correctly.
-If the routing rules are not applied, then on some requests you will see `v1` and on other requests you will see `v2`.
-This is why the tests need to be run multiple times.
+****
+[system]#*{win} | {mac}*#
 
 Run the command to start the tests:
 
 ```
-mvn verify -Ddockerfile.skip=true -Dtest.ip=<ip-address> -Dtest.port=<port>
+mvn verify -Ddockerfile.skip=true
 ```
 
-The `dockerfile.skip=true` flag skips re-building the docker images. The `test.ip` and `test.port`
-parameters refer to the ip address and port for the {istio} gateway.
+[system]#*{linux}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+```
+****
+
+The `dockerfile.skip=true` flag skips rebuilding the docker images. The `cluster.ip` and `port`
+parameters refer to the IP address and port for the {istio} gateway.
 
 If the tests pass, then you should see output similar to this:
 
@@ -488,29 +488,67 @@ If the tests pass, then you should see output similar to this:
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running it.io.openliberty.guides.inventory.InventoryVersionTest
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.98 sec - [ ] in it.io.openliberty.guides.inventory.InventoryVersionTest
+Running it.io.openliberty.guides.rest.EndpointTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.648 s - in it.io.openliberty.guides.rest.EndpointTest
 
-Results :
+Results:
 
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
+Roll back to the old version of the microservice and run the tests again.
 
-== Tearing down your deployments and {istio}
+****
+[system]#*{mac} | {linux}*#
+
+```
+./set-live green
+```
+
+[system]#*{win}*#
+
+```
+set-live.bat green
+```
+****
+
+****
+[system]#*{win} | {mac}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true
+```
+
+[system]#*{linux}*#
+
+Run the command to start the tests:
+
+```
+mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+```
+****
+
+Observe that the tests fail because the version number that the tests expect and the version of the running microservice are now different. 
+
+== Tearing down your environment
 
 Finally, you may want to teardown all the deployed resources as a cleanup step.
 
 Delete your resources from the cluster.
 ```
-kubectl delete -f inventory-app.yaml
-kubectl delete -f routing.yaml
+kubectl delete -f hello.yaml
+kubectl delete -f traffic.yaml
 ```
 
-Delete the {istio} resources from the cluster.
+Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
 ```
-kubectl delete -f istio.yaml
+kubectl delete -f install/kubernetes/istio-demo.yaml
+kubectl delete -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
+
+include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
@@ -518,7 +556,7 @@ kubectl delete -f istio.yaml
 
 == Great work! You're done!
 
-You have just deployed two microservice to a Kubernetes cluster and created routing rules to route between two different version of one of the microservice using Istio.
+You have deployed a microservice to a Kubernetes cluster and used Istio to implement a blue-green deployment scheme.
 
 // uncomment this when Istio guide is released
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
