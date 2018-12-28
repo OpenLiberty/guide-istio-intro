@@ -6,15 +6,13 @@
 ##
 ##############################################################################
 
-# Deploy v1
-printf "\nmvn -q package\n"
+# Deploy
+
+printf "\nmvn -q clean package\n"
 mvn -q clean package
 
-printf "\nistioctl kube-inject -f hello.yaml | kubectl apply -f -\n"
-istioctl kube-inject -f hello.yaml | kubectl apply -f -
-
-printf "\nkubectl apply -f traffic.yaml\n"
-kubectl apply -f traffic.yaml
+printf "\nkubectl apply -f ../scripts/hello.yaml\n"
+kubectl apply -f ../scripts/hello.yaml
 
 printf "\nsleep 120\n"
 sleep 120
@@ -25,52 +23,17 @@ kubectl get pods
 printf "\nminikube ip\n"
 echo `minikube ip`
 
-printf "\ncurl http://`minikube ip`:31380/hello -HHost:example.com\n"
-curl http://`minikube ip`:31380/hello -HHost:example.com
-
-# Deploy v2
-
-printf "\nmvn versions:set -DnewVersion=2.0-SNAPSHOT\n"
-mvn versions:set -DnewVersion=2.0-SNAPSHOT
-
-printf "\nmvn -q package\n"
-mvn -q clean package
-
-printf "\nkubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT"
-kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
-
-printf "\nsleep 120\n"
-sleep 120
-
-printf "\nkubectl get pods\n"
-kubectl get pods
-
-printf "\nminikube ip\n"
-echo `minikube ip`
-
-printf "\ncurl http://`minikube ip`:31380/hello -HHost:test.example.com\n"
-curl http://`minikube ip`:31380/hello -HHost:test.example.com
-
-printf "\nkubectl apply -f ../finish/traffic.yaml\n"
-kubectl apply -f ../finish/traffic.yaml
-
-printf "\ncurl http://`minikube ip`:31380/hello -HHost:example.com\n"
-curl http://`minikube ip`:31380/hello -HHost:example.com
+printf "\ncurl http://`minikube ip`:31000/hello\n"
+curl http://`minikube ip`:31000/hello
 
 # Run tests
 
-cp ../finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java src/test/java/it/io/openliberty/guides/rest/EndpointTest.java
-printf "\nmvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380\n"
-mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+printf "\nmvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31000\n"
+mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31000
 
 # Print logs
 
-BLUE_POD=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep blue)
-GREEN_POD=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep green)
+POD_NAME=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep hello)
 
-printf "\nkubectl logs $BLUE_POD hello-container\n"
-kubectl logs $BLUE_POD hello-container
-
-printf "\nkubectl logs $GREEN_POD hello-container\n"
-kubectl logs $GREEN_POD hello-container
-
+printf "\nkubectl logs $POD_NAME hello-container\n"
+kubectl logs $POD_NAME

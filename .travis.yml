@@ -14,20 +14,8 @@ before_script:
 - wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64 -q -O minikube
 - chmod +x minikube
 - sudo ln -s $(pwd)/minikube /usr/local/bin/minikube
-- wget https://github.com/istio/istio/releases/download/1.0.5/istio-1.0.5-linux.tar.gz -q -O istio-linux.tar.gz
-- tar -zxf istio-linux.tar.gz
-- rm istio-linux.tar.gz
-- cd `ls | grep istio-`
-- sudo ln -s $(pwd)/bin/istioctl /usr/local/bin/istioctl
 - sudo minikube start --vm-driver=none --bootstrapper=localkube
-- echo $(pwd)
-- kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
-- kubectl apply -f install/kubernetes/istio-demo.yaml
-- kubectl get deployments -n istio-system
-- sleep 180
-- kubectl get deployments -n istio-system
 - chmod +x ../scripts/travisTest.sh
-- cd ../start
 script:
 - ../scripts/travisTest.sh
 notifications:
