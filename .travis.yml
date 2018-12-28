@@ -20,6 +20,7 @@ before_script:
 - cd `ls | grep istio-`
 - sudo ln -s $(pwd)/bin/istioctl /usr/local/bin/istioctl
 - sudo minikube start --vm-driver=none --bootstrapper=localkube
+- echo $(pwd)
 - kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 - kubectl apply -f install/kubernetes/istio-demo.yaml
 - kubectl get deployments -n istio-system
