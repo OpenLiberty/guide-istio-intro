@@ -13,7 +13,7 @@
 :page-layout: guide
 :page-duration: 15 minutes
 :page-releasedate: 2018-06-30
-:page-description: Explore how to route traffic to different versions of the same service using Istio and Kubernetes.
+:page-description: Explore how to set up your microservices for blue green deployments using Istio.
 :page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'Minikube', 'Istio']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes']
@@ -21,12 +21,12 @@
 :source-highlighter: prettify
 :page-seo-title: Istio routing tutorial
 :page-seo-description: How to run microservices in Istio
-= Versioning services with Istio
+= Implementing blue green deployments using Istio
 
 [.hidden]
 NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
 
-Explore how to leverage content-based routing to route HTTP traffic to different versions of the same service using Istio and Kubernetes.
+Explore how to set up your microservices for blue green deployments using Istio.
 
 :kube: Kubernetes
 :istio: Istio
@@ -40,19 +40,20 @@ Explore how to leverage content-based routing to route HTTP traffic to different
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
 {istio} to shift traffic to implement blue-green deployments.
 
-The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting.
+Blue green deployments are a way of deploying your web applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment the traffic will be shifted over. Thus your live traffic is now coming from what used to be the testing site.
 
-You will use the `kubectl` CLI tool to deploy and manage your {kube} resources. You'll use the `istioctl` CLI tool to inject {istio} sidecars into your pods.
+The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or testing environments.
+
+You will use the `kubectl` command-line tool to deploy your {kube} resources. You'll use the `istioctl` command-line tool to inject {istio} sidecars into your pods.
 
 === What is {istio}?
 
 {istio} is a platform for managing how microservices interact with each other and the outside world.
-It works by deploying istio control plane. Then, it injects an extra container into each of your pods that contains
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. It's specialized for a service mesh architecture since it offers many useful features.
-Features it offers such as load balancing and support for distributed tracing help creating a service mesh.
+It works by deploying {istio} control plane. Then, it injects an extra container into each of your pods that has
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is specialized for a service mesh architecture. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is an extra layer that deals with your HTTP traffic. It exists to perform certain functions so the features do no need to be part of the application's code.
 
-While {istio} supports {kube} and that will be the focus of this guide. Note that {istio}
-can also be used with other environments such as Docker Compose. {istio} has many features. Some of these features are
+While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
+can also be used with other environments such as Docker Compose. Although {istio} has many features such as
 traffic shifting, request routing, access control, and distributed tracing. The focus of this guide will be traffic shifting.
 
 === Why {istio}?
@@ -61,12 +62,11 @@ traffic shifting, request routing, access control, and distributed tracing. The 
 such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
 application's code.
 
+{istio}'s routing features allow you to route HTTP requests based on several factors such as HTTP headers or cookies.
 A possible use case for {istio}'s Telemetry feature is to enable distributed tracing. Distributed tracing allows you
 to visualize how HTTP requests travel between different services in your cluster using a tool such as https://zipkin.io/[Zipkin].
 One of the items {istio} offers under its collection of security features is to enable HTTPS between pods
 in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
-
-You will use {istio}'s traffic shifting features to implement blue-green deployments.
 
 // =================================================================================================
 // Prerequisites
@@ -135,7 +135,7 @@ the deployment is complete.
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If after a few minutes the deployments are not available increase the amount of memory available to your {kube} cluster. On Docker Desktop this can be done from your Docker preferences. On minikube this can be done using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -200,7 +200,6 @@ istioctl kube-inject -f hello.yaml | kubectl apply -f -
 ```
 
 [system]#*{win}*#
-
 ```
 istioctl kube-inject -f hello.yaml > tmp-hello.yaml
 kubectl apply -f tmp-hello.yaml
@@ -224,6 +223,8 @@ The `traffic.yaml` file contains two virtual services and a destination rule. A 
 kubectl apply -f traffic.yaml
 ```
 
+You can see that the virtual services and destination rule have been created.
+
 [source, role="no_copy"]
 ----
 virtualservice.networking.istio.io/hello-virtual-service created
@@ -231,14 +232,14 @@ virtualservice.networking.istio.io/hello-test-virtual-service created
 destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
-v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
-
 You can check that all of the deployments are available using the command.
 
 ```
 kubectl get deployments
 ```
+
+Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
+v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
 
 Which produces a list of deployments for your microservices.
 
@@ -252,11 +253,13 @@ hello-deployment-green   1         1         1            1           1m
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+Make a request to the service by using curl.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
+
+If curl is unavailable then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -291,16 +294,20 @@ Deploy the new image to the green deployment.
 kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 ```
 
+You will work with two environments. One of the environments is a testing site located at `test.example.com`. The other environment is your production environment located at `example.com`. To start with, the production environment is tied to the blue deployment and the testing environment is tied to the green deployment.
+
 Test the updated microservice by making requests to the testing site. The `version` field in the response JSON is now `2.0-SNAPSHOT` on the testing site and it is still `1.0-SNAPSHOT` on the live site.
 
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+Make a request to the service by using curl.
 
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
+
+If curl is unavailable then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -311,7 +318,7 @@ curl -HHost:test.example.com http://`minikube ip`:31380/hello
 ```
 ****
 
-Once you see that the microservice is working on the testing site, modify the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+Once you see that the microservice is working on the testing site, modify the weights `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
 [source, Java]
 ----
@@ -373,11 +380,13 @@ Test the updated microservice by making requests to the testing site. You'll see
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+Make a request to the service by using curl.
 
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
+
+If curl is unavailable then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -448,11 +457,11 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
 
-The `set-live` script generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Then it deploys the updated virtual services to route traffic accordingly.
+The `set-live` script accepts a single argument that is either `blue` or `green`. Based on the color it generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Similarly, it routes the testing traffic to the opposite color. Then, it deploys the updated virtual services to route traffic accordingly.
 
 == Testing microservices that are running on {kube}
 
-Create the endpoint test in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
+Create the endpoint test class in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
 [source, Java]
 ----
 include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright]
@@ -476,12 +485,13 @@ Run the command to start the tests:
 ```
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
+
+The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 ****
 
-The `dockerfile.skip=true` flag skips rebuilding the docker images. The `cluster.ip` and `port`
-parameters refer to the IP address and port for the {istio} gateway.
+The `dockerfile.skip=true` flag skips rebuilding the docker images.
 
-If the tests pass, then you should see output similar to this:
+If the tests pass, then you should see output similar to the following:
 
 [source, role="no_copy"]
 ----
@@ -496,7 +506,7 @@ Results:
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-Roll back to the old version of the microservice and run the tests again.
+Next, roll back to the old version of the microservice and run the tests again. Notice that the tests fail because the version number that the tests expect and the version of the running microservice are now different. 
 
 ****
 [system]#*{mac} | {linux}*#
@@ -530,7 +540,6 @@ mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 ****
 
-Observe that the tests fail because the version number that the tests expect and the version of the running microservice are now different. 
 
 == Tearing down your environment
 
