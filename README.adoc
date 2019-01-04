@@ -40,7 +40,7 @@ Explore how to set up your microservices for blue green deployments using Istio.
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
 {istio} to shift traffic to implement blue-green deployments.
 
-Blue green deployments are a way of deploying your web applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment the traffic will be shifted over. Thus your live traffic is now coming from what used to be the testing site.
+Blue green deployments are a way of deploying your web applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
 
 The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or testing environments.
 
@@ -53,8 +53,8 @@ It works by deploying {istio} control plane. Then, it injects an extra container
 the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is specialized for a service mesh architecture. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is an extra layer that deals with your HTTP traffic. It exists to perform certain functions so the features do no need to be part of the application's code.
 
 While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
-can also be used with other environments such as Docker Compose. Although {istio} has many features such as
-traffic shifting, request routing, access control, and distributed tracing. The focus of this guide will be traffic shifting.
+can also be used with other environments such as Docker Compose. {istio} has many features such as
+traffic shifting, request routing, access control, and distributed tracing, but the focus of this guide will be on traffic shifting.
 
 === Why {istio}?
 
@@ -135,7 +135,7 @@ the deployment is complete.
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If after a few minutes the deployments are not available increase the amount of memory available to your {kube} cluster. On Docker Desktop this can be done from your Docker preferences. On minikube this can be done using the `--memory` flag.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop this can be done from your Docker preferences. On minikube this can be done using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -318,7 +318,7 @@ curl -HHost:test.example.com http://`minikube ip`:31380/hello
 ```
 ****
 
-Once you see that the microservice is working on the testing site, modify the weights `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+Once you see that the microservice is working on the testing site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
 [source, Java]
 ----
