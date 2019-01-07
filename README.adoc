@@ -11,7 +11,7 @@
 //
 :projectid: istio
 :page-layout: guide
-:page-duration: 15 minutes
+:page-duration: 20 minutes
 :page-releasedate: 2018-06-30
 :page-description: Explore how to set up your microservices for blue green deployments using Istio.
 :page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'Minikube', 'Istio']
@@ -178,16 +178,16 @@ You'll see an image called `hello:1.0-SNAPSHOT` listed in a table similar to the
 
 [source, role="no_copy"]
 ----
-REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
-hello                                      1.0-SNAPSHOT        d316c2c2c6ba        9 seconds ago       501MB
-istio/galley                               1.0.1               7ac6c7be3d3e        5 days ago          65.8MB
-istio/citadel                              1.0.1               abcc721c2454        5 days ago          51.7MB
-istio/mixer                                1.0.1               0d97b4000ed5        5 days ago          64.5MB
-istio/sidecar_injector                     1.0.1               a122adc160b7        5 days ago          45.3MB
-istio/proxyv2                              1.0.1               f1bf7b920fe1        5 days ago          352MB
-istio/pilot                                1.0.1               46d3b4e95fc3        5 days ago          290MB
-open-liberty                               latest              ed1ca62c4bd5        7 days ago          501MB
-prom/prometheus                            v2.3.1              b82ef1f3aa07        2 months ago        119MB
+REPOSITORY                 TAG            IMAGE ID       CREATED          SIZE
+hello                      1.0-SNAPSHOT   d316c2c2c6ba   9 seconds ago    501MB
+istio/galley               1.0.1          7ac6c7be3d3e   5 days ago       65.8MB
+istio/citadel              1.0.1          abcc721c2454   5 days ago       51.7MB
+istio/mixer                1.0.1          0d97b4000ed5   5 days ago       64.5MB
+istio/sidecar_injector     1.0.1          a122adc160b7   5 days ago       45.3MB
+istio/proxyv2              1.0.1          f1bf7b920fe1   5 days ago       352MB
+istio/pilot                1.0.1          46d3b4e95fc3   5 days ago       290MB
+open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
+prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 ----
 
 To deploy the `hello` microservice to the {kube} cluster, use the `istioctl` command to inject the sidecars into your deployments and use `kubectl` to deploy the microservice.
@@ -270,6 +270,12 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
 
+You'll see a greeting message along with a corresponding version.
+
+----
+{"greeting":"hello","version":"1.0-SNAPSHOT"}
+----
+
 // =================================================================================================
 // Deploy v2
 // =================================================================================================
@@ -317,6 +323,12 @@ Make a request to the service by using curl.
 curl -HHost:test.example.com http://`minikube ip`:31380/hello
 ```
 ****
+
+You'll see a greeting message along with a corresponding version.
+
+----
+{"greeting":"hello","version":"2.0-SNAPSHOT"}
+----
 
 Once you see that the microservice is working on the testing site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
@@ -456,6 +468,12 @@ Make a request to the service by using curl.
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
+
+You'll see a greeting message along with a corresponding version.
+
+----
+{"greeting":"hello","version":"3.0-SNAPSHOT"}
+----
 
 The `set-live` script accepts a single argument that is either `blue` or `green`. Based on the color it generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Similarly, it routes the testing traffic to the opposite color. Then, it deploys the updated virtual services to route traffic accordingly.
 

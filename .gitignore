@@ -20,3 +20,5 @@ README.html
 
 *.txt
 deployment.yml
+istio-*/
+istio-*.tar.gz
