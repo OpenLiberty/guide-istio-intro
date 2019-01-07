@@ -3,17 +3,17 @@
 LIVE_DEPLOYMENT=$1
 
 if [ "$LIVE_DEPLOYMENT" = "blue" ]; then
-	WEIGHT_BLUE=100
-	WEIGHT_GREEN=0
-	TEST_WEIGHT_BLUE=0
-	TEST_WEIGHT_GREEN=100
-	echo "Setting blue as live..."
+  WEIGHT_BLUE=100
+  WEIGHT_GREEN=0
+  TEST_WEIGHT_BLUE=0
+  TEST_WEIGHT_GREEN=100
+  echo "Setting blue as live..."
 elif [ "$LIVE_DEPLOYMENT" = "green" ]; then
-	WEIGHT_BLUE=0
-	WEIGHT_GREEN=100
-	TEST_WEIGHT_BLUE=100
-	TEST_WEIGHT_GREEN=0
-	echo "Setting green as live..."
+  WEIGHT_BLUE=0
+  WEIGHT_GREEN=100
+  TEST_WEIGHT_BLUE=100
+  TEST_WEIGHT_GREEN=0
+  echo "Setting green as live..."
 else
   echo "$LIVE_DEPLOYMENT is an invalid option"
   exit 1
