@@ -1,8 +1,12 @@
 @echo off
 
 set LIVE_DEPLOYMENT=%1
-goto :START
 
+if "%LIVE_DEPLOYMENT%"=="blue" goto BLUE_DEPLOYMENT
+if "%LIVE_DEPLOYMENT%"=="green" goto GREEN_DEPLOYMENT
+
+echo %LIVE_DEPLOYMENT% is an invalid option
+exit /B 1
 
 :BLUE_DEPLOYMENT
 set WEIGHT_BLUE=100
@@ -87,10 +91,3 @@ echo      version: green
 kubectl apply -f tmp-traffic.yaml
 del tmp-traffic.yaml
 exit /B
-
-:START
-if "%LIVE_DEPLOYMENT%"=="blue" goto BLUE_DEPLOYMENT
-if "%LIVE_DEPLOYMENT%"=="green" goto GREEN_DEPLOYMENT
-
-echo %LIVE_DEPLOYMENT% is an invalid option
-exit /B 1
