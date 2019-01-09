@@ -1,8 +1,12 @@
 @echo off
 
 set LIVE_DEPLOYMENT=%1
-goto :START
 
+if "%LIVE_DEPLOYMENT%"=="blue" goto BLUE_DEPLOYMENT
+if "%LIVE_DEPLOYMENT%"=="green" goto GREEN_DEPLOYMENT
+
+echo %LIVE_DEPLOYMENT% is an invalid option
+exit /B 1
 
 :BLUE_DEPLOYMENT
 set WEIGHT_BLUE=100
@@ -29,21 +33,21 @@ echo spec:
 echo   hosts:
 echo   - "example.com"
 echo   gateways:
-echo  - hello-gateway
-echo  http:
-echo  - route:
-echo    - destination:
-echo        port:
-echo          number: 9080
-echo        host: hello-service
-echo        subset: blue
-echo      weight: %WEIGHT_BLUE%
-echo    - destination:
-echo        port:
-echo          number: 9080
-echo        host: hello-service
-echo        subset: green
-echo      weight: %WEIGHT_GREEN%
+echo   - hello-gateway
+echo   http:
+echo   - route:
+echo     - destination:
+echo         port:
+echo           number: 9080
+echo         host: hello-service
+echo         subset: blue
+echo       weight: %WEIGHT_BLUE%
+echo     - destination:
+echo         port:
+echo           number: 9080
+echo         host: hello-service
+echo         subset: green
+echo       weight: %WEIGHT_GREEN%
 echo ---
 echo apiVersion: networking.istio.io/v1alpha3
 echo kind: VirtualService
@@ -87,10 +91,3 @@ echo      version: green
 kubectl apply -f tmp-traffic.yaml
 del tmp-traffic.yaml
 exit /B
-
-:START
-if "%LIVE_DEPLOYMENT%"=="blue" goto BLUE_DEPLOYMENT
-if "%LIVE_DEPLOYMENT%"=="green" goto GREEN_DEPLOYMENT
-
-echo %LIVE_DEPLOYMENT% is an invalid option
-exit /B 1
