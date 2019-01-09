@@ -29,21 +29,21 @@ echo spec:
 echo   hosts:
 echo   - "example.com"
 echo   gateways:
-echo  - hello-gateway
-echo  http:
-echo  - route:
-echo    - destination:
-echo        port:
-echo          number: 9080
-echo        host: hello-service
-echo        subset: blue
-echo      weight: %WEIGHT_BLUE%
-echo    - destination:
-echo        port:
-echo          number: 9080
-echo        host: hello-service
-echo        subset: green
-echo      weight: %WEIGHT_GREEN%
+echo   - hello-gateway
+echo   http:
+echo   - route:
+echo     - destination:
+echo         port:
+echo           number: 9080
+echo         host: hello-service
+echo         subset: blue
+echo       weight: %WEIGHT_BLUE%
+echo     - destination:
+echo         port:
+echo           number: 9080
+echo         host: hello-service
+echo         subset: green
+echo       weight: %WEIGHT_GREEN%
 echo ---
 echo apiVersion: networking.istio.io/v1alpha3
 echo kind: VirtualService
