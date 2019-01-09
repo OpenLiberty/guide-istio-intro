@@ -69,8 +69,8 @@ One of the items {istio} offers under its collection of security features is to 
 in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
 
 You'll use {istio} to implement blue green deployments. The traffic shifting features allow you to allocate a percentage of
-traffic to certain versions of services. This feature can be leveraged to shift 100% of live traffic to blue deployments and 100%
-of testing traffic to green deployments. Then you can shift the traffic to point to the opposite deployments as is necessary to
+traffic to certain versions of services. This feature can be used to shift 100 percent of live traffic to blue deployments and 100 percent
+of testing traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as is necessary to
 perform blue green deployments.
 
 // =================================================================================================
