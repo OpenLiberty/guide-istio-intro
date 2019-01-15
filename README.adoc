@@ -21,7 +21,7 @@
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
 :page-seo-description: Managing traffic with Istio to implement blue green deployments
-= Implementing blue green deployments using Istio
+= Managing microservice traffic using Istio
 
 [.hidden]
 NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
