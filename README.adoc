@@ -222,9 +222,19 @@ deployment.apps/hello-deployment-blue created
 deployment.apps/hello-deployment-green created
 ----
 
-The `hello.yaml` file contains two deployments, a service, and a gateway. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster.
+View the `hello.yaml` file. It contains two deployments, a service, and a gateway. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster.
 
-The `traffic.yaml` file contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live. Deploy the resources defined in `traffic.yaml`.
+[source, yaml, role="no_copy"]
+----
+include::finish/hello.yaml[tags=**;]
+----
+
+View the `traffic.yaml` file. It contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live. Deploy the resources defined in `traffic.yaml`.
+
+[source, yaml, role="no_copy"]
+----
+include::start/traffic.yaml[tags=**;]
+----
 
 ```
 kubectl apply -f traffic.yaml
@@ -339,7 +349,7 @@ You'll see a greeting message along with a corresponding version.
 
 Once you see that the microservice is working on the testing site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
-[source, Java]
+[source, yaml]
 ----
 include::finish/traffic.yaml[tags=**;]
 ----
