@@ -19,14 +19,14 @@
 :page-related-guides: ['docker', 'kubernetes']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
-:page-seo-title: Istio routing tutorial
-:page-seo-description: How to run microservices in Istio
+:page-seo-title: Managing microservice traffic using Istio
+:page-seo-description: Managing traffic with Istio to implement blue green deployments
 = Implementing blue green deployments using Istio
 
 [.hidden]
 NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
 
-Explore how to set up your microservices for blue green deployments using Istio.
+Explore how to use Istio to implement blue green deployments for your microservices.
 
 :kube: Kubernetes
 :istio: Istio
@@ -48,7 +48,7 @@ You will use the `kubectl` command-line tool to deploy your {kube} resources. Yo
 
 === What is {istio}?
 
-{istio} is a platform for managing how microservices interact with each other and the outside world.
+https://istio.io/[{istio}] is a platform for managing how microservices interact with each other and the outside world.
 It works by deploying {istio} control plane. Then, it injects an extra container into each of your pods that has
 the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is specialized for a service mesh architecture. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is an extra layer that deals with your HTTP traffic. It exists to perform certain functions so the features do no need to be part of the application's code.
 
@@ -222,7 +222,21 @@ deployment.apps/hello-deployment-blue created
 deployment.apps/hello-deployment-green created
 ----
 
-The `traffic.yaml` file contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. Deploy the resources defined in `traffic.yaml`.
+View the `hello.yaml` file. It contains two deployments, a service, and a gateway. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster.
+
+[source, yaml, role="no_copy"]
+----
+include::finish/hello.yaml[tags=**;]
+----
+
+View the `traffic.yaml` file. It contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
+
+[source, yaml, role="no_copy"]
+----
+include::start/traffic.yaml[tags=**;]
+----
+
+Deploy the resources defined in `traffic.yaml`.
 
 ```
 kubectl apply -f traffic.yaml
@@ -337,7 +351,7 @@ You'll see a greeting message along with a corresponding version.
 
 Once you see that the microservice is working on the testing site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
-[source, Java]
+[source, yaml]
 ----
 include::finish/traffic.yaml[tags=**;]
 ----
@@ -367,120 +381,6 @@ Make a request to the service by using curl.
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
-
-// =================================================================================================
-// Deploy v3
-// =================================================================================================
-
-== Automating the blue-green switch
-
-Manually changing the weights in the `traffic.yaml` to deploy a new version of your microservice can be a tedious process. Thankfully this can be easily automated with some scripting. You'll deploy version 3 of the `hello` microservice and create a script to automate the switch over. Use the maven command to bump the version of the microservice to `3.0-SNAPSHOT`.
-
-```
-mvn versions:set -DnewVersion=3.0-SNAPSHOT
-```
-
-Build the new version of the docker container.
-
-```
-mvn clean package
-```
-
-Deploy the new image to the blue deployment.
-
-```
-kubectl set image deployment/hello-deployment-blue hello-container=hello:3.0-SNAPSHOT
-```
-
-Test the updated microservice by making requests to the testing site. You'll see the `version` field of the JSON response is equal to `3.0-SNAPSHOT`.
-
-****
-[system]#*{win} | {mac}*#
-
-Make a request to the service by using curl.
-
-```
-curl -HHost:test.example.com http://localhost/hello
-```
-
-If curl is unavailable then use https://www.getpostman.com/[Postman].
-
-[system]#*{linux}*#
-
-Make a request to the service by using curl.
-
-```
-curl -HHost:test.example.com http://`minikube ip`:31380/hello
-```
-****
-
-Once you see that the microservice is working on the testing site, you will create a script to automate shifting the traffic.
-
-****
-[system]#*{mac} | {linux}*#
-
-Create the `set-live` file.
-
-[source, bash]
-----
-include::finish/set-live[tags=**;]
-----
-
-Make the `set-live` file executable.
-
-```
-chmod +x set-live
-```
-
-Move the live traffic over to the blue deployment.
-
-```
-./set-live blue
-```
-
-[system]#*{win}*#
-
-Create the `set-live.bat` file.
-
-[source, batch]
-----
-include::finish/set-live.bat[tags=**;]
-----
-
-Move the live traffic over to the blue deployment.
-
-```
-set-live.bat blue
-```
-****
-
-Ensure that the live traffic is now being routed to version 3 of the microservice.
-
-****
-[system]#*{win} | {mac}*#
-
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
-
-```
-curl -HHost:example.com http://localhost/hello
-```
-
-[system]#*{linux}*#
-
-Make a request to the service by using curl.
-
-```
-curl -HHost:example.com http://`minikube ip`:31380/hello
-```
-****
-
-You'll see a greeting message along with a corresponding version.
-
-----
-{"greeting":"hello","version":"3.0-SNAPSHOT"}
-----
-
-The `set-live` script accepts a single argument that is either `blue` or `green`. Based on the color it generates its own `traffic.yaml` contents with the appropriate weights substituted in to route live traffic to either the blue or green deployment. Similarly, it routes the testing traffic to the opposite color. Then, it deploys the updated virtual services to route traffic accordingly.
 
 == Testing microservices that are running on {kube}
 
@@ -528,41 +428,6 @@ Results:
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
-
-Next, roll back to the old version of the microservice and run the tests again. Notice that the tests fail because the version number that the tests expect and the version of the running microservice are now different. 
-
-****
-[system]#*{mac} | {linux}*#
-
-```
-./set-live green
-```
-
-[system]#*{win}*#
-
-```
-set-live.bat green
-```
-****
-
-****
-[system]#*{win} | {mac}*#
-
-Run the command to start the tests:
-
-```
-mvn verify -Ddockerfile.skip=true
-```
-
-[system]#*{linux}*#
-
-Run the command to start the tests:
-
-```
-mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
-```
-****
-
 
 == Tearing down your environment
 
