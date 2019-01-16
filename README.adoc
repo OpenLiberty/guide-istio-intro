@@ -73,7 +73,7 @@ perform blue green deployments.
 
 === What are blue green deployments?
 
-Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
+Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
 
 // =================================================================================================
 // Prerequisites
@@ -124,7 +124,7 @@ the deployment is complete.
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop this can be done from your Docker preferences. On minikube this can be done using the `--memory` flag.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On, Docker Desktop this can be done from your Docker preferences. On, minikube this can be done using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -251,17 +251,17 @@ v1 of the deployed application. As defined in `hello.yaml` the gateway is expect
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
-If curl is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
@@ -305,17 +305,17 @@ Test the updated microservice by making requests to the testing site. The `versi
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
 
-If curl is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:test.example.com http://`minikube ip`:31380/hello
@@ -346,15 +346,16 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
+If `curl` is unavailable then use https://www.getpostman.com/[Postman].
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
