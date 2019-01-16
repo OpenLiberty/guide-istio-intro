@@ -124,7 +124,7 @@ the deployment is complete.
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On, Docker Desktop this can be done from your Docker preferences. On, minikube this can be done using the `--memory` flag.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, this can be done from your Docker preferences. On minikube, this can be done using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
