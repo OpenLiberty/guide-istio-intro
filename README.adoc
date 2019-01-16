@@ -73,7 +73,7 @@ perform blue green deployments.
 
 === What are blue green deployments?
 
-Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
+Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario, there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
 
 // =================================================================================================
 // Prerequisites
@@ -257,7 +257,7 @@ Make a request to the service by using `curl`.
 curl -HHost:example.com http://localhost/hello
 ```
 
-If `curl` is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -311,7 +311,7 @@ Make a request to the service by using `curl`.
 curl -HHost:test.example.com http://localhost/hello
 ```
 
-If `curl` is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -352,7 +352,7 @@ Make a request to the service by using `curl`.
 curl -HHost:example.com http://localhost/hello
 ```
 
-If `curl` is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 [system]#*{linux}*#
 
 Make a request to the service by using `curl`.
