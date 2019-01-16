@@ -45,17 +45,3 @@ spec:
         host: hello-service
         subset: green
       weight: 0
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: hello-destination-rule
-spec:
-  host: hello-service
-  subsets:
-  - name: blue
-    labels:
-      version: blue
-  - name: green
-    labels:
-      version: green

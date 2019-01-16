@@ -222,14 +222,14 @@ deployment.apps/hello-deployment-blue created
 deployment.apps/hello-deployment-green created
 ----
 
-View the `hello.yaml` file. It contains two deployments, a service, and a gateway. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster.
+View the `hello.yaml` file. It contains two deployments, a service, a gateway, and a destination rule. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
 [source, yaml, role="no_copy"]
 ----
 include::finish/hello.yaml[tags=**;]
 ----
 
-View the `traffic.yaml` file. It contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
+View the `traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications through the gateway. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
 
 [source, yaml, role="no_copy"]
 ----
@@ -248,7 +248,6 @@ You can see that the virtual services and destination rule have been created.
 ----
 virtualservice.networking.istio.io/hello-virtual-service created
 virtualservice.networking.istio.io/hello-test-virtual-service created
-destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
 You can check that all of the deployments are available using the command.
