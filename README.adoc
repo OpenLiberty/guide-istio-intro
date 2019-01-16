@@ -40,8 +40,6 @@ Explore how to use Istio to implement blue green deployments for your microservi
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
 {istio} to shift traffic to implement blue-green deployments.
 
-Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
-
 The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or testing environments.
 
 You will use the `kubectl` command-line tool to deploy your {kube} resources. You'll use the `istioctl` command-line tool to inject {istio} sidecars into your pods.
@@ -72,6 +70,10 @@ You'll use {istio} to implement blue green deployments. The traffic shifting fea
 traffic to certain versions of services. This feature can be used to shift 100 percent of live traffic to blue deployments and 100 percent
 of testing traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as is necessary to
 perform blue green deployments.
+
+=== What are blue green deployments?
+
+Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
 
 // =================================================================================================
 // Prerequisites
@@ -140,7 +142,7 @@ prometheus               1         1         1            1           44s
 servicegraph             1         1         1            1           44s
 ----
 
-Finally, Enable automatic istio sidecar injection.
+Finally, enable automatic sidecar injection.
 
 ```
 kubectl label namespace default istio-injection=enabled
@@ -220,7 +222,7 @@ Deploy the resources defined in `traffic.yaml`.
 kubectl apply -f traffic.yaml
 ```
 
-You can see that the virtual services and destination rule have been created.
+You can see that the virtual services have been created.
 
 [source, role="no_copy"]
 ----
@@ -358,6 +360,12 @@ Make a request to the service by using curl.
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
+
+You'll see a greeting message along with a corresponding version.
+
+----
+{"greeting":"hello","version":"2.0-SNAPSHOT"}
+----
 
 == Testing microservices that are running on {kube}
 
