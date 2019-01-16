@@ -100,25 +100,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add the `bin/` directory to your `PATH`.
-
-****
-[system]#*{linux} | {mac}*#
-
-```
-cd bin
-export PATH=$PATH:$PWD
-cd ..
-```
-
-[system]#*{win}*#
-
-```
-cd bin
-set PATH=%PATH%;%cd%
-cd ..
-```
-****
+First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
@@ -158,6 +140,12 @@ prometheus               1         1         1            1           44s
 servicegraph             1         1         1            1           44s
 ----
 
+Finally, Enable automatic istio sidecar injection.
+
+```
+kubectl label namespace default istio-injection=enabled
+```
+
 // =================================================================================================
 // Deploying v1 of the service to cluster
 // =================================================================================================
@@ -195,22 +183,11 @@ open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
 prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 ----
 
-To deploy the `hello` microservice to the {kube} cluster, use the `istioctl` command to inject the sidecars into your deployments and use `kubectl` to deploy the microservice.
-
-****
-[system]#*{linux} | {mac}*#
+To deploy the `hello` microservice to the {kube} cluster, use `kubectl` to deploy the microservice.
 
 ```
-istioctl kube-inject -f hello.yaml | kubectl apply -f -
+kubectl apply -f hello.yaml
 ```
-
-[system]#*{win}*#
-```
-istioctl kube-inject -f hello.yaml > tmp-hello.yaml
-kubectl apply -f tmp-hello.yaml
-del tmp-hello.yaml
-```
-****
 
 You can see that your resources are created:
 
@@ -220,6 +197,7 @@ gateway.networking.istio.io/hello-gateway created
 service/hello-service created
 deployment.apps/hello-deployment-blue created
 deployment.apps/hello-deployment-green created
+destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
 View the `hello.yaml` file. It contains two deployments, a service, a gateway, and a destination rule. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
@@ -439,6 +417,12 @@ Delete your resources from the cluster.
 ```
 kubectl delete -f hello.yaml
 kubectl delete -f traffic.yaml
+```
+
+Delete the `istio-injection` label from the default namespace.
+
+```
+kubectl label namespace default istio-injection-
 ```
 
 Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
