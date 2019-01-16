@@ -47,7 +47,7 @@ You will use the `kubectl` command-line tool to deploy your {kube} resources. Yo
 === What is {istio}?
 
 https://istio.io/[{istio}] is a platform for managing how microservices interact with each other and the outside world.
-{istio} consists of a control plane and side cars injected into application pods. The side cars contain
+{istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
 the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is a service mesh. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is a sidecar that deals with HTTP and TCP traffic. It provides routing, monitoring, security, operations features for microservices.
 
 While {istio} runs on top of {kube} and that will be the focus of this guide, note that {istio}
