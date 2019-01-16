@@ -70,3 +70,17 @@ spec:
         image: hello:1.0-SNAPSHOT
         ports:
         - containerPort: 9080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: hello-destination-rule
+spec:
+  host: hello-service
+  subsets:
+  - name: blue
+    labels:
+      version: blue
+  - name: green
+    labels:
+      version: green

@@ -40,8 +40,6 @@ Explore how to use Istio to implement blue green deployments for your microservi
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
 {istio} to shift traffic to implement blue-green deployments.
 
-Blue green deployments are a way of deploying your web applications such that you have two environments where your application runs. In this scenario there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
-
 The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or testing environments.
 
 You will use the `kubectl` command-line tool to deploy your {kube} resources. You'll use the `istioctl` command-line tool to inject {istio} sidecars into your pods.
@@ -49,29 +47,33 @@ You will use the `kubectl` command-line tool to deploy your {kube} resources. Yo
 === What is {istio}?
 
 https://istio.io/[{istio}] is a platform for managing how microservices interact with each other and the outside world.
-It works by deploying {istio} control plane. Then, it injects an extra container into each of your pods that has
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is specialized for a service mesh architecture. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is an extra layer that deals with your HTTP traffic. It exists to perform certain functions so the features do no need to be part of the application's code.
+{istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is a service mesh. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is a sidecar that deals with HTTP and TCP traffic. It provides routing, monitoring, security, operations features for microservices.
 
-While {istio} supports {kube} and that will be the focus of this guide, note that {istio}
+While {istio} runs on top of {kube} and that will be the focus of this guide, note that {istio}
 can also be used with other environments such as Docker Compose. {istio} has many features such as
 traffic shifting, request routing, access control, and distributed tracing, but the focus of this guide will be on traffic shifting.
 
 === Why {istio}?
 
 {istio} provides a collection of features that allow you to manage several aspects of your services
-such as: Routing, Telemetry, and Security. These features can be easily configured independently of your
+such as: Routing, Telemetry, and Security. These features can be easily configured transparently to your
 application's code.
 
 {istio}'s routing features allow you to route HTTP requests based on several factors such as HTTP headers or cookies.
 A possible use case for {istio}'s Telemetry feature is to enable distributed tracing. Distributed tracing allows you
 to visualize how HTTP requests travel between different services in your cluster using a tool such as https://zipkin.io/[Zipkin].
-One of the items {istio} offers under its collection of security features is to enable HTTPS between pods
+One of the items {istio} offers under its collection of security features is to enable mutual TLS between pods
 in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
 
 You'll use {istio} to implement blue green deployments. The traffic shifting features allow you to allocate a percentage of
 traffic to certain versions of services. This feature can be used to shift 100 percent of live traffic to blue deployments and 100 percent
 of testing traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as is necessary to
 perform blue green deployments.
+
+=== What are blue green deployments?
+
+Blue green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario, there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now coming from what used to be the testing site.
 
 // =================================================================================================
 // Prerequisites
@@ -100,25 +102,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add the `bin/` directory to your `PATH`.
-
-****
-[system]#*{linux} | {mac}*#
-
-```
-cd bin
-export PATH=$PATH:$PWD
-cd ..
-```
-
-[system]#*{win}*#
-
-```
-cd bin
-set PATH=%PATH%;%cd%
-cd ..
-```
-****
+First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
@@ -140,7 +124,7 @@ the deployment is complete.
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop this can be done from your Docker preferences. On minikube this can be done using the `--memory` flag.
+Ensure that the istio deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, this can be done from your Docker preferences. On minikube, this can be done using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -157,6 +141,12 @@ istio-tracing            1         1         1            1           43s
 prometheus               1         1         1            1           44s
 servicegraph             1         1         1            1           44s
 ----
+
+Finally, enable automatic sidecar injection.
+
+```
+kubectl label namespace default istio-injection=enabled
+```
 
 // =================================================================================================
 // Deploying v1 of the service to cluster
@@ -195,22 +185,11 @@ open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
 prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 ----
 
-To deploy the `hello` microservice to the {kube} cluster, use the `istioctl` command to inject the sidecars into your deployments and use `kubectl` to deploy the microservice.
-
-****
-[system]#*{linux} | {mac}*#
+To deploy the `hello` microservice to the {kube} cluster, use `kubectl` to deploy the microservice.
 
 ```
-istioctl kube-inject -f hello.yaml | kubectl apply -f -
+kubectl apply -f hello.yaml
 ```
-
-[system]#*{win}*#
-```
-istioctl kube-inject -f hello.yaml > tmp-hello.yaml
-kubectl apply -f tmp-hello.yaml
-del tmp-hello.yaml
-```
-****
 
 You can see that your resources are created:
 
@@ -220,16 +199,17 @@ gateway.networking.istio.io/hello-gateway created
 service/hello-service created
 deployment.apps/hello-deployment-blue created
 deployment.apps/hello-deployment-green created
+destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-View the `hello.yaml` file. It contains two deployments, a service, and a gateway. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster.
+View the `hello.yaml` file. It contains two deployments, a service, a gateway, and a destination rule. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
 [source, yaml, role="no_copy"]
 ----
 include::finish/hello.yaml[tags=**;]
 ----
 
-View the `traffic.yaml` file. It contains two virtual services and a destination rule. A virtual service defines how requests are routed to your applications through the gateway. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to. In the virtual services you can configure the weight which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
+View the `traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
 
 [source, yaml, role="no_copy"]
 ----
@@ -242,13 +222,12 @@ Deploy the resources defined in `traffic.yaml`.
 kubectl apply -f traffic.yaml
 ```
 
-You can see that the virtual services and destination rule have been created.
+You can see that the virtual services have been created.
 
 [source, role="no_copy"]
 ----
 virtualservice.networking.istio.io/hello-virtual-service created
 virtualservice.networking.istio.io/hello-test-virtual-service created
-destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
 You can check that all of the deployments are available using the command.
@@ -256,9 +235,6 @@ You can check that all of the deployments are available using the command.
 ```
 kubectl get deployments
 ```
-
-Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
-v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
 
 Which produces a list of deployments for your microservices.
 
@@ -269,20 +245,23 @@ hello-deployment-blue    1         1         1            1           1m
 hello-deployment-green   1         1         1            1           1m
 ----
 
+Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
+v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
+
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
-If curl is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
@@ -326,17 +305,17 @@ Test the updated microservice by making requests to the testing site. The `versi
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
 
-If curl is unavailable then use https://www.getpostman.com/[Postman].
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:test.example.com http://`minikube ip`:31380/hello
@@ -367,24 +346,34 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using curl. If curl is unavailable then use https://www.getpostman.com/[Postman].
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
+If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
 [system]#*{linux}*#
 
-Make a request to the service by using curl.
+Make a request to the service by using `curl`.
 
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
 ****
 
+You'll see a greeting message along with a corresponding version.
+
+----
+{"greeting":"hello","version":"2.0-SNAPSHOT"}
+----
+
 == Testing microservices that are running on {kube}
 
+Next, you will create a test to verify that the correct version of your microservice is running.
+
 Create the endpoint test class in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
+
 [source, Java]
 ----
 include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright]
@@ -437,6 +426,12 @@ Delete your resources from the cluster.
 ```
 kubectl delete -f hello.yaml
 kubectl delete -f traffic.yaml
+```
+
+Delete the `istio-injection` label from the default namespace.
+
+```
+kubectl label namespace default istio-injection-
 ```
 
 Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
