@@ -14,7 +14,7 @@
 :page-duration: 30 minutes
 :page-releasedate: 2018-06-30
 :page-description: Explore how to set up your microservices for blue green deployments using Istio.
-:page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'Minikube', 'Istio']
+:page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
