@@ -11,12 +11,12 @@
 //
 :projectid: istio-intro
 :page-layout: guide
-:page-duration: 20 minutes
+:page-duration: 30 minutes
 :page-releasedate: 2018-06-30
 :page-description: Explore how to set up your microservices for blue green deployments using Istio.
-:page-tags: ['microservices', 'Kubernetes', 'Docker', 'containers', 'kubectl', 'Minikube', 'Istio']
+:page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
-:page-related-guides: ['docker', 'kubernetes']
+:page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
@@ -48,7 +48,9 @@ You will use the `kubectl` command-line tool to deploy your {kube} resources. Yo
 
 https://istio.io/[{istio}] is a platform for managing how microservices interact with each other and the outside world.
 {istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. {istio} is a service mesh. The service mesh architecture is a concept that a sidecar proxy is deployed with each microservice. The proxy is a sidecar that deals with HTTP and TCP traffic. It provides routing, monitoring, security, operations features for microservices.
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. 
+
+{istio} is a service mesh, meaning that a sidecar proxy is deployed with each microservice. The proxy is a sidecar that deals with HTTP and TCP traffic. It provides routing, monitoring, security, operations features for microservices.
 
 While {istio} runs on top of {kube} and that will be the focus of this guide, note that {istio}
 can also be used with other environments such as Docker Compose. {istio} has many features such as
@@ -245,8 +247,7 @@ hello-deployment-blue    1         1         1            1           1m
 hello-deployment-green   1         1         1            1           1m
 ----
 
-Once all the deployments are available, you can navigate to `\http://<ip-address>:<port>/hello` to make a request to view
-v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
+Once all the deployments are available, you will make a request to v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Ensure to set the `Host` header appropriately.
 
 ****
 [system]#*{win} | {mac}*#
@@ -270,6 +271,7 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 You'll see a greeting message along with a corresponding version.
 
+[source, role="no_copy"]
 ----
 {"greeting":"hello","version":"1.0-SNAPSHOT"}
 ----
@@ -324,6 +326,7 @@ curl -HHost:test.example.com http://`minikube ip`:31380/hello
 
 You'll see a greeting message along with a corresponding version.
 
+[source, role="no_copy"]
 ----
 {"greeting":"hello","version":"2.0-SNAPSHOT"}
 ----
@@ -364,6 +367,7 @@ curl -HHost:example.com http://`minikube ip`:31380/hello
 
 You'll see a greeting message along with a corresponding version.
 
+[source, role="no_copy"]
 ----
 {"greeting":"hello","version":"2.0-SNAPSHOT"}
 ----
@@ -448,7 +452,7 @@ include::{common-includes}/kube-minikube-teardown.adoc[]
 
 == Great work! You're done!
 
-You have deployed a microservice to a Kubernetes cluster and used Istio to implement a blue-green deployment scheme.
+You have deployed a microservice running on Open Liberty to a Kubernetes cluster and used Istio to implement a blue-green deployment scheme.
 
 // uncomment this when Istio guide is released
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
