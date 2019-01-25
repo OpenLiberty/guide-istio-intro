@@ -12,21 +12,21 @@
 :projectid: istio-intro
 :page-layout: guide
 :page-duration: 30 minutes
-:page-releasedate: 2018-06-30
-:page-description: Explore how to set up your microservices for blue-green deployments using Istio.
+:page-releasedate: 2019-02-01
+:page-description: Explore how to manage microservice traffic using Istio.
 :page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
-:page-seo-description: Managing traffic with Istio to implement blue-green deployments
+:page-seo-description: How to manage microservice traffic with Istio
 = Managing microservice traffic using Istio
 
 [.hidden]
 NOTE: This repository contains the guide documentation source. To view the guide in published form, view it on the https://openliberty.io/guides/{projectid}.html[Open Liberty website].
 
-Explore how to use Istio to implement blue-green deployments for your microservices.
+Explore how to manage microservice traffic using Istio.
 
 :kube: Kubernetes
 :istio: Istio
@@ -41,15 +41,15 @@ Explore how to use Istio to implement blue-green deployments for your microservi
 == What you'll learn
 
 You will learn how to deploy an application to a Kubernetes cluster and enable {istio} on it. You will also learn how to configure
-{istio} to shift traffic to implement blue-green deployments.
+{istio} to shift traffic to implement blue-green deployments for microservices.
 
 === What is {istio}?
 
-https://istio.io/[{istio}] is a platform for managing how microservices interact with each other and the outside world.
+https://istio.io/[{istio}] is a service mesh, meaning that it's a platform for managing
+how microservices interact with each other and the outside world.
 {istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and controls all the traffic to and from your container. 
-
-{istio} is a service mesh, meaning that a sidecar proxy is deployed with each microservice. The proxy is a sidecar that deals with HTTP and TCP traffic.
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and
+controls all the traffic to and from your container, it deals with HTTP and TCP traffic.
 
 While {istio} runs on top of {kube} and that will be the focus of this guide, note that {istio}
 can also be used with other environments such as Docker Compose. {istio} has many features such as
@@ -57,11 +57,11 @@ traffic shifting, request routing, access control, and distributed tracing, but 
 
 === Why {istio}?
 
-{istio}'s routing features allow you to route HTTP requests based on several factors such as HTTP headers or cookies.
-A possible use case for {istio}'s Telemetry feature is to enable distributed tracing. Distributed tracing allows you
+{istio} provides a collection of features that allows you to manage several aspects of your services.
+One example is {istio}'s routing features, it allows you to route HTTP requests based on several factors such as HTTP headers or cookies.
+Another use case for {istio} is Telemetry, which can be used to enable distributed tracing. Distributed tracing allows you
 to visualize how HTTP requests travel between different services in your cluster using a tool such as https://www.jaegertracing.io/[Jaeger].
-One of the items {istio} offers under its collection of security features is to enable mutual TLS between pods
-in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
+Finally, one of the items {istio} offers under its collection of security features is to enable mutual TLS between pods in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
 
 You'll use {istio} to implement blue-green deployments. The traffic shifting features allows you to allocate a percentage of
 traffic to certain versions of services. This feature can be used to shift 100 percent of live traffic to blue deployments and 100 percent
@@ -248,7 +248,7 @@ hello-deployment-blue    1         1         1            1           1m
 hello-deployment-green   1         1         1            1           1m
 ----
 
-Once all the deployments are available, you will make a request to v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Requests to `example.com` won't be routed to the appropriate IP address. Ensure to set the `Host` header appropriately so the gateway routes your requests appropriately.
+Once all the deployments are available, you will make a request to v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Requests to `example.com` won't be routed to the appropriate IP address. Ensure that the `Host` header is set to `example.com` so the gateway routes your requests appropriately, for instance, with the `-H` option of the `curl` command.
 
 ****
 [system]#*{win} | {mac}*#
