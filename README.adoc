@@ -155,7 +155,7 @@ any additional steps for the sidecars to be injected.
 // Deploying v1
 // =================================================================================================
 
-== Deploying version 2 of the hello microservice
+== Deploying version 1 of the hello microservice
 
 Navigate to the `start` directory and run the following command. It may take a few minutes to complete.
 It will build the application and then package it into a {docker} image.
