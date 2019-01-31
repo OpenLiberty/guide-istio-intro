@@ -20,7 +20,7 @@
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
-:page-seo-description: How to manage microservice traffic with Istio
+:page-seo-description: A tutorial on how to manage microservice traffic with Istio using blue-green deployment as an example
 = Managing microservice traffic using Istio
 
 [.hidden]
