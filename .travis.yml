@@ -11,13 +11,14 @@ before_script:
 - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 - chmod +x kubectl
 - sudo ln -s $(pwd)/kubectl /usr/local/bin/kubectl
-- wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64 -q -O minikube
+- wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64
+  -q -O minikube
 - chmod +x minikube
 - sudo ln -s $(pwd)/minikube /usr/local/bin/minikube
 - sudo minikube start --vm-driver=none --bootstrapper=localkube
 - chmod +x ../scripts/travisTest.sh
 script:
-- ../scripts/travisTest.sh
+- "../scripts/travisTest.sh"
 notifications:
   slack:
     template:
@@ -27,7 +28,7 @@ notifications:
     - 'Author: %{author}'
     - 'Summary: %{result} in %{duration}'
     rooms:
-      secure: YWWBjdjIecQL+Sam5fLjsyHjj+6S5FtDoZtpEyRRQDrn6wYdw9reZG2kNSzDjrUynMeeZXQUXEDABCOMhEN7a7L0SXjMdyTJ68XW9Rd6PRN5seYBHJvDQv9w3EwcKz71h3IIDYr8pxKFga06Afn0L9dkSOEEPVemqfftdnOI4Mm8peQrXGHTWQaYwsMYZ5vVq+RMXtYHaaIExcme0qEN+TUuEC6RGk386Mj7c5iT2GQ6grfi0tODzRmebAm6nWTG2eSmB6CXL0h3ly0weqK71RLQX5RicMB8IIuACEQWf6+GpwmVB/chlc0Z6Axz5mFibUBMBCGucLyJxNpFDr+FoSIBu88PWAqlwQDe0Uv8Dfs+1ZXnlEPt6dHZ4JnXau0NqKEct6tLmKPOSS+Q4QF/lhOmfIlPTDM+UcztigkSEt8AaAX9tdwgk0R/yUgGhFy+BDqkyeL/iJfc6AhlthqBrLvr0cFRfoGG01hKMw9ua+addtR2GpXV0ne90yfgNyDaQkrLJ+TH4NqIK9Y3JhaV6lVsvxisC3dNIzULvtMi/x24Wp76GYN3UhkkB5zlk24ZBjAcU3vypa3uHxM9aQjjiJyhM13vZtrLI7lL2+MKz8vs1y61vo/oppSSOswzuULvgbXqUmEtO9NUdf2GwT8vJUMMNNv5lHvjq51Rn5pV3LM=
+      secure: VwWwp+VAYE1WI0PMVnDmEUMUDDaH9xH/Rq91cuDAIfdmA5+krxIGYTOjNgvP0ZMbohsWMOLlqMwurBvD2kU4Blvv0av2+ZZPzFtvNu5E/VX6wFlPAgt+qyEHqfC+0Cgv22KecCaD5e65Yhqi+OFdZRTjjDCaJuJ0tC+oZEFC5kMWOlf2hTwaffEbPBUz/ebbrmdvq8M/4b/H3PLRQYkvwM3h3tJVwAIjeao4X+8yKGXur+uHNoamZt8KlcVQh4nFHJUdTHQLNu78Fy5SW2zHXCIdcTdVrIBdWeMl1aT3smyssTUwobiFGtmJHGoLRZUh4FAIFJXdyf7S2Oq1kg/qZwq/fLVjww3/Ed+SG/zf8JQwPmJ5JsxoypPu3oI1HAmUwdT0ejJEtRlAUHNsliTyXHWVs7+nH7K+GbXIANfplGngeY7Wyp/476qLlfPt2iS/5rW9xcrZbXBBF7KzRSh+TAx5dAXcXuSjFc6FJcxnupq4unVPo/ejO/3H6hqReKO43LaOClYumLsWZLLgddC+Yty8lWs8Y481NcGUr2B1lOfK8WE+DlX0USgtsswsfgZ7zMV/TWW5BC22YeJXb/PcnJd28FKZjih9XCWDR4wtftxDWY6drAVcxg8OeCtVzXit7RVU4KwqoLDoEkOolOIxrvBgopLJuwOfJFQsffYbcXQ=
     on_success: never
     on_failure: always
 branches:
