@@ -48,31 +48,32 @@ You will learn how to deploy an application to a Kubernetes cluster and enable {
 https://istio.io/[{istio}] is a service mesh, meaning that it's a platform for managing
 how microservices interact with each other and the outside world.
 {istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts and
-controls all the traffic to and from your container, it deals with HTTP and TCP traffic.
+the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts
+and controls all the HTTP and TCP traffic to and from your container.
 
-While {istio} runs on top of {kube} and that will be the focus of this guide, note that {istio}
-can also be used with other environments such as Docker Compose. {istio} has many features such as
+While {istio} runs on top of {kube} and that will be the focus of this guide, you can also use {istio} with
+other environments such as https://docs.docker.com/compose/overview/[Docker Compose]. {istio} has many features such as
 traffic shifting, request routing, access control, and distributed tracing, but the focus of this guide will be on traffic shifting.
 
 === Why {istio}?
 
 {istio} provides a collection of features that allows you to manage several aspects of your services.
-One example is {istio}'s routing features, it allows you to route HTTP requests based on several factors such as HTTP headers or cookies.
-Another use case for {istio} is Telemetry, which can be used to enable distributed tracing. Distributed tracing allows you
-to visualize how HTTP requests travel between different services in your cluster using a tool such as https://www.jaegertracing.io/[Jaeger].
-Finally, one of the items {istio} offers under its collection of security features is to enable mutual TLS between pods in your cluster. Enabling HTTPS between pods secures communication between microservices internally.
+One example is {istio}'s routing features. You can route HTTP requests based on several factors such as HTTP headers or cookies.
+Another use case for {istio} is telemetry, which you can use to enable distributed tracing. Distributed tracing allows you
+to visualize how HTTP requests travel between different services in your cluster by using a tool such as https://www.jaegertracing.io/[Jaeger].
+Additionally, as part of its collection of security features, {istio} allows you to enable mutual TLS between pods in your cluster.
+Enabling TLS between pods secures communication between microservices internally.
 
-You'll use {istio} to implement blue-green deployments. The traffic shifting features allows you to allocate a percentage of
-traffic to certain versions of services. This feature can be used to shift 100 percent of live traffic to blue deployments and 100 percent
-of testing traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as is necessary to
+You'll use {istio} to implement https://openliberty.io/guides/istio-intro.html#what-are-blue-green-deployments[blue-green deployments]. The traffic shifting feature allows you to allocate a percentage of
+traffic to certain versions of services. You can use this feature to shift 100 percent of live traffic to blue deployments and 100 percent
+of test traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as necessary to
 perform blue-green deployments.
 
-The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or testing environments.
+The microservice you'll deploy is called `hello`. It responds with a JSON object that has a version number and a greeting. The version number will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or test environments.
 
 === What are blue-green deployments?
 
-Blue-green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario, there will be a production environment and a testing environment. At any point in time the blue deployment may be accepting production traffic and the green accepting testing traffic or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your testing environment. Once the new version is verified on the testing environment, the traffic will be shifted over. Thus, your live traffic is now being handled by what used to be the testing site.
+Blue-green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario, you will have a production environment and a test environment. At any point in time, the blue deployment can accept production traffic and the green deployment can accept test traffic, or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is currently acting as your test environment. After the new version is verified on the test environment, the traffic will be shifted over. Thus, your live traffic is now being handled by what used to be the test site.
 
 // =================================================================================================
 // Prerequisites
@@ -109,21 +110,21 @@ Next, deploy the {istio} custom resource definitions. Custom resource definition
 kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
 
-Next, deploy {istio}'s resources to your cluster by running the `kubectl apply` command, which creates or updates
+Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command will deploy {istio}.
 
 ```
 kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
 
-Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` once
+Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` after
 the deployment is complete.
 
 ```
 kubectl get deployments -n istio-system
 ```
  
-Ensure that the {istio} deployments are all available before continuing, it may take a few minutes for all of them to be available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, this can be done from your {docker} preferences. On {minikube}, this can be done using the `--memory` flag.
+Ensure that the {istio} deployments are all available before you continue. The deployments might take a few minutes to become available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, you can increase the memory from your {docker} preferences. On {minikube}, you can increase the memory using the `--memory` flag.
 [source, role="no_copy"]
 ----
 NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -165,8 +166,8 @@ To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-
 mvn clean package
 ```
 
-After running the command, it builds a {docker} image for the `hello` microservice.
-You can verify that this image was created by running the given command. 
+The command builds a {docker} image for the `hello` microservice.
+You can verify that this image was created by running the following command. 
 
 ```
 docker images
@@ -188,7 +189,7 @@ open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
 prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 ----
 
-To deploy the `hello` microservice to the {kube} cluster, use `kubectl` to deploy the microservice.
+To deploy the `hello` microservice to the {kube} cluster, use the following command to deploy the microservice.
 
 ```
 kubectl apply -f hello.yaml
@@ -212,14 +213,14 @@ View the `hello.yaml` file. It contains two deployments, a service, a gateway, a
 include::finish/hello.yaml[tags=**;]
 ----
 
-View the `traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0 which corresponds to which deployment is live.
+View the `traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0, which corresponds to which deployment is live.
 
 [source, yaml, role="no_copy"]
 ----
 include::start/traffic.yaml[tags=**;]
 ----
 
-Deploy the resources defined in `traffic.yaml`.
+Deploy the resources defined in the `traffic.yaml` file.
 
 ```
 kubectl apply -f traffic.yaml
@@ -233,13 +234,13 @@ virtualservice.networking.istio.io/hello-virtual-service created
 virtualservice.networking.istio.io/hello-test-virtual-service created
 ----
 
-You can check that all of the deployments are available using the command.
+You can check that all of the deployments are available by running the following command.
 
 ```
 kubectl get deployments
 ```
 
-Which produces a list of deployments for your microservices.
+The command produces a list of deployments for your microservices that is similar to the following output.
 
 [source, role="no_copy"]
 ----
@@ -248,20 +249,20 @@ hello-deployment-blue    1         1         1            1           1m
 hello-deployment-green   1         1         1            1           1m
 ----
 
-Once all the deployments are available, you will make a request to v1 of the deployed application. As defined in `hello.yaml` the gateway is expecting the host to be `example.com`. Requests to `example.com` won't be routed to the appropriate IP address. Ensure that the `Host` header is set to `example.com` so the gateway routes your requests appropriately, for instance, with the `-H` option of the `curl` command.
+After all the deployments are available, you will make a request to v1 of the deployed application. As defined in the `hello.yaml` file the gateway is expecting the host to be `example.com`. However, requests to `example.com` won't be routed to the appropriate IP address. To ensure that the gateway routes your requests appropriately, ensure that the Host header is set to `example.com`. For instance, you can set the `Host` header with the `-H` option of the `curl` command.
 
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using `curl`.
+Make a request to the service by running the following `curl` command.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
-If `curl` is unavailable, then use https://www.getpostman.com/[Postman]. Postman enables you
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `http://localhost/hello`
-into the URL bar. Next, switch to the `Headers` tab and add a header with key `Host` and value `example.com`.
+into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
 
 [system]#*{linux}*#
@@ -304,20 +305,20 @@ Deploy the new image to the green deployment.
 kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 ```
 
-You will work with two environments. One of the environments is a testing site located at `test.example.com`. The other environment is your production environment located at `example.com`. To start with, the production environment is tied to the blue deployment and the testing environment is tied to the green deployment.
+You will work with two environments. One of the environments is a test site located at `test.example.com`. The other environment is your production environment located at `example.com`. To start with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
 
-Test the updated microservice by making requests to the testing site. The `version` field in the response JSON is now `2.0-SNAPSHOT` on the testing site and it is still `1.0-SNAPSHOT` on the live site.
+Test the updated microservice by making requests to the test site. The `version` field in the response JSON is now `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using `curl`.
+Make a request to the service by running the following `curl` command.
 
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
 
-If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -335,7 +336,7 @@ You'll see a greeting message along with a corresponding version.
 {"greeting":"hello","version":"2.0-SNAPSHOT"}
 ----
 
-Once you see that the microservice is working on the testing site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+After you see that the microservice is working on the test site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
 [source, yaml]
 ----
@@ -353,13 +354,13 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 ****
 [system]#*{win} | {mac}*#
 
-Make a request to the service by using `curl`.
+Make a request to the service by running the following `curl` command.
 
 ```
 curl -HHost:example.com http://localhost/hello
 ```
 
-If `curl` is unavailable, then use https://www.getpostman.com/[Postman].
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman].
 
 [system]#*{linux}*#
 
@@ -412,7 +413,7 @@ The `cluster.ip` and `port` parameters refer to the IP address and port for the 
 
 The `dockerfile.skip=true` flag skips rebuilding the {docker} images.
 
-If the tests pass, then you should see output similar to the following:
+If the tests pass, then you should see output similar to the following example:
 
 [source, role="no_copy"]
 ----
@@ -429,7 +430,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 == Tearing down your environment
 
-Finally, you may want to teardown all the deployed resources as a cleanup step.
+You might want to teardown all the deployed resources as a cleanup step.
 
 Delete your resources from the cluster.
 ```
@@ -458,7 +459,7 @@ include::{common-includes}/kube-minikube-teardown.adoc[]
 
 == Great work! You're done!
 
-You have deployed a microservice running on Open Liberty to a Kubernetes cluster and used Istio to implement a blue-green deployment scheme.
+You have deployed a microservice that runs on Open Liberty to a Kubernetes cluster and used {istio} to implement a blue-green deployment scheme.
 
 // uncomment this when Istio guide is released
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
