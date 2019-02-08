@@ -215,11 +215,6 @@ deployment.apps/hello-deployment-green created
 destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-[role="code_command hotspot=1-2", subs="quotes"]
-----
-#View the `hello.yaml` file.#
-`hello.yaml`
-----
 hello.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
@@ -228,11 +223,6 @@ include::finish/hello.yaml[tags=**;]
 
 View the [hotspot file=0]`hello.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=30-50 file=0]`blue` and the second deployment is labeled [hotspot=52-72 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
-[role="code_command", subs="quotes"]
-----
-#View the `traffic.yaml` file.#
-`traffic.yaml`
-----
 start/traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
