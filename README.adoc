@@ -226,20 +226,20 @@ hello.yaml
 include::finish/hello.yaml[tags=**;]
 ----
 
-The `hello.yaml` file contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=30-50 file=0]`blue` and the second deployment is labeled [hotspot=52-72 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
+View the [hotspot file=0]`hello.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=30-50 file=0]`blue` and the second deployment is labeled [hotspot=52-72 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
 [role="code_command", subs="quotes"]
 ----
 #View the `traffic.yaml` file.#
 `traffic.yaml`
 ----
-traffic.yaml
+start/traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
 include::start/traffic.yaml[tags=**;]
 ----
 
-The `traffic.yaml` file contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0, which corresponds to which deployment is live.
+View the [hotspot file=1]`traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0, which corresponds to which deployment is live.
 
 Deploy the resources defined in the `traffic.yaml` file.
 
@@ -373,7 +373,7 @@ After you see that the microservice is working on the test site, modify the weig
 #Update the `traffic.yaml` file.#
 `traffic.yaml`
 ----
-traffic.yaml
+finish/traffic.yaml
 [source, yaml, linenums, role='code_column']
 ----
 include::finish/traffic.yaml[tags=**;!copyright]
