@@ -10,7 +10,7 @@
 //     IBM Corporation
 //
 :projectid: istio-intro
-:page-layout: guide
+:page-layout: guide-multipane
 :page-duration: 30 minutes
 :page-releasedate: 2019-02-01
 :page-description: Explore how to manage microservice traffic using Istio.
@@ -85,6 +85,7 @@ include::{common-includes}/kube-prereq.adoc[]
 // Getting Started
 // =================================================================================================
 
+[role=command]
 include::{common-includes}/gitclone.adoc[]
 
 // no "try what you'll build" section in this guide since it would be too long due to all setup the user will have to do.
@@ -94,6 +95,7 @@ include::{common-includes}/gitclone.adoc[]
 // =================================================================================================
 
 :minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.10.0
+[role=command]
 include::{common-includes}/kube-start.adoc[]
 
 // =================================================================================================
@@ -106,6 +108,7 @@ First, go to the https://github.com/istio/istio/releases[{istio} release page] a
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
+[role=command]
 ```
 kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
@@ -113,6 +116,7 @@ kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command will deploy {istio}.
 
+[role=command]
 ```
 kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
@@ -120,6 +124,7 @@ kubectl apply -f install/kubernetes/istio-demo.yaml
 Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` after
 the deployment is complete.
 
+[role=command]
 ```
 kubectl get deployments -n istio-system
 ```
@@ -144,6 +149,7 @@ servicegraph             1         1         1            1           44s
 
 Finally, create the `istio-injection` label and set its value to `enabled`.
 
+[role=command]
 ```
 kubectl label namespace default istio-injection=enabled
 ```
@@ -162,6 +168,7 @@ Navigate to the `start` directory and run the following command. It may take a f
 It will build the application and then package it into a {docker} image.
 To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-plugin`.
 
+[role=command]
 ```
 mvn clean package
 ```
@@ -169,6 +176,7 @@ mvn clean package
 The command builds a {docker} image for the `hello` microservice.
 You can verify that this image was created by running the following command. 
 
+[role=command]
 ```
 docker images
 ```
@@ -191,6 +199,7 @@ prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 
 To deploy the `hello` microservice to the {kube} cluster, use the following command to deploy the microservice.
 
+[role=command]
 ```
 kubectl apply -f hello.yaml
 ```
@@ -206,22 +215,35 @@ deployment.apps/hello-deployment-green created
 destinationrule.networking.istio.io/hello-destination-rule created
 ----
 
-View the `hello.yaml` file. It contains two deployments, a service, a gateway, and a destination rule. One of the deployments is labeled `blue` and the second deployment is labeled `green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
-
-[source, yaml, role="no_copy"]
+[role="code_command hotspot=1-2", subs="quotes"]
+----
+#View the `hello.yaml` file.#
+`hello.yaml`
+----
+hello.yaml
+[source, yaml, linenums, role='code_column no_copy']
 ----
 include::finish/hello.yaml[tags=**;]
 ----
 
-View the `traffic.yaml` file. It contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0, which corresponds to which deployment is live.
+The `hello.yaml` file contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=30-50 file=0]`blue` and the second deployment is labeled [hotspot=52-72 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
-[source, yaml, role="no_copy"]
+[role="code_command", subs="quotes"]
+----
+#View the `traffic.yaml` file.#
+`traffic.yaml`
+----
+traffic.yaml
+[source, yaml, linenums, role='code_column no_copy']
 ----
 include::start/traffic.yaml[tags=**;]
 ----
 
+The `traffic.yaml` file contains two virtual services. A virtual service defines how requests are routed to your applications. In the virtual services, you can configure the weight, which controls the amount of traffic going to each deployment. In this case, the weights should be 100 or 0, which corresponds to which deployment is live.
+
 Deploy the resources defined in the `traffic.yaml` file.
 
+[role=command]
 ```
 kubectl apply -f traffic.yaml
 ```
@@ -236,6 +258,7 @@ virtualservice.networking.istio.io/hello-test-virtual-service created
 
 You can check that all of the deployments are available by running the following command.
 
+[role=command]
 ```
 kubectl get deployments
 ```
@@ -256,6 +279,7 @@ After all the deployments are available, you will make a request to v1 of the de
 
 Make a request to the service by running the following `curl` command.
 
+[role=command]
 ```
 curl -HHost:example.com http://localhost/hello
 ```
@@ -269,6 +293,7 @@ Finally, click the blue `Send` button to make the request.
 
 Make a request to the service by using `curl`.
 
+[role=command]
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
@@ -289,18 +314,21 @@ You'll see a greeting message along with a corresponding version.
 
 The `hello` microservice is set up to respond with the version that is set in the `pom.xml` file. The tag for the {docker} image is also dependent on the version specified in the `pom.xml` file. Use the {maven} command to bump the version of the microservice to `2.0-SNAPSHOT`.
 
+[role=command]
 ```
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
 ```
 
 Build the new version of the {docker} container.
 
+[role=command]
 ```
 mvn clean package
 ```
 
 Deploy the new image to the green deployment.
 
+[role=command]
 ```
 kubectl set image deployment/hello-deployment-green hello-container=hello:2.0-SNAPSHOT
 ```
@@ -314,6 +342,7 @@ Test the updated microservice by making requests to the test site. The `version`
 
 Make a request to the service by running the following `curl` command.
 
+[role=command]
 ```
 curl -HHost:test.example.com http://localhost/hello
 ```
@@ -324,6 +353,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 
 Make a request to the service by using `curl`.
 
+[role=command]
 ```
 curl -HHost:test.example.com http://`minikube ip`:31380/hello
 ```
@@ -338,13 +368,20 @@ You'll see a greeting message along with a corresponding version.
 
 After you see that the microservice is working on the test site, modify the weights in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
 
-[source, yaml]
+[role="code_command hotspot=17 hotspot=23 hotspot=41 hotspot=47", subs="quotes"]
 ----
-include::finish/traffic.yaml[tags=**;]
+#Update the `traffic.yaml` file.#
+`traffic.yaml`
+----
+traffic.yaml
+[source, yaml, linenums, role='code_column']
+----
+include::finish/traffic.yaml[tags=**;!copyright]
 ----
 
 Deploy the updated `traffic.yaml` file.
 
+[role=command]
 ```
 kubectl apply -f traffic.yaml
 ```
@@ -356,6 +393,7 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 
 Make a request to the service by running the following `curl` command.
 
+[role=command]
 ```
 curl -HHost:example.com http://localhost/hello
 ```
@@ -366,6 +404,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 
 Make a request to the service by using `curl`.
 
+[role=command]
 ```
 curl -HHost:example.com http://`minikube ip`:31380/hello
 ```
@@ -384,7 +423,13 @@ Next, you will create a test to verify that the correct version of your microser
 
 Create the endpoint test class in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
 
-[source, Java]
+[role="code_command", subs="quotes"]
+----
+#Create the `EndpointTest` class.#
+`src/test/java/it/io/openliberty/guides/rest/EndpointTest.java`
+----
+EndpointTest.java
+[source, Java, linenums, role='code_column']
 ----
 include::finish/src/test/java/it/io/openliberty/guides/rest/EndpointTest.java[tags=**;!copyright]
 ----
@@ -396,6 +441,7 @@ The `testGetGreeting` test case verifies that the correct greeting and version n
 
 Run the command to start the tests:
 
+[role=command]
 ```
 mvn verify -Ddockerfile.skip=true
 ```
@@ -404,6 +450,7 @@ mvn verify -Ddockerfile.skip=true
 
 Run the command to start the tests:
 
+[role=command]
 ```
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
@@ -433,6 +480,8 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 You might want to teardown all the deployed resources as a cleanup step.
 
 Delete your resources from the cluster.
+
+[role=command]
 ```
 kubectl delete -f hello.yaml
 kubectl delete -f traffic.yaml
@@ -441,11 +490,14 @@ kubectl delete -f traffic.yaml
 Delete the `istio-injection` label from the default namespace. The hyphen immediately
 after the label name indicates that the label should be deleted.
 
+[role=command]
 ```
 kubectl label namespace default istio-injection-
 ```
 
 Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
+
+[role=command]
 ```
 kubectl delete -f install/kubernetes/istio-demo.yaml
 kubectl delete -f install/kubernetes/helm/istio/templates/crds.yaml
@@ -466,6 +518,8 @@ You have deployed a microservice that runs on Open Liberty to a Kubernetes clust
 
 // Include the below from the guides-common repo to tell users how they can contribute to the guide
 include::{common-includes}/finish.adoc[]
+
+include::https://raw.githubusercontent.com/OpenLiberty/guides-common/multipane/attribution.adoc[subs="attributes"]
 
 // DO NO CREATE ANYMORE SECTIONS AT THIS POINT
 // Related guides will be added in automatically here if you included them in ":page-related-guides"
