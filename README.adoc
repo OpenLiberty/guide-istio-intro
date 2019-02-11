@@ -356,8 +356,6 @@ You'll see a greeting message along with a corresponding version.
 {"greeting":"hello","version":"2.0-SNAPSHOT"}
 ----
 
-After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
-
 [role="code_command", subs="quotes"]
 ----
 #Update the `traffic.yaml` file.#
@@ -368,6 +366,9 @@ finish/traffic.yaml
 ----
 include::finish/traffic.yaml[tags=**;!copyright]
 ----
+[role="edit_command_text"]
+After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+
 
 Deploy the updated `traffic.yaml` file.
 
