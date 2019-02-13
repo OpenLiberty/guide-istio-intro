@@ -221,7 +221,7 @@ hello.yaml
 include::finish/hello.yaml[tags=**;]
 ----
 
-View the [hotspot file=0]`hello.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=30-50 file=0]`blue` and the second deployment is labeled [hotspot=52-72 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
+View the [hotspot file=0]`hello.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=33 hotspot=39 hotspot=44 file=0]`blue` and the second deployment is labeled [hotspot=55 hotspot=61 hotspot=66 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
 start/traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
@@ -275,7 +275,7 @@ curl -HHost:example.com http://localhost/hello
 ```
 
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman]. Postman enables you
-to make requests using a graphical interface. To make a request with Postman, enter `http://localhost/hello`
+to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/hello`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
 
@@ -367,7 +367,7 @@ finish/traffic.yaml
 include::finish/traffic.yaml[tags=**;!copyright]
 ----
 [role="edit_command_text"]
-After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the live traffic to the green deployment.
+After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
 
 
 Deploy the updated `traffic.yaml` file.
