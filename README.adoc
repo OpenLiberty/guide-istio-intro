@@ -45,14 +45,14 @@ You will learn how to deploy an application to a Kubernetes cluster and enable {
 
 === What is {istio}?
 
-https://istio.io/[{istio}] is a service mesh, meaning that it's a platform for managing
+https://istio.io/[{istio}^] is a service mesh, meaning that it's a platform for managing
 how microservices interact with each other and the outside world.
 {istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
-the https://www.envoyproxy.io/[Envoy] proxy. You can think of Envoy as a sidecar that intercepts
+the https://www.envoyproxy.io/[Envoy^] proxy. You can think of Envoy as a sidecar that intercepts
 and controls all the HTTP and TCP traffic to and from your container.
 
 While {istio} runs on top of {kube} and that will be the focus of this guide, you can also use {istio} with
-other environments such as https://docs.docker.com/compose/overview/[Docker Compose]. {istio} has many features such as
+other environments such as https://docs.docker.com/compose/overview/[Docker Compose^]. {istio} has many features such as
 traffic shifting, request routing, access control, and distributed tracing, but the focus of this guide will be on traffic shifting.
 
 === Why {istio}?
@@ -60,11 +60,11 @@ traffic shifting, request routing, access control, and distributed tracing, but 
 {istio} provides a collection of features that allows you to manage several aspects of your services.
 One example is {istio}'s routing features. You can route HTTP requests based on several factors such as HTTP headers or cookies.
 Another use case for {istio} is telemetry, which you can use to enable distributed tracing. Distributed tracing allows you
-to visualize how HTTP requests travel between different services in your cluster by using a tool such as https://www.jaegertracing.io/[Jaeger].
+to visualize how HTTP requests travel between different services in your cluster by using a tool such as https://www.jaegertracing.io/[Jaeger^].
 Additionally, as part of its collection of security features, {istio} allows you to enable mutual TLS between pods in your cluster.
 Enabling TLS between pods secures communication between microservices internally.
 
-You'll use {istio} to implement https://openliberty.io/guides/istio-intro.html#what-are-blue-green-deployments[blue-green deployments]. The traffic shifting feature allows you to allocate a percentage of
+You'll use {istio} to implement https://openliberty.io/guides/istio-intro.html#what-are-blue-green-deployments[blue-green deployments^]. The traffic shifting feature allows you to allocate a percentage of
 traffic to certain versions of services. You can use this feature to shift 100 percent of live traffic to blue deployments and 100 percent
 of test traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as necessary to
 perform blue-green deployments.
@@ -104,7 +104,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases[{istio} release page] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
+First, go to the https://github.com/istio/istio/releases[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
@@ -274,7 +274,7 @@ Make a request to the service by running the following `curl` command.
 curl -HHost:example.com http://localhost/hello
 ```
 
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman]. Postman enables you
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/hello`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
@@ -337,7 +337,7 @@ Make a request to the service by running the following `curl` command.
 curl -HHost:test.example.com http://localhost/hello
 ```
 
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman].
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 
 [system]#*{linux}*#
 
@@ -389,7 +389,7 @@ Make a request to the service by running the following `curl` command.
 curl -HHost:example.com http://localhost/hello
 ```
 
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman].
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 
 [system]#*{linux}*#
 
