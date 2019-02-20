@@ -412,8 +412,6 @@ You'll see a greeting message along with a corresponding version.
 
 Next, you will create a test to verify that the correct version of your microservice is running.
 
-Create the endpoint test class in the `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java` file:
-
 [role="code_command", subs="quotes"]
 ----
 #Create the `EndpointTest` class.#
