@@ -262,7 +262,7 @@ hello-deployment-blue    1         1         1            1           1m
 hello-deployment-green   1         1         1            1           1m
 ----
 
-After all the deployments are available, you will make a request to v1 of the deployed application. As defined in the `hello.yaml` file the gateway is expecting the host to be `example.com`. However, requests to `example.com` won't be routed to the appropriate IP address. To ensure that the gateway routes your requests appropriately, ensure that the Host header is set to `example.com`. For instance, you can set the `Host` header with the `-H` option of the `curl` command.
+After all the deployments are available, you will make a request to v1 of the deployed application. As defined in the [hotspot=1-15 file=0]`hello.yaml` file the gateway is expecting the host to be `example.com`. However, requests to `example.com` won't be routed to the appropriate IP address. To ensure that the gateway routes your requests appropriately, ensure that the Host header is set to `example.com`. For instance, you can set the `Host` header with the `-H` option of the `curl` command.
 
 ****
 [system]#*{win} | {mac}*#
