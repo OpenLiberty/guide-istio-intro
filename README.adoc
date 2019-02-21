@@ -357,7 +357,7 @@ You'll see a greeting message along with a corresponding version.
 {"greeting":"hello","version":"2.0-SNAPSHOT"}
 ----
 
-[role="code_command", subs="quotes"]
+[role="code_command hotspot", subs="quotes"]
 ----
 #Update the `traffic.yaml` file.#
 `traffic.yaml`
@@ -413,7 +413,7 @@ You'll see a greeting message along with a corresponding version.
 
 Next, you will create a test to verify that the correct version of your microservice is running.
 
-[role="code_command", subs="quotes"]
+[role="code_command hotspot", subs="quotes"]
 ----
 #Create the `EndpointTest` class.#
 `src/test/java/it/io/openliberty/guides/rest/EndpointTest.java`
