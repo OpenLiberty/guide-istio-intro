@@ -171,7 +171,7 @@ To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-
 
 [role=command]
 ```
-mvn package
+mvn clean package
 ```
 
 The command builds a {docker} image for the `hello` microservice.
@@ -314,7 +314,7 @@ Build the new version of the {docker} container.
 
 [role=command]
 ```
-mvn package
+mvn clean package
 ```
 
 Deploy the new image to the green deployment.
