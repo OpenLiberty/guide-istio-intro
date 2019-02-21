@@ -21,6 +21,7 @@
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
 :page-seo-description: A tutorial on how to manage microservice traffic with Istio using blue-green deployment as an example
+:guide-author: Open Liberty
 = Managing microservice traffic using Istio
 
 [.hidden]
@@ -506,8 +507,6 @@ You have deployed a microservice that runs on Open Liberty to a Kubernetes clust
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
 
 // Include the below from the guides-common repo to tell users how they can contribute to the guide
-include::{common-includes}/finish.adoc[]
-
 include::https://raw.githubusercontent.com/OpenLiberty/guides-common/multipane/attribution.adoc[subs="attributes"]
 
 // DO NO CREATE ANYMORE SECTIONS AT THIS POINT
