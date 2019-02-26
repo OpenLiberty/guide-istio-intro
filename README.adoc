@@ -507,7 +507,7 @@ You have deployed a microservice that runs on Open Liberty to a Kubernetes clust
 //Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
 
 // Include the below from the guides-common repo to tell users how they can contribute to the guide
-include::https://raw.githubusercontent.com/OpenLiberty/guides-common/multipane/attribution.adoc[subs="attributes"]
+include::{common-includes}/attribution.adoc[subs="attributes"]
 
 // DO NO CREATE ANYMORE SECTIONS AT THIS POINT
 // Related guides will be added in automatically here if you included them in ":page-related-guides"
