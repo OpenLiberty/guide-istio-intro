@@ -65,7 +65,7 @@ to visualize how HTTP requests travel between different services in your cluster
 Additionally, as part of its collection of security features, {istio} allows you to enable mutual TLS between pods in your cluster.
 Enabling TLS between pods secures communication between microservices internally.
 
-You'll use {istio} to implement https://openliberty.io/guides/istio-intro.html#what-are-blue-green-deployments[blue-green deployments]. The traffic shifting feature allows you to allocate a percentage of
+You'll use {istio} to implement https://openliberty.io/guides/istio-intro.html#what-are-blue-green-deployments[blue-green deployments^]. The traffic shifting feature allows you to allocate a percentage of
 traffic to certain versions of services. You can use this feature to shift 100 percent of live traffic to blue deployments and 100 percent
 of test traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as necessary to
 perform blue-green deployments.
