@@ -110,7 +110,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download Istio 1.0.6. Extract the archive and navigate to the directory with the extracted files.
+First, go to the https://github.com/istio/istio/releases/tag/1.0.6[{istio} release page^] and download Istio 1.0.6. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
