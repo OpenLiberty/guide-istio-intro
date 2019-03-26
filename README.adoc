@@ -115,14 +115,14 @@ First, go to the https://github.com/istio/istio/releases/[{istio} release page^]
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 ****
-[system]#*{win} | {mac}*#
+[system]#*{linux} | {mac}*#
 
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
 
-[system]#*{linux}*#
+[system]#*{win}*#
 [role=command]
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
@@ -508,14 +508,14 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 
 ****
-[system]#*{win} | {mac}*#
+[system]#*{linux} | {mac}*#
 
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
 
-[system]#*{linux}*#
+[system]#*{win}*#
 [role=command]
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
