@@ -98,7 +98,7 @@ include::{common-includes}/gitclone.adoc[]
 // Staring and preparing your cluster for deployment
 // =================================================================================================
 
-:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.10.0
+:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.13.0
 :docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
 :minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM then 4GB should be adequate.
 [role=command]
@@ -110,14 +110,24 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases/tag/1.0.6[{istio} 1.0.6 release page^] and download Istio 1.0.6. Extract the archive and navigate to the directory with the extracted files.
+First, go to the https://github.com/istio/istio/releases/[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
+****
+[system]#*{linux} | {mac}*#
+
 [role=command]
 ```
-kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
+
+[system]#*{win}*#
+[role=command]
+```
+FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
+```
+****
 
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command will deploy {istio}.
@@ -495,8 +505,24 @@ Navigate to the directory where you extracted {istio} and delete the {istio} res
 [role=command]
 ```
 kubectl delete -f install/kubernetes/istio-demo.yaml
-kubectl delete -f install/kubernetes/helm/istio/templates/crds.yaml
 ```
+
+****
+[system]#*{linux} | {mac}*#
+
+[role=command]
+```
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+```
+
+[system]#*{win}*#
+[role=command]
+```
+FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
+```
+****
+
+
 
 include::{common-includes}/kube-minikube-teardown.adoc[]
 
