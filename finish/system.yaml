@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: hello-gateway
+  name: sys-app-gateway
 spec:
   selector:
     istio: ingressgateway
@@ -17,66 +17,66 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-service
+  name: system-service
   labels:
-    app: hello
+    app: system
 spec:
   ports:
   - port: 9080
     name: http
   selector:
-    app: hello
+    app: system
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-deployment-blue
+  name: system-deployment-blue
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello
+      app: system
       version: blue
   template:
     metadata:
       labels:
-        app: hello
+        app: system
         version: blue
     spec:
       containers:
-      - name: hello-container
-        image: hello:1.0-SNAPSHOT
+      - name: system-container
+        image: system:1.0-SNAPSHOT
         ports:
         - containerPort: 9080
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-deployment-green
+  name: system-deployment-green
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello
+      app: system
       version: green
   template:
     metadata:
       labels:
-        app: hello
+        app: system
         version: green
     spec:
       containers:
-      - name: hello-container
-        image: hello:1.0-SNAPSHOT
+      - name: system-container
+        image: system:1.0-SNAPSHOT
         ports:
         - containerPort: 9080
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: hello-destination-rule
+  name: system-destination-rule
 spec:
-  host: hello-service
+  host: system-service
   subsets:
   - name: blue
     labels:
