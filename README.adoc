@@ -421,7 +421,7 @@ You'll see the new version in the `X-App-Version` response header.
 
 [source, role="no_copy"]
 ----
-X-App-Version: 1.0-SNAPSHOT
+X-App-Version: 2.0-SNAPSHOT
 ----
 
 == Testing microservices that are running on {kube}
