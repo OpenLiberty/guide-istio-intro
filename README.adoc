@@ -73,7 +73,7 @@ traffic to certain versions of services. You can use this feature to shift 100 p
 of test traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as necessary to
 perform blue-green deployments.
 
-The microservice you'll deploy is called `system`. It responds with current system's JVM properties and it returns app version in the response header. The version will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or test environments.
+The microservice you'll deploy is called `system`. It responds with current system's JVM properties and it returns the app version in the response header. The version will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or test environments.
 
 === What are blue-green deployments?
 
@@ -110,7 +110,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases/[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
+First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
@@ -278,7 +278,7 @@ system-deployment-blue    1         1         1            1           1m
 system-deployment-green   1         1         1            1           1m
 ----
 
-After all the deployments are available, you will make a request to v1 of the deployed application. As defined in the [hotspot=1-15 file=0]`system.yaml`, file the gateway is expecting the host to be `example.com`. However, requests to `example.com` won't be routed to the appropriate IP address. To ensure that the gateway routes your requests appropriately, ensure that the Host header is set to `example.com`. For instance, you can set the `Host` header with the `-H` option of the `curl` command.
+After all the deployments are available, you will make a request to v1 of the deployed application. As defined in the [file=0]`system.yaml`, file the [hotspot=1-15 file=0]`gateway` is expecting the host to be `example.com`. However, requests to `example.com` won't be routed to the appropriate IP address. To ensure that the gateway routes your requests appropriately, ensure that the Host header is set to `example.com`. For instance, you can set the `Host` header with the `-H` option of the `curl` command.
 
 ****
 [system]#*{win} | {mac}*#
@@ -439,7 +439,7 @@ SystemEndpointTest.java
 include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java[tags=**;!copyright]
 ----
 
-The `testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
+The [hotspot=56-64]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
 
 ****
 [system]#*{win} | {mac}*#
