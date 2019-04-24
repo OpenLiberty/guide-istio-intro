@@ -43,7 +43,8 @@ public class SystemEndpointTest {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
         String clusterIp = System.getProperty("cluster.ip");
-        String nodePort = System.getProperty("system.node.port");
+        String nodePort = System.getProperty("port");
+
         clusterUrl = "http://" + clusterIp + ":" + nodePort + "/system/properties/";
     }
     

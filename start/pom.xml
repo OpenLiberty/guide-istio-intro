@@ -16,6 +16,7 @@
         <app.name>LibertyProject</app.name>
         <testServerHttpPort>9080</testServerHttpPort>
         <testServerHttpsPort>9443</testServerHttpsPort>
+        <cluster.ip>localhost</cluster.ip>
         <warContext>${app.name}</warContext>
         <package.file>${project.build.directory}/${app.name}.zip</package.file>
         <packaging.type>usr</packaging.type>
@@ -197,7 +198,7 @@
                                 <liberty.test.port>${testServerHttpPort}</liberty.test.port>
                                 <war.name>${warContext}</war.name>
                                 <app.name>${project.version}</app.name>
-                                <cluster.ip>localhost</cluster.ip>
+                                <cluster.ip>${cluster.ip}</cluster.ip>
                                 <port>80</port>
                                 <host-header>example.com</host-header>
                             </systemPropertyVariables>
