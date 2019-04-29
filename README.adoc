@@ -48,7 +48,7 @@ You will learn how to deploy an application to a Kubernetes cluster and enable {
 
 https://istio.io/[{istio}^] is a service mesh, meaning that it's a platform for managing
 how microservices interact with each other and the outside world.
-{istio} consists of a control plane and sidecars injected into application pods. The sidecars contain
+{istio} consists of a control plane and sidecars that are injected into application pods. The sidecars contain
 the https://www.envoyproxy.io/[Envoy^] proxy. You can think of Envoy as a sidecar that intercepts
 and controls all the HTTP and TCP traffic to and from your container.
 
@@ -100,7 +100,7 @@ include::{common-includes}/gitclone.adoc[]
 
 :minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.13.0
 :docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
-:minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM then 4GB should be adequate.
+:minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM, then 4GB should be adequate.
 [role=command]
 include::{common-includes}/kube-start.adoc[]
 
@@ -130,7 +130,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 ****
 
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
-{kube} resources defined in a yaml file. This command will deploy {istio}.
+{kube} resources defined in a yaml file. This command deploys {istio}.
 
 [role=command]
 ```
@@ -180,8 +180,8 @@ any additional steps for the sidecars to be injected.
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `start` directory and run the following command. It may take a few minutes to complete.
-It will build the application and then package it into a {docker} image.
+Navigate to the `start` directory and run the following command. It might take a few minutes to complete.
+It builds the application and then packages it into a {docker} image.
 To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-plugin`.
 
 [role=command]
