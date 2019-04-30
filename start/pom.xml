@@ -153,29 +153,9 @@
                     </bootstrapProperties>
                 </configuration>
                 <executions>
-                    <!-- Install the OL runtime -->
+                   <!-- Install the app into the apps/ directory of defaultServer -->
                     <execution>
-                        <id>install-liberty</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>install-server</goal>
-                        </goals>
-                    </execution>
-                    <!-- Create defaultServer -->
-                    <execution>
-                        <id>create-server</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>create-server</goal>
-                        </goals>
-                    </execution>
-                    <!-- Install the app into the apps/ directory of defaultServer -->
-                    <execution>
-                        <id>install-app</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>install-apps</goal>
-                        </goals>
+                        <id>install-apps</id>
                         <configuration>
                             <appsDirectory>apps</appsDirectory>
                             <stripVersion>true</stripVersion>
