@@ -305,11 +305,11 @@ curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
-You'll see a header called `X-App-Version` along with the corresponding version.
+You'll see a header called `x-app-version` along with the corresponding version.
 
 [source, role="no_copy"]
 ----
-X-App-Version: 1.0-SNAPSHOT
+x-app-version: 1.0-SNAPSHOT
 ----
 
 // =================================================================================================
@@ -341,7 +341,7 @@ kubectl set image deployment/system-deployment-green system-container=system:2.0
 
 You will work with two environments. One of the environments is a test site located at `test.example.com`. The other environment is your production environment located at `example.com`. To start with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
 
-Test the updated microservice by making requests to the test site. The `X-App-Version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
+Test the updated microservice by making requests to the test site. The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
 ****
 [system]#*{win} | {mac}*#
@@ -365,11 +365,11 @@ curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
-You'll see the new version in the `X-App-Version` response header.
+You'll see the new version in the `x-app-version` response header.
 
 [source, role="no_copy"]
 ----
-X-App-Version: 2.0-SNAPSHOT
+x-app-version: 2.0-SNAPSHOT
 ----
 
 [role="code_command hotspot", subs="quotes"]
@@ -417,11 +417,11 @@ curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
-You'll see the new version in the `X-App-Version` response header.
+You'll see the new version in the `x-app-version` response header.
 
 [source, role="no_copy"]
 ----
-X-App-Version: 2.0-SNAPSHOT
+x-app-version: 2.0-SNAPSHOT
 ----
 
 == Testing microservices that are running on {kube}
