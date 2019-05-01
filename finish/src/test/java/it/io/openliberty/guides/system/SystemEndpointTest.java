@@ -114,7 +114,7 @@ public class SystemEndpointTest {
             .get();
     }
 
-   private void assertResponse(String url, Response response) {
+    private void assertResponse(String url, Response response) {
         assertEquals("Incorrect response code from " + url,
             200,
             response.getStatus());
