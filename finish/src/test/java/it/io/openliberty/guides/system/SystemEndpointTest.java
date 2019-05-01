@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.json.JsonObject;
 import javax.ws.rs.client.WebTarget;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
@@ -81,8 +80,11 @@ public class SystemEndpointTest {
         this.assertResponse(clusterUrl, response);
         String greeting = response.getHeaderString("X-Pod-Name");
         
+        String message = "Container name should not be null but it was. " +
+            "The service is probably not running inside a container";
+
         assertNotNull(
-            "Container name should not be null but it was. The service is probably not running inside a container",
+            message,
             greeting);
     }
 
@@ -97,19 +99,13 @@ public class SystemEndpointTest {
             .header("Host", System.getProperty("host-header"))
             .get();
 
-        assertEquals("Incorrect response code from " + clusterUrl, 200, response.getStatus());
+        assertEquals("Incorrect response code from " + clusterUrl,
+            200,
+            response.getStatus());
+
         response.close();
     }
 
-    /**
-     * <p>
-     * Returns response information from the specified URL.
-     * </p>
-     * 
-     * @param url
-     *          - target URL.
-     * @return Response object with the response from the specified URL.
-     */
     private Response getResponse(String url) {
         return client
             .target(url)
@@ -129,7 +125,9 @@ public class SystemEndpointTest {
      *          - response received from the target URL.
      */
     private void assertResponse(String url, Response response) {
-        assertEquals("Incorrect response code from " + url, 200, response.getStatus());
+        assertEquals("Incorrect response code from " + url,
+            200,
+            response.getStatus());
     }
 
 }
