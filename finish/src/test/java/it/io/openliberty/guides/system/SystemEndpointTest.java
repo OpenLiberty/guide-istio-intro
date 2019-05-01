@@ -114,17 +114,7 @@ public class SystemEndpointTest {
             .get();
     }
 
-    /**
-     * <p>
-     * Asserts that the given URL has the correct response code of 200.
-     * </p>
-     * 
-     * @param url
-     *          - target URL.
-     * @param response
-     *          - response received from the target URL.
-     */
-    private void assertResponse(String url, Response response) {
+   private void assertResponse(String url, Response response) {
         assertEquals("Incorrect response code from " + url,
             200,
             response.getStatus());
