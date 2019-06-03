@@ -569,7 +569,7 @@ minikube delete
 ****
 
 
-
+[role=command]
 include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
