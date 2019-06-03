@@ -527,7 +527,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete 
 ****
 
 
-
+[role=command]
 include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
