@@ -115,17 +115,24 @@ First, go to the https://github.com/istio/istio/releases/latest[{istio} release 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 ****
-[system]#*{linux} | {mac}*#
+[system]#*{win}*#
+[role=command]
+```
+FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
+```
+
+[system]#*{mac}*#
 
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
 
-[system]#*{win}*#
+[system]#*{linux}*#
+
 [role=command]
 ```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
 ****
 
@@ -484,7 +491,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 
 You might want to teardown all the deployed resources as a cleanup step.
 
-Delete your resources from the cluster.
+First, navigate to the `start` directory and delete your resources from the cluster.
 
 [role=command]
 ```
@@ -511,19 +518,54 @@ Navigate to the directory where you extracted {istio} and delete the {istio} res
 kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 
+Next, delete the `helm` resources from the cluster.
+
 ****
-[system]#*{linux} | {mac}*#
+[system]#*{win}*#
+[role=command]
+```
+FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
+```
+Nothing more needs to be done for Docker Desktop.
+
+
+[system]#*{mac}*#
+
+[role=command]
+```
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+```
+Nothing more needs to be done for Docker Desktop.
+
+
+[system]#*{linux}*#
 
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
 
-[system]#*{win}*#
-[role=command]
+Perform the following steps to return your environment to a clean state.
+
+. Point the Docker daemon back to your local machine:
++
 ```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
+eval $(minikube docker-env -u)
 ```
+
+. Stop your Minikube cluster:
++
+```
+minikube stop
+```
+
+. Delete your cluster:
++
+```
+minikube delete
+```
+
+
 ****
 
 
