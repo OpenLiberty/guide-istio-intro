@@ -131,7 +131,6 @@ Linux
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
 ```
-
 [.tab_content]
 [#mac_section]
 --
@@ -139,7 +138,6 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
-
 [.tab_content]
 [#linux_section]
 --
