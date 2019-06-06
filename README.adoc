@@ -469,7 +469,6 @@ include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest
 
 The [hotspot=55-63]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
 
-****
 [.tab_link]
 [#windows_link]
 Windows
