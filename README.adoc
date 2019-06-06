@@ -112,7 +112,23 @@ include::{common-includes}/kube-start.adoc[]
 
 First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
 
-Next,, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
+Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
+
+[.tab_link]
+[#windows_link]
+Windows
+[.tab_link]
+[#mac_link]
+Mac
+[.tab_link]
+[#linux_link]
+Linux
+
+
+[.tab_content]
+[#windows_section]
+--
+
 
 ****
 [system]#*{linux} | {mac}*#
