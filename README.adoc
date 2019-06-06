@@ -480,19 +480,26 @@ Mac
 [#linux_link]
 Linux
 
-[system]#*{win} | {mac}*#
-
 Run the command to start the tests:
 
+[.tab_content]
+[#windows_section]
 [role=command]
 ```
 mvn verify -Ddockerfile.skip=true
 ```
 
-[system]#*{linux}*#
+[.tab_content]
+[#mac_section]
+[role=command]
+```
+mvn verify -Ddockerfile.skip=true
+```
 
 Run the command to start the tests:
 
+[.tab_content]
+[#linux_section]
 [role=command]
 ```
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
