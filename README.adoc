@@ -505,8 +505,6 @@ mvn verify -Ddockerfile.skip=true
 ```
 --
 
-Run the command to start the tests:
-
 [.tab_content]
 [#linux_section]
 --
