@@ -124,10 +124,22 @@ Mac
 [#linux_link]
 Linux
 
-
 [.tab_content]
 [#windows_section]
 --
+FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
+
+
+[.tab_content]
+[#mac_section]
+--
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+
+
+[.tab_content]
+[#linux_section]
+--
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 
 
 ****
