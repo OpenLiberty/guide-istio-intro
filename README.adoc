@@ -148,21 +148,6 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f 
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
 
-****
-[system]#*{linux} | {mac}*#
-
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
-```
-
-[system]#*{win}*#
-[role=command]
-```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
-```
-****
-
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
 {kube} resources defined in a yaml file. This command deploys {istio}.
 
