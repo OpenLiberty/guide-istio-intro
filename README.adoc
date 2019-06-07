@@ -314,10 +314,11 @@ Mac
 [#linux_link]
 Linux
 
+Make a request to the service by running the following `curl` command.
+
 [.tab_content]
 [#windows_section]
 --
-Make a request to the service by running the following `curl` command.
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
@@ -332,7 +333,6 @@ Finally, click the blue `Send` button to make the request.
 [.tab_content]
 [#mac_section]
 --
-Make a request to the service by running the following `curl` command.
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
@@ -347,7 +347,6 @@ Finally, click the blue `Send` button to make the request.
 [.tab_content]
 [#linux_section]
 --
-Make a request to the service by using `curl`.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
