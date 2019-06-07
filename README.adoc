@@ -324,7 +324,7 @@ Linux
 ```
 curl -HHost:example.com -I http://localhost/system/properties
 ```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
+- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
@@ -337,7 +337,7 @@ Finally, click the blue `Send` button to make the request.
 ```
 curl -HHost:example.com -I http://localhost/system/properties
 ```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
+- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
@@ -410,7 +410,7 @@ Linux
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
 ```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 --
 
 [.tab_content]
@@ -420,12 +420,13 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
 ```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 --
 
 [.tab_content]
 [#linux_section]
 --
+Make a request to the service by using `curl`.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
@@ -571,7 +572,7 @@ mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 
 
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
-
+****
 
 The `dockerfile.skip=true` flag skips rebuilding the {docker} images.
 
