@@ -391,7 +391,7 @@ You will work with two environments. One of the environments is a test site loca
 
 Test the updated microservice by making requests to the test site. The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
-Run the command to start the tests:
+Make a request to the service by running the following `curl` command.
 
 [.tab_link]
 [#windows_link]
@@ -406,7 +406,6 @@ Linux
 [.tab_content]
 [#windows_section]
 --
-Make a request to the service by running the following `curl` command.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
@@ -417,7 +416,6 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 [.tab_content]
 [#mac_section]
 --
-Make a request to the service by running the following `curl` command.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
@@ -428,7 +426,6 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 [.tab_content]
 [#linux_section]
 --
-Make a request to the service by using `curl`.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
