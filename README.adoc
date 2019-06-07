@@ -468,26 +468,46 @@ kubectl apply -f traffic.yaml
 Ensure that the live traffic is now being routed to version 2 of the microservice.
 
 ****
-[system]#*{win} | {mac}*#
+[.tab_link]
+[#windows_link]
+Windows
+[.tab_link]
+[#mac_link]
+Mac
+[.tab_link]
+[#linux_link]
+Linux
 
+[.tab_content]
+[#windows_section]
 Make a request to the service by running the following `curl` command.
-
+--
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
 ```
-
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+--
 
-[system]#*{linux}*#
+[.tab_content]
+[#mac_section]
+--
+[role=command]
+```
+curl -HHost:example.com -I http://localhost/system/properties
+```
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+--
 
+[.tab_content]
+[#linux_section]
+--
 Make a request to the service by using `curl`.
-
 [role=command]
 ```
 curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
 ```
-****
+--
 
 You'll see the new version in the `x-app-version` response header.
 
@@ -513,6 +533,8 @@ include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest
 
 The [hotspot=55-63]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
 
+Run the command to start the tests:
+
 [.tab_link]
 [#windows_link]
 Windows
@@ -522,8 +544,6 @@ Mac
 [.tab_link]
 [#linux_link]
 Linux
-
-Run the command to start the tests:
 
 [.tab_content]
 [#windows_section]
@@ -609,7 +629,6 @@ Mac
 [.tab_link]
 [#linux_link]
 Linux
-
 
 [.tab_content]
 [#windows_section]
