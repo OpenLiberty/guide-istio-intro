@@ -391,6 +391,7 @@ You will work with two environments. One of the environments is a test site loca
 
 Test the updated microservice by making requests to the test site. The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
+Run the command to start the tests:
 
 [.tab_link]
 [#windows_link]
@@ -401,8 +402,6 @@ Mac
 [.tab_link]
 [#linux_link]
 Linux
-
-Run the command to start the tests:
 
 [.tab_content]
 [#windows_section]
@@ -466,7 +465,9 @@ kubectl apply -f traffic.yaml
 
 Ensure that the live traffic is now being routed to version 2 of the microservice.
 
-****
+
+Make a request to the service by running the following `curl` command.
+
 [.tab_link]
 [#windows_link]
 Windows
@@ -479,7 +480,6 @@ Linux
 
 [.tab_content]
 [#windows_section]
-Make a request to the service by running the following `curl` command.
 --
 [role=command]
 ```
@@ -501,7 +501,6 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 [.tab_content]
 [#linux_section]
 --
-Make a request to the service by using `curl`.
 [role=command]
 ```
 curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
