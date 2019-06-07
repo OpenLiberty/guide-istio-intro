@@ -354,7 +354,6 @@ curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
 ```
 --
 
-
 You'll see a header called `x-app-version` along with the corresponding version.
 
 [source, role="no_copy"]
