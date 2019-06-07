@@ -568,7 +568,7 @@ mvn verify -Ddockerfile.skip=true
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 --
-
+****
 
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 ****
