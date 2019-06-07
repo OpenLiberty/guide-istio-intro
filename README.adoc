@@ -314,11 +314,10 @@ Mac
 [#linux_link]
 Linux
 
-
-[system]#*{win} | {mac}*#
-
+[.tab_content]
+[#windows_section]
+--
 Make a request to the service by running the following `curl` command.
-
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
@@ -328,16 +327,33 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
+--
 
-[system]#*{linux}*#
-
-Make a request to the service by using `curl`.
-
+[.tab_content]
+[#mac_section]
+--
+Make a request to the service by running the following `curl` command.
 [role=command]
 ```
-curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
+curl -HHost:example.com -I http://localhost/system/properties
 ```
-****
+
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
+to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
+into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
+Finally, click the blue `Send` button to make the request.
+--
+
+[.tab_content]
+[#linux_section]
+--
+Make a request to the service by using `curl`.
+[role=command]
+```
+curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
+```
+--
+
 
 You'll see a header called `x-app-version` along with the corresponding version.
 
@@ -377,27 +393,50 @@ You will work with two environments. One of the environments is a test site loca
 
 Test the updated microservice by making requests to the test site. The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
-****
-[system]#*{win} | {mac}*#
 
+[.tab_link]
+[#windows_link]
+Windows
+[.tab_link]
+[#mac_link]
+Mac
+[.tab_link]
+[#linux_link]
+Linux
+
+Run the command to start the tests:
+
+[.tab_content]
+[#windows_section]
+--
 Make a request to the service by running the following `curl` command.
-
 [role=command]
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
 ```
-
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+--
 
-[system]#*{linux}*#
+[.tab_content]
+[#mac_section]
+--
+Make a request to the service by running the following `curl` command.
+[role=command]
+```
+curl -HHost:test.example.com -I http://localhost/system/properties
+```
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+--
 
+[.tab_content]
+[#linux_section]
+--
 Make a request to the service by using `curl`.
-
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
 ```
-****
+--
 
 You'll see the new version in the `x-app-version` response header.
 
@@ -562,7 +601,6 @@ Navigate to the directory where you extracted {istio} and delete the {istio} res
 kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 
-****
 [.tab_link]
 [#windows_link]
 Windows
@@ -573,20 +611,33 @@ Mac
 [#linux_link]
 Linux
 
-[system]#*{linux} | {mac}*#
 
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
-
-[system]#*{win}*#
+[.tab_content]
+[#windows_section]
+--
 [role=command]
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
 ```
-****
+--
 
+[.tab_content]
+[#mac_section]
+--
+[role=command]
+```
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+```
+--
+
+[.tab_content]
+[#linux_section]
+--
+[role=command]
+```
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+```
+--
 
 
 include::{common-includes}/kube-minikube-teardown.adoc[]
