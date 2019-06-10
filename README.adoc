@@ -346,12 +346,12 @@ curl -HHost:example.com -I http://localhost/system/properties
 
 [.tab_content]
 [#linux_section]
----
+--
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
 ```
----
+--
 
 
 You'll see a header called `x-app-version` along with the corresponding version.
