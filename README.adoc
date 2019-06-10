@@ -133,7 +133,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 ```
 --
 
-//[.tab_content]
+[.tab_content]
 [#mac_section]
 --
 [role=command]
@@ -142,7 +142,7 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f 
 ```
 --
 
-//[.tab_content]
+[.tab_content]
 [#linux_section]
 --
 [role=command]
@@ -330,7 +330,7 @@ curl -HHost:example.com -I http://localhost/system/properties
 //Finally, click the blue `Send` button to make the request.
 --
 
-//[.tab_content]
+[.tab_content]
 [#mac_section]
 --
 [role=command]
@@ -343,7 +343,7 @@ curl -HHost:example.com -I http://localhost/system/properties
 //Finally, click the blue `Send` button to make the request.
 --
 
-//[.tab_content]
+[.tab_content]
 [#linux_section]
 --
 [role=command]
