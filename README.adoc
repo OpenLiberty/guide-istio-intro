@@ -467,6 +467,7 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 
 Make a request to the service by running the following `curl` command.
 
+
 [.tab_link]
 [#windows_link]
 Windows
@@ -532,6 +533,7 @@ include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest
 The [hotspot=55-63]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
 
 Run the command to start the tests:
+
 
 [.tab_link]
 [#windows_link]
