@@ -116,13 +116,13 @@ Next, deploy the {istio} custom resource definitions. Custom resource definition
 
 [.tab_link]
 [#windows_link]
-Windows
+`*Windows*`
 [.tab_link]
 [#mac_link]
-Mac
+`*Mac*`
 [.tab_link]
 [#linux_link]
-Linux
+`*Linux*`
 
 [.tab_content]
 [#windows_section]
