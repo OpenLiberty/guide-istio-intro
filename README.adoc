@@ -320,7 +320,7 @@ Make a request to the service by running the following `curl` command.
 [.tab_content]
 [#windows_section]
 
---
+---
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
@@ -329,12 +329,12 @@ curl -HHost:example.com -I http://localhost/system/properties
 //to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 //into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 //Finally, click the blue `Send` button to make the request.
---
+---
 
 [.tab_content]
 [#mac_section]
 
---
+---
 [role=command]
 ```
 curl -HHost:example.com -I http://localhost/system/properties
@@ -343,17 +343,17 @@ curl -HHost:example.com -I http://localhost/system/properties
 //to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 //into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 //Finally, click the blue `Send` button to make the request.
---
+---
 
 [.tab_content]
 [#linux_section]
 
---
+---
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
 ```
---
+---
 
 
 You'll see a header called `x-app-version` along with the corresponding version.
