@@ -116,13 +116,13 @@ Next, deploy the {istio} custom resource definitions. Custom resource definition
 
 [.tab_link]
 [#windows_link]
-`*Windows*`
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-`*Mac*`
+`*MAC*`
 [.tab_link]
 [#linux_link]
-`*Linux*`
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
@@ -309,13 +309,13 @@ Make a request to the service by running the following `curl` command.
 
 [.tab_link]
 [#windows_link]
-Windows
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-Mac
+`*MAC*`
 [.tab_link]
 [#linux_link]
-Linux
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
@@ -395,13 +395,13 @@ Make a request to the service by running the following `curl` command.
 
 [.tab_link]
 [#windows_link]
-Windows
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-Mac
+`*MAC*`
 [.tab_link]
 [#linux_link]
-Linux
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
@@ -470,13 +470,13 @@ Make a request to the service by running the following `curl` command.
 
 [.tab_link]
 [#windows_link]
-Windows
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-Mac
+`*MAC*`
 [.tab_link]
 [#linux_link]
-Linux
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
@@ -537,13 +537,13 @@ Run the command to start the tests:
 
 [.tab_link]
 [#windows_link]
-Windows
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-Mac
+`*MAC*`
 [.tab_link]
 [#linux_link]
-Linux
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
@@ -622,13 +622,13 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 
 [.tab_link]
 [#windows_link]
-Windows
+`*WINDOWS*`
 [.tab_link]
 [#mac_link]
-Mac
+`*MAC*`
 [.tab_link]
 [#linux_link]
-Linux
+`*LINUX*`
 
 [.tab_content]
 [#windows_section]
