@@ -639,7 +639,6 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
 ```
-
 --
 
 [.tab_content]
