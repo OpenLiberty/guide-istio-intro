@@ -635,28 +635,28 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 [.tab_content]
 [#windows_section]
 --
-[role=command]
-```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
-```
+    [role=command]
+    ```
+    FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
+    ```
 --
 
 [.tab_content]
 [#mac_section]
 --
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
+    [role=command]
+    ```
+    for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+    ```
 --
 
 [.tab_content]
 [#linux_section]
 --
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
+    [role=command]
+    ```
+    for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+    ```
 --
 
 include::{common-includes}/kube-minikube-teardown.adoc[]
