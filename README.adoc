@@ -17,7 +17,7 @@
 :page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
-:common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
+:common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/os-specific
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
 :page-seo-description: A tutorial on how to manage microservice traffic with Istio using blue-green deployment as an example
@@ -83,7 +83,7 @@ Blue-green deployments are a way of deploying your applications such that you ha
 // Prerequisites
 // =================================================================================================
 
-include::{common-includes}/os-specific/kube-prereq.adoc[]
+include::{common-includes}/kube-prereq.adoc[]
 
 // =================================================================================================
 // Getting Started
@@ -102,7 +102,7 @@ include::{common-includes}/gitclone.adoc[]
 :docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
 :minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM, then 4GB should be adequate.
 [role=command]
-include::{common-includes}/os-specific/kube-start.adoc[]
+include::{common-includes}/kube-start.adoc[]
 
 // =================================================================================================
 // Deploying Istio
