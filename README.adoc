@@ -594,6 +594,7 @@ Results:
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 ----
+****
 
 == Tearing down your environment
 
@@ -657,32 +658,9 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
-
-Perform the following steps to return your environment to a clean state.
-
-. Point the Docker daemon back to your local machine:
-+
-```
-eval $(minikube docker-env -u)
-```
-
-. Stop your Minikube cluster:
-+
-```
-minikube stop
-```
-
-. Delete your cluster:
-+
-```
-minikube delete
-```
 --
 
-
-
-
-//include::{common-includes}/kube-minikube-teardown.adoc[]
+include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
