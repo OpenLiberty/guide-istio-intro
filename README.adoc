@@ -115,17 +115,17 @@ First, go to the https://github.com/istio/istio/releases/latest[{istio} release 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 [.tab_link]
-[#windows_link]
+[#windows3_link]
 `*WINDOWS*`
 [.tab_link]
-[#mac_link]
+[#mac3_link]
 `*MAC*`
 [.tab_link]
-[#linux_link]
+[#linux3_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows3_section]
 --
 [role=command]
 ```
@@ -134,7 +134,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 --
 
 [.tab_content]
-[#mac_section]
+[#mac3_section]
 --
 [role=command]
 ```
@@ -143,7 +143,7 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f 
 --
 
 [.tab_content]
-[#linux_section]
+[#linux3_section]
 --
 [role=command]
 ```
@@ -308,17 +308,17 @@ Make a request to the service by running the following `curl` command.
 
 
 [.tab_link]
-[#windows_link]
+[#windows4_link]
 `*WINDOWS*`
 [.tab_link]
-[#mac_link]
+[#mac4_link]
 `*MAC*`
 [.tab_link]
-[#linux_link]
+[#linux4_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows4_section]
 --
 [role=command]
 ```
@@ -333,7 +333,7 @@ Finally, click the blue `Send` button to make the request.
 --
 
 [.tab_content]
-[#mac_section]
+[#mac4_section]
 --
 [role=command]
 ```
@@ -346,7 +346,7 @@ Finally, click the blue `Send` button to make the request.
 --
 
 [.tab_content]
-[#linux_section]
+[#linux4_section]
 --
 [role=command]
 ```
@@ -396,17 +396,17 @@ Test the updated microservice by making requests to the test site. The `x-app-ve
 Make a request to the service by running the following `curl` command.
 
 [.tab_link]
-[#windows_link]
+[#windows5_link]
 `*WINDOWS*`
 [.tab_link]
-[#mac_link]
+[#mac5_link]
 `*MAC*`
 [.tab_link]
-[#linux_link]
+[#linux5_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows5_section]
 --
 [role=command]
 ```
@@ -416,7 +416,7 @@ curl -HHost:test.example.com -I http://localhost/system/properties
 --
 
 [.tab_content]
-[#mac_section]
+[#mac5_section]
 --
 [role=command]
 ```
@@ -426,7 +426,7 @@ curl -HHost:test.example.com -I http://localhost/system/properties
 --
 
 [.tab_content]
-[#linux_section]
+[#linux5_section]
 --
 Make a request to the service by using `curl`.
 [role=command]
@@ -471,17 +471,17 @@ Make a request to the service by running the following `curl` command.
 
 
 [.tab_link]
-[#windows_link]
+[#windows6_link]
 `*WINDOWS*`
 [.tab_link]
-[#mac_link]
+[#mac6_link]
 `*MAC*`
 [.tab_link]
-[#linux_link]
+[#linux6_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows6_section]
 --
 [role=command]
 ```
@@ -491,7 +491,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 --
 
 [.tab_content]
-[#mac_section]
+[#mac6_section]
 --
 [role=command]
 ```
@@ -501,7 +501,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 --
 
 [.tab_content]
-[#linux_section]
+[#linux6_section]
 --
 [role=command]
 ```
@@ -538,17 +538,17 @@ Run the command to start the tests:
 
 
 [.tab_link]
-[#windows_link]
+[#windows7_link]
 `*WINDOWS*`
 [.tab_link]
-[#mac_link]
+[#mac7_link]
 `*MAC*`
 [.tab_link]
-[#linux_link]
+[#linux7_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows7_section]
 --
 [role=command]
 ```
@@ -557,7 +557,7 @@ mvn verify -Ddockerfile.skip=true
 --
 
 [.tab_content]
-[#mac_section]
+[#mac7_section]
 --
 [role=command]
 ```
@@ -566,7 +566,7 @@ mvn verify -Ddockerfile.skip=true
 --
 
 [.tab_content]
-[#linux_section]
+[#linux7_section]
 --
 [role=command]
 ```
@@ -623,19 +623,17 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 
 [.tab_link]
-[#windows_link]
+[#windows8_link]
 `*WINDOWS*`
-
 [.tab_link]
-[#mac_link]
+[#mac8_link]
 `*MAC*`
-
 [.tab_link]
-[#linux_link]
+[#linux8_link]
 `*LINUX*`
 
 [.tab_content]
-[#windows_section]
+[#windows8_section]
 --
 [role=command]
 ```
@@ -644,7 +642,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete 
 --
 
 [.tab_content]
-[#mac_section]
+[#mac8_section]
 --
 [role=command]
 ```
@@ -653,7 +651,7 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 --
 
 [.tab_content]
-[#linux_section]
+[#linux8_section]
 --
 [role=command]
 ```
