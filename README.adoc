@@ -661,7 +661,7 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 --
 
 include::{common-includes}/kube-minikube-teardown.adoc[]
-****
+
 // =================================================================================================
 // finish
 // =================================================================================================
