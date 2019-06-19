@@ -660,14 +660,14 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
 --
-
+****
 include::{common-includes}/kube-minikube-teardown.adoc[]
-
+****
 // =================================================================================================
 // finish
 // =================================================================================================
 
-=== Great work! You're done!
+== Great work! You're done!
 
 You have deployed a microservice that runs on Open Liberty to a Kubernetes cluster and used {istio} to implement a blue-green deployment scheme.
 
