@@ -324,12 +324,10 @@ Make a request to the service by running the following `curl` command.
 ```
 curl -HHost:example.com -I http://localhost/system/properties
 ```
-----
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
 into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
 Finally, click the blue `Send` button to make the request.
-----
 --
 
 [.tab_content]
@@ -428,7 +426,7 @@ curl -HHost:test.example.com -I http://localhost/system/properties
 [.tab_content]
 [#linux5_section]
 --
-Make a request to the service by using `curl`.
+//Make a request to the service by using `curl`.
 [role=command]
 ```
 curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
