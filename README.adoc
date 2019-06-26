@@ -659,24 +659,22 @@ Nothing more needs to be done for Docker Desktop.
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
-{nbsp} +
+//{nbsp} +
 Perform the following steps to return your environment to a clean state.
-. Point the Docker daemon back to your local machine:
-+
+Point the Docker daemon back to your local machine:
+//+
 [role=command]
 ```
 eval $(minikube docker-env -u)
 ```
-
-. Stop your Minikube cluster:
-+
+Stop your Minikube cluster:
+//+
 [role=command]
 ```
 minikube stop
 ```
-
-. Delete your cluster:
-+
+Delete your cluster:
+//+
 [role=command]
 ```
 minikube delete
