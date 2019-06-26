@@ -639,6 +639,7 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
 ```
+Nothing more needs to be done for Docker Desktop.
 --
 
 [.tab_content]
@@ -648,6 +649,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete 
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
+Nothing more needs to be done for Docker Desktop.
 --
 
 [.tab_content]
@@ -657,9 +659,28 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
+
+Perform the following steps to return your environment to a clean state.
+. Point the Docker daemon back to your local machine:
++
+```
+eval $(minikube docker-env -u)
+```
+
+. Stop your Minikube cluster:
++
+```
+minikube stop
+```
+
+. Delete your cluster:
++
+```
+minikube delete
+```
 --
 
-include::{common-includes}/kube-minikube-teardown.adoc[]
+//include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
