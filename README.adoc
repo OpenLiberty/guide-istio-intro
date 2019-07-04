@@ -115,13 +115,13 @@ First, go to the https://github.com/istio/istio/releases/latest[{istio} release 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
 [.tab_link]
-[.windows_link]
+//[.windows_link]
 `*WINDOWS*`
 [.tab_link]
-[.mac_link]
+//[.mac_link]
 `*MAC*`
 [.tab_link]
-[.linux_link]
+//[.linux_link]
 `*LINUX*`
 
 [.tab_content]
