@@ -125,7 +125,8 @@ Next, deploy the {istio} custom resource definitions. Custom resource definition
 `*LINUX*`
 
 [.tab_content]
-[.windows_section, indent=0]
+..... 
+[.windows_section]
 --
 [role=command]
 ```
@@ -134,7 +135,8 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 --
 
 [.tab_content]
-[.mac_section, indent=1]
+..... 
+[.mac_section]
 --
 [role=command]
 ```
@@ -143,7 +145,8 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f 
 --
 
 [.tab_content]
-[.linux_section, indent=2]
+..... 
+[.linux_section]
 --
 [role=command]
 ```
