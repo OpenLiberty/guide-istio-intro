@@ -114,39 +114,33 @@ First, go to the https://github.com/istio/istio/releases/latest[{istio} release 
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
-[.tab_link][.windows_link]
-`*WINDOWS*`
-[.tab_link][.mac_link]
-`*MAC*`
-[.tab_link][.linux_link]
-`*LINUX*`
+[.tab_link][.windows_link]`*WINDOWS*`
+[.tab_link][.mac_link]`*MAC*`
+[.tab_link][.linux_link]`*LINUX*`
 
-[.tab_content]
-[.windows_section]
---
+[.tab_content][.windows_section]
+---
 [role=command]
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
 ```
---
+---
 
-[.tab_content]
-[.mac_section]
---
+[.tab_content][.mac_section]
+---
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
---
+---
 
-[.tab_content]
-[.linux_section]
---
+[.tab_content][.linux_section]
+---
 [role=command]
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 ```
---
+---
 
 
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
