@@ -292,32 +292,14 @@ After all the deployments are available, you will make a request to version 1 of
 
 Make a request to the service by running the following `curl` command.
 
-
-[.tab_link]
-[.windows_link]
+[.tab_link.windows_link]
 `*WINDOWS*`
-[.tab_link]
-[.mac_link]
+[.tab_link.mac_link]
 `*MAC*`
-[.tab_link]
-[.linux_link]
+[.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content]
-[.windows_section]
---
-[role=command]
-```
-curl -HHost:example.com -I http://localhost/system/properties
-```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
-to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
-into the URL bar. Next, switch to the `Headers` tab and add a header with key of `Host` and value of `example.com`.
-Finally, click the blue `Send` button to make the request.
---
-
-[.tab_content]
-[.mac_section]
+[.tab_content.windows_section.mac_section]
 --
 [role=command]
 ```
@@ -379,28 +361,14 @@ Test the updated microservice by making requests to the test site. The `x-app-ve
 
 Make a request to the service by running the following `curl` command.
 
-[.tab_link]
-[.windows_link]
+[.tab_link.windows_link]
 `*WINDOWS*`
-[.tab_link]
-[.mac_link]
+[.tab_link.mac_link]
 `*MAC*`
-[.tab_link]
-[.linux_link]
+[.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content]
-[.windows_section]
---
-[role=command]
-```
-curl -HHost:test.example.com -I http://localhost/system/properties
-```
-- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
---
-
-[.tab_content]
-[.mac_section]
+[.tab_content.windows_section.mac_section]
 --
 [role=command]
 ```
@@ -453,29 +421,14 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 
 Make a request to the service by running the following `curl` command.
 
-
-[.tab_link]
-[.windows_link]
+[.tab_link.windows_link]
 `*WINDOWS*`
-[.tab_link]
-[.mac_link]
+[.tab_link.mac_link]
 `*MAC*`
-[.tab_link]
-[.linux_link]
+[.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content]
-[.windows_section]
---
-[role=command]
-```
-curl -HHost:example.com -I http://localhost/system/properties
-```
-If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
---
-
-[.tab_content]
-[.mac_section]
+[.tab_content.windows_section.mac_section]
 --
 [role=command]
 ```
@@ -520,28 +473,14 @@ The [hotspot=55-63]`testAppVersionMatchesPom` test case verifies that the correc
 
 Run the command to start the tests:
 
-
-[.tab_link]
-[.windows_link]
+[.tab_link.windows_link]
 `*WINDOWS*`
-[.tab_link]
-[.mac_link]
+[.tab_link.mac_link]
 `*MAC*`
-[.tab_link]
-[.linux_link]
+[.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content]
-[.windows_section]
---
-[role=command]
-```
-mvn verify -Ddockerfile.skip=true
-```
---
-
-[.tab_content]
-[.mac_section]
+[.tab_content.windows_section.mac_section]
 --
 [role=command]
 ```
@@ -557,7 +496,6 @@ mvn verify -Ddockerfile.skip=true
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 --
-
 
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 ****
@@ -607,15 +545,11 @@ Navigate to the directory where you extracted {istio} and delete the {istio} res
 ```
 kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
-
-[.tab_link]
-[.windows_link]
+[.tab_link.windows_link]
 `*WINDOWS*`
-[.tab_link]
-[.mac_link]
+[.tab_link.mac_link]
 `*MAC*`
-[.tab_link]
-[.linux_link]
+[.tab_link.linux_link]
 `*LINUX*`
 
 [.tab_content]
@@ -645,22 +579,21 @@ Nothing more needs to be done for Docker Desktop.
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
-//{nbsp} +
+
 Perform the following steps to return your environment to a clean state.
 Point the Docker daemon back to your local machine:
-//+
+
 [role=command]
 ```
 eval $(minikube docker-env -u)
 ```
 Stop your Minikube cluster:
-//+
 [role=command]
 ```
 minikube stop
 ```
+
 Delete your cluster:
-//+
 [role=command]
 ```
 minikube delete
