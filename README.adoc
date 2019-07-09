@@ -119,7 +119,6 @@ Next, deploy the {istio} custom resource definitions. Custom resource definition
 [.tab_link.linux_link]`*LINUX*`
 
 [.tab_content]
-..... 
 [.windows_section]
 --
 [role=command]
