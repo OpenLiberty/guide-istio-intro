@@ -569,6 +569,7 @@ Nothing more needs to be done for Docker Desktop.
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
+--
 
 Perform the following steps to return your environment to a clean state.
 Point the Docker daemon back to your local machine:
