@@ -372,7 +372,7 @@ Make a request to the service by running the following `curl` command.
 ```
 curl -HHost:test.example.com -I http://localhost/system/properties
 ```
-- If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 --
 
 [.tab_content.linux_section]
@@ -490,10 +490,8 @@ mvn verify -Ddockerfile.skip=true
 ```
 mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
 ```
---
-
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
-****
+--
 
 The `dockerfile.skip=true` flag skips rebuilding the {docker} images.
 
