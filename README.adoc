@@ -591,6 +591,43 @@ minikube delete
 ```
 --
 
+[.tab_link.windows_link]
+`*WINDOWS*`
+[.tab_link.mac_link]
+`*MAC*`
+[.tab_link.linux_link]
+`*LINUX*`
+
+[.tab_content.windows_section.mac_section]
+--
+Nothing more needs to be done for Docker Desktop.
+--
+
+[.tab_content.linux_section]
+--
+Perform the following steps to return your environment to a clean state.
+
+. Point the Docker daemon back to your local machine:
++
+[role=command]
+```
+eval $(minikube docker-env -u)
+```
+. Stop your Minikube cluster:
++
+[role=command]
+```
+minikube stop
+```
+
+. Delete your cluster:
++
+[role=command]
+```
+minikube delete
+```
+--
+
 //include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
