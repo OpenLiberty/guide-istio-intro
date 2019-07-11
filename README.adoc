@@ -569,7 +569,6 @@ Nothing more needs to be done for Docker Desktop.
 ```
 for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
 ```
---
 
 Perform the following steps to return your environment to a clean state.
 Point the Docker daemon back to your local machine:
@@ -591,50 +590,13 @@ minikube delete
 ```
 --
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
-
-[.tab_content.windows_section.mac_section]
---
-Nothing more needs to be done for Docker Desktop.
---
-
-[.tab_content.linux_section]
---
-Perform the following steps to return your environment to a clean state.
-
-. Point the Docker daemon back to your local machine:
-+
-[role=command]
-```
-eval $(minikube docker-env -u)
-```
-. Stop your Minikube cluster:
-+
-[role=command]
-```
-minikube stop
-```
-
-. Delete your cluster:
-+
-[role=command]
-```
-minikube delete
-```
---
-
 //include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
 // =================================================================================================
 
-== Nice work! You're done!
+== Great work! You're done!
 
 You have deployed a microservice that runs on Open Liberty to a Kubernetes cluster and used {istio} to implement a blue-green deployment scheme.
 
