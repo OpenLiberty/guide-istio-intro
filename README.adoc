@@ -596,7 +596,7 @@ minikube delete
 // finish
 // =================================================================================================
 
-== Great work! You're done!
+== Nice work! You're done!
 
 You have deployed a microservice that runs on Open Liberty to a Kubernetes cluster and used {istio} to implement a blue-green deployment scheme.
 
