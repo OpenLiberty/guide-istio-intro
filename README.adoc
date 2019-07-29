@@ -287,7 +287,7 @@ Make a request to the service by running the following `curl` command.
 
 [role=command]
 ```
-curl -HHost:example.com -I http://localhost/system/properties
+curl -H "Host:example.com" -I http://localhost/system/properties
 ```
 
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
@@ -301,7 +301,7 @@ Make a request to the service by using `curl`.
 
 [role=command]
 ```
-curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
@@ -350,7 +350,7 @@ Make a request to the service by running the following `curl` command.
 
 [role=command]
 ```
-curl -HHost:test.example.com -I http://localhost/system/properties
+curl -H "Host:test.example.com" -I http://localhost/system/properties
 ```
 
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
@@ -361,7 +361,7 @@ Make a request to the service by using `curl`.
 
 [role=command]
 ```
-curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
@@ -402,7 +402,7 @@ Make a request to the service by running the following `curl` command.
 
 [role=command]
 ```
-curl -HHost:example.com -I http://localhost/system/properties
+curl -H "Host:example.com" -I http://localhost/system/properties
 ```
 
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
@@ -413,7 +413,7 @@ Make a request to the service by using `curl`.
 
 [role=command]
 ```
-curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
 ```
 ****
 
