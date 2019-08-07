@@ -180,16 +180,19 @@ any additional steps for the sidecars to be injected.
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `start` directory and run the following command. It might take a few minutes to complete.
-It builds the application and then packages it into a {docker} image.
-To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-plugin`.
-
+Navigate to the `start` directory and run the following command to build the application locally.
 [role=command]
 ```
 mvn clean package
 ```
+Next, run the `docker build` commands to build the container image for your application:
+[role='command']
+```
+docker build -t system:1.0-SNAPSHOT .
+```
 
-The command builds a {docker} image for the `system` microservice.
+The command builds a {docker} image for the `system` microservice. The `-t` flag in the `docker build` command allows the Docker image to be labeled (tagged) in the `name[:tag]` format. 
+The tag for an image describes the specific image version. If the optional `[:tag]` tag is not specified, the `latest` tag is created by default.
 You can verify that this image was created by running the following command. 
 
 [role=command]
@@ -448,7 +451,7 @@ Run the command to start the tests:
 
 [role=command]
 ```
-mvn verify -Ddockerfile.skip=true
+mvn verify
 ```
 
 [system]#*{linux}*#
@@ -457,13 +460,11 @@ Run the command to start the tests:
 
 [role=command]
 ```
-mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+mvn verify -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 ****
-
-The `dockerfile.skip=true` flag skips rebuilding the {docker} images.
 
 If the tests pass, then you should see output similar to the following example:
 
