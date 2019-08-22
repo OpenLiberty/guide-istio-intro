@@ -331,7 +331,7 @@ mvn versions:set -DnewVersion=2.0-SNAPSHOT
 Use Maven to repackage your microservice:
 [role=command]
 ```
-mvn package
+mvn clean package
 ```
 
 Next, build the new version of the container image as `2.0-SNAPSHOT`:
