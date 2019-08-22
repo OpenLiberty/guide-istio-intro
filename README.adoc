@@ -320,8 +320,13 @@ x-app-version: 1.0-SNAPSHOT
 // =================================================================================================
 
 == Deploying version 2 of the system microservice
-In this section, you will bump the version of 
-the `system` microservice to `2.0-SNAPSHOT` and redeploy the new version of the microservice.
+
+The `system` microservice is set up to respond with the version that is set in the `pom.xml` file. The tag for the {docker} image is also dependent on the version specified in the `pom.xml` file. Use the {maven} command to bump the version of the microservice to `2.0-SNAPSHOT`.
+
+[role=command]
+```
+mvn versions:set -DnewVersion=2.0-SNAPSHOT
+```
 
 Use Maven to repackage your microservice:
 [role=command]
