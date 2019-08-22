@@ -332,7 +332,7 @@ mvn package
 Next, build the new version of the container image as `2.0-SNAPSHOT`:
 [role=command]
 ```
-docker build -t system:2.0-SNAPSHOT system/.
+docker build -t system:2.0-SNAPSHOT .
 ```
 
 Deploy the new image to the green deployment.
