@@ -11,6 +11,9 @@ set -euxo pipefail
 
 mvn -q clean package
 
+docker pull open-liberty
+docker build -t system:2.0-SNAPSHOT .
+
 kubectl apply -f ../scripts/system.yaml
 
 sleep 120
