@@ -514,7 +514,7 @@ kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
 
 ****
-[system]#*{linux} | {mac}*#
+[system]#*{mac}*#
 
 [role=command]
 ```
@@ -526,11 +526,34 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f
 ```
 FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
 ```
-****
 
+[system]#*{linux}*#
 
 [role=command]
-include::{common-includes}/kube-minikube-teardown.adoc[]
+```
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
+```
+
+Perform the following steps to return your environment to a clean state.
+
+. Point the Docker daemon back to your local machine:
++
+```
+eval $(minikube docker-env -u)
+```
+
+. Stop your Minikube cluster:
++
+```
+minikube stop
+```
+
+. Delete your cluster:
++
+```
+minikube delete
+```
+****
 
 // =================================================================================================
 // finish
