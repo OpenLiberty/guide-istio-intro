@@ -17,7 +17,7 @@
 :page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
-:common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/os-specific
+:common-includes: ../guides-common/
 :source-highlighter: prettify
 :page-seo-title: Managing microservice traffic using Istio
 :page-seo-description: A tutorial on how to manage microservice traffic with Istio using blue-green deployment as an example
@@ -188,16 +188,19 @@ any additional steps for the sidecars to be injected.
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `start` directory and run the following command. It might take a few minutes to complete.
-It builds the application and then packages it into a {docker} image.
-To build the {docker} image, it uses a {maven} plug-in called `dockerfile-maven-plugin`.
-
+Navigate to the `start` directory and run the following command to build the application locally.
 [role=command]
 ```
 mvn clean package
 ```
+Next, run the `docker build` commands to build the container image for your application:
+[role='command']
+```
+docker build -t system:1.0-SNAPSHOT .
+```
 
-The command builds a {docker} image for the `system` microservice.
+The command builds a {docker} image for the `system` microservice. The `-t` flag in the `docker build` command allows the Docker image to be labeled (tagged) in the `name[:tag]` format. 
+The tag for an image describes the specific image version. If the optional `[:tag]` tag is not specified, the `latest` tag is created by default.
 You can verify that this image was created by running the following command. 
 
 [role=command]
@@ -298,11 +301,11 @@ Make a request to the service by running the following `curl` command.
 [.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content.windows_section.mac_section]
+[.tab_content.windows_section]
 --
 [role=command]
 ```
-curl -HHost:example.com -I http://localhost/system/properties
+curl -H "Host:example.com" -I http://localhost/system/properties
 ```
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^]. Postman enables you
 to make requests using a graphical interface. To make a request with Postman, enter `\http://localhost/system/properties`
@@ -310,11 +313,19 @@ into the URL bar. Next, switch to the `Headers` tab and add a header with key of
 Finally, click the blue `Send` button to make the request.
 --
 
+[.tab_content..mac_section]
+--
+[role=command]
+```
+curl -H "Host:example.com" -I http://localhost/system/properties
+```
+--
+
 [.tab_content.linux_section]
 --
 [role=command]
 ```
-curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
 
@@ -339,11 +350,16 @@ The `system` microservice is set up to respond with the version that is set in t
 mvn versions:set -DnewVersion=2.0-SNAPSHOT
 ```
 
-Build the new version of the {docker} container.
-
+Use Maven to repackage your microservice:
 [role=command]
 ```
 mvn clean package
+```
+
+Next, build the new version of the container image as `2.0-SNAPSHOT`:
+[role=command]
+```
+docker build -t system:2.0-SNAPSHOT .
 ```
 
 Deploy the new image to the green deployment.
@@ -370,7 +386,7 @@ Make a request to the service by running the following `curl` command.
 --
 [role=command]
 ```
-curl -HHost:test.example.com -I http://localhost/system/properties
+curl -H "Host:test.example.com" -I http://localhost/system/properties
 ```
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 --
@@ -380,7 +396,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 //Make a request to the service by using `curl`.
 [role=command]
 ```
-curl -HHost:test.example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
 
@@ -425,20 +441,28 @@ Make a request to the service by running the following `curl` command.
 [.tab_link.linux_link]
 `*LINUX*`
 
-[.tab_content.windows_section.mac_section]
+[.tab_content.windows_section]
 --
 [role=command]
 ```
-curl -HHost:example.com -I http://localhost/system/properties
+curl -H "Host:example.com" -I http://localhost/system/properties
 ```
 If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
+--
+
+[.tab_content.mac_section]
+--
+[role=command]
+```
+curl -H "Host:example.com" -I http://localhost/system/properties
+```
 --
 
 [.tab_content.linux_section]
 --
 [role=command]
 ```
-curl -HHost:example.com -I http://`minikube ip`:31380/system/properties
+curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
 
@@ -480,7 +504,7 @@ Run the command to start the tests:
 --
 [role=command]
 ```
-mvn verify -Ddockerfile.skip=true
+mvn verify
 ```
 --
 
@@ -488,12 +512,10 @@ mvn verify -Ddockerfile.skip=true
 --
 [role=command]
 ```
-mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31380
+mvn verify -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 --
-
-The `dockerfile.skip=true` flag skips rebuilding the {docker} images.
 
 If the tests pass, then you should see output similar to the following example:
 
@@ -577,22 +599,14 @@ Perform the following steps to return your environment to a clean state.
 eval $(minikube docker-env -u)
 ```
 
-. Stop your Minikube cluster:
+. Stop and delete your Minikube cluster:
 +
 [role=command]
 ```
 minikube stop
-```
-
-. Delete your cluster:
-+
-[role=command]
-```
 minikube delete
 ```
 --
-
-//include::{common-includes}/kube-minikube-teardown.adoc[]
 
 // =================================================================================================
 // finish
