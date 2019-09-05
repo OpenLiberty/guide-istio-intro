@@ -114,12 +114,7 @@ First, go to the https://github.com/istio/istio/releases/latest[{istio} release 
 
 Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
 --
@@ -294,12 +289,7 @@ After all the deployments are available, you will make a request to version 1 of
 
 Make a request to the service by running the following `curl` command.
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
 --
@@ -375,12 +365,7 @@ Test the updated microservice by making requests to the test site. The `x-app-ve
 
 Make a request to the service by running the following `curl` command.
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section.mac_section]
 --
@@ -434,12 +419,7 @@ Ensure that the live traffic is now being routed to version 2 of the microservic
 
 Make a request to the service by running the following `curl` command.
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
 --
@@ -493,12 +473,7 @@ The [hotspot=55-63]`testAppVersionMatchesPom` test case verifies that the correc
 
 Run the command to start the tests:
 
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section.mac_section]
 --
@@ -558,12 +533,7 @@ Navigate to the directory where you extracted {istio} and delete the {istio} res
 ```
 kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
-[.tab_link.windows_link]
-`*WINDOWS*`
-[.tab_link.mac_link]
-`*MAC*`
-[.tab_link.linux_link]
-`*LINUX*`
+include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
 --
