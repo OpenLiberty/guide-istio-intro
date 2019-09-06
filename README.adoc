@@ -133,38 +133,41 @@ for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f 
 --
 
 Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
-{kube} resources defined in a yaml file. This command deploys {istio}.
+{kube} resources defined in a yaml file.
 
 [role=command]
 ```
 kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
 
-Verify that {istio} was successfully deployed. All the values in the `AVAILABLE` column will have a value of `1` after
-the deployment is complete.
+Verify that Istio was successfully deployed by running the following command:
 
 [role=command]
 ```
 kubectl get deployments -n istio-system
 ```
- 
-Ensure that the {istio} deployments are all available before you continue. The deployments might take a few minutes to become available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, you can increase the memory from your {docker} preferences. On {minikube}, you can increase the memory using the `--memory` flag.
+
+All the values in the `AVAILABLE` column will have a value of `1` after
+the deployment is complete.
+
 [source, role="no_copy"]
 ----
-NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-grafana                  1         1         1            1           44s
-istio-citadel            1         1         1            1           44s
-istio-egressgateway      1         1         1            1           44s
-istio-galley             1         1         1            1           44s
-istio-ingressgateway     1         1         1            1           44s
-istio-pilot              1         1         1            1           44s
-istio-policy             1         1         1            1           44s
-istio-sidecar-injector   1         1         1            1           44s
-istio-telemetry          1         1         1            1           44s
-istio-tracing            1         1         1            1           43s
-prometheus               1         1         1            1           44s
-servicegraph             1         1         1            1           44s
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+grafana                  1/1     1            1           2m48s
+istio-citadel            1/1     1            1           2m48s
+istio-egressgateway      1/1     1            1           2m48s
+istio-galley             1/1     1            1           2m48s
+istio-ingressgateway     1/1     1            1           2m48s
+istio-pilot              1/1     1            1           2m48s
+istio-policy             1/1     1            1           2m48s
+istio-sidecar-injector   1/1     1            1           2m48s
+istio-telemetry          1/1     1            1           2m48s
+istio-tracing            1/1     1            1           2m48s
+kiali                    1/1     1            1           2m48s
+prometheus               1/1     1            1           2m48s
 ----
+ 
+Ensure that the {istio} deployments are all available before you continue. The deployments might take a few minutes to become available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, you can increase the memory from your {docker} preferences. On {minikube}, you can increase the memory using the `--memory` flag.
 
 Finally, create the `istio-injection` label and set its value to `enabled`.
 
@@ -174,8 +177,7 @@ kubectl label namespace default istio-injection=enabled
 ```
 
 Adding this label enables automatic {istio} sidecar injection. Automatic injection means that sidecars will
-automatically be injected into your pods when you deploy your application. You don't need to perform
-any additional steps for the sidecars to be injected.
+automatically be injected into your pods when you deploy your application.
 
 // =================================================================================================
 // Deploying v1
@@ -511,7 +513,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 
 You might want to teardown all the deployed resources as a cleanup step.
 
-Delete your resources from the cluster. This will stop any running pods created by the yaml files and delete them from the cluster.
+Delete your resources from the cluster:
 
 [role=command]
 ```
@@ -527,12 +529,15 @@ after the label name indicates that the label should be deleted.
 kubectl label namespace default istio-injection-
 ```
 
-Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster.
+Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster:
 
 [role=command]
 ```
 kubectl delete -f install/kubernetes/istio-demo.yaml
 ```
+
+Next, delete the Istio custom resource definitions, by running the following command: 
+
 include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
