@@ -442,6 +442,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 ```
 curl -H "Host:example.com" -I http://localhost/system/properties
 ```
+If the `curl` command is unavailable, then use https://www.getpostman.com/[Postman^].
 --
 
 [.tab_content.linux_section]
