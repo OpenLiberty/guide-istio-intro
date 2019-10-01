@@ -64,6 +64,7 @@ public class SystemEndpointTest {
         client.close();
     }
 
+    // tag::testAppVersion[]
     @Test
     public void testAppVersionMatchesPom() {
         response = this.getResponse(clusterUrl);
@@ -73,7 +74,7 @@ public class SystemEndpointTest {
 
         assertEquals(expectedVersion, actualVersion);
     }
-    
+    // end::testAppVersion[] 
     @Test
     public void testPodNameNotNull() {
         response = this.getResponse(clusterUrl);
