@@ -405,9 +405,9 @@ x-app-version: 2.0-SNAPSHOT
 `traffic.yaml`
 ----
 finish/traffic.yaml
-[source, yaml, linenums, role='code_column']
+[source, yaml, linenums, role='code_column hide_tags=copyright']
 ----
-include::finish/traffic.yaml[tags=**;!copyright]
+include::finish/traffic.yaml[]
 ----
 [role="edit_command_text"]
 After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
@@ -471,9 +471,9 @@ Next, you will create a test to verify that the correct version of your microser
 `src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java`
 ----
 SystemEndpointTest.java
-[source, Java, linenums, role='code_column']
+[source, Java, linenums, role='code_column hide_tags=copyright']
 ----
-include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java[tags=**;!copyright]
+include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java[]
 ----
 
 The [hotspot=testAppVersion]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
