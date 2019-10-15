@@ -75,6 +75,7 @@ public class SystemEndpointTest {
         assertEquals(expectedVersion, actualVersion);
     }
     // end::testAppVersion[] 
+    
     @Test
     public void testPodNameNotNull() {
         response = this.getResponse(clusterUrl);
