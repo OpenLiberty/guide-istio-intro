@@ -1,3 +1,5 @@
 FROM open-liberty
 
-ADD --chown=1001:0 target/LibertyProject.tar.gz /opt/ol
+COPY src/main/liberty/config /config/
+RUN configure.sh
+COPY target/system.war /config/apps
