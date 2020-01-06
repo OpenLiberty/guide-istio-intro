@@ -467,16 +467,16 @@ Next, you will create a test to verify that the correct version of your microser
 
 [role="code_command hotspot", subs="quotes"]
 ----
-#Create the `SystemEndpointTest` class.#
-`src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java`
+#Create the `SystemEndpointIT` class.#
+`src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java`
 ----
-SystemEndpointTest.java
+SystemEndpointIT.java
 [source, Java, linenums, role='code_column hide_tags=copyright']
 ----
-include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java[]
+include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java[]
 ----
 
-The [hotspot=testAppVersion]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
+The [hotspot=testAppVersion]`testAppVersionMatchesPom()` test case verifies that the correct version number is returned in the response headers.
 
 Run the command to start the tests:
 
@@ -486,7 +486,7 @@ include::{common-includes}/os-tabs.adoc[]
 --
 [role=command]
 ```
-mvn verify
+mvn failsafe:integration-test
 ```
 --
 
@@ -494,7 +494,7 @@ mvn verify
 --
 [role=command]
 ```
-mvn verify -Dcluster.ip=`minikube ip` -Dport=31380
+mvn failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 --
@@ -506,8 +506,8 @@ If the tests pass, then you should see output similar to the following example:
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running it.io.openliberty.guides.system.SystemEndpointTest
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.503 s - in it.io.openliberty.guides.system.SystemEndpointTest
+Running it.io.openliberty.guides.system.SystemEndpointIT
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.503 s - in it.io.openliberty.guides.system.SystemEndpointIT
 
 Results:
 
