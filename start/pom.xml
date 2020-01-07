@@ -25,7 +25,7 @@
         <!-- Liberty configuration -->
         <liberty.var.default.http.port>9080</liberty.var.default.http.port>
         <liberty.var.default.https.port>9443</liberty.var.default.https.port>
-        <app.version>${project.version}</app.version>
+        <liberty.var.app.version>${project.version}</liberty.var.app.version>
     </properties>
 
     <dependencies>
