@@ -22,6 +22,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import io.openliberty.guides.system.SystemResource;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,10 +67,10 @@ public class SystemEndpointIT {
 
     @Test
     // tag::testAppVersion[]
-    public void testAppVersionMatchesPom() {
+    public void testAppVersion() {
         response = this.getResponse(clusterUrl);
         
-        String expectedVersion = System.getProperty("app.name");
+        String expectedVersion = SystemResource.APP_VERSION;
         String actualVersion = response.getHeaderString("X-App-Version");
 
         assertEquals(expectedVersion, actualVersion);

@@ -28,9 +28,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Path("/properties")
 public class SystemResource {
 
-  @Inject
-  @ConfigProperty(name = "app.version")
-  String APP_VERSION;
+  // tag::version[]
+  public static String APP_VERSION = "2.0-SNAPSHOT";
+  // end::version[]
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
