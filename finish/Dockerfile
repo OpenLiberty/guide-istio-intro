@@ -1,5 +1,5 @@
 FROM open-liberty
 
 COPY src/main/liberty/config /config/
-RUN configure.sh
 COPY target/system.war /config/apps
+RUN configure.sh
