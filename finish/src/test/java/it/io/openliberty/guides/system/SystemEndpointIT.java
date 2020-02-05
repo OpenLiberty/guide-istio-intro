@@ -24,12 +24,16 @@ import javax.ws.rs.core.Response;
 
 import io.openliberty.guides.system.SystemResource;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.AfterEach;
 
-
+@TestMethodOrder(OrderAnnotation.class)
 public class SystemEndpointIT {
 
     private static String clusterUrl;
@@ -66,18 +70,7 @@ public class SystemEndpointIT {
     }
 
     @Test
-    // tag::testAppVersion[]
-    public void testAppVersion() {
-        response = this.getResponse(clusterUrl);
-        
-        String expectedVersion = SystemResource.APP_VERSION;
-        String actualVersion = response.getHeaderString("X-App-Version");
-
-        assertEquals(expectedVersion, actualVersion);
-    }
-    // end::testAppVersion[] 
-    
-    @Test
+    @Order(1)
     public void testPodNameNotNull() {
         response = this.getResponse(clusterUrl);
         this.assertResponse(clusterUrl, response);
@@ -90,6 +83,20 @@ public class SystemEndpointIT {
     }
 
     @Test
+    @Order(2)
+    // tag::testAppVersion[]
+    public void testAppVersion() {
+        response = this.getResponse(clusterUrl);
+
+        String expectedVersion = SystemResource.APP_VERSION;
+        String actualVersion = response.getHeaderString("X-App-Version");
+
+        assertEquals(expectedVersion, actualVersion);
+    }
+    // end::testAppVersion[]
+
+    @Test
+    @Order(3)
     public void testGetProperties() {
         Client client = ClientBuilder.newClient();
         client.register(JsrJsonpProvider.class);
