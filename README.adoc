@@ -428,14 +428,14 @@ x-app-version: 2.0-SNAPSHOT
 `traffic.yaml`
 ----
 
-traffic.yaml
-[source, yaml, linenums, role='code_column hide_tags=copyright']
+start/traffic.yaml
+[source, yaml, linenums, role='code_column']
 ----
-include::finish/traffic.yaml[]
+include::start/traffic.yaml[tags=**;]
 ----
 
 [role="edit_command_text"]
-After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
+After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47 file=1]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
 
 
 Deploy the updated `traffic.yaml` file.
