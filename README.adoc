@@ -428,10 +428,10 @@ x-app-version: 2.0-SNAPSHOT
 `traffic.yaml`
 ----
 
-start/traffic.yaml
+traffic.yaml
 [source, yaml, linenums, role='code_column']
 ----
-include::start/traffic.yaml[tags=**;]
+include::finish/traffic.yaml[tags=**;]
 ----
 
 [role="edit_command_text"]
