@@ -315,7 +315,7 @@ into the URL bar. Next, switch to the `Headers` tab and add a header with key of
 Finally, click the blue `Send` button to make the request.
 --
 
-[.tab_content..mac_section]
+[.tab_content.mac_section]
 --
 [role=command]
 ```
@@ -349,7 +349,7 @@ x-app-version: 1.0-SNAPSHOT
 
 == Deploying version 2 of the system microservice
 
-[role="code_command", subs="quotes", file=]
+[role="code_command", subs="quotes"]
 ----
 #Replace the `SystemResource` class.#
 `src/main/java/io/openliberty/guides/system/SystemResource.java`
