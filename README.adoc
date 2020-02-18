@@ -349,7 +349,7 @@ x-app-version: 1.0-SNAPSHOT
 
 == Deploying version 2 of the system microservice
 
-[role="code_command file=0", subs="quotes"]
+[role="code_command hotspot file=0", subs="quotes"]
 ----
 #Replace the `SystemResource` class.#
 `src/main/java/io/openliberty/guides/system/SystemResource.java`
@@ -413,7 +413,6 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
-
 
 You'll see the new version in the `x-app-version` response header.
 
