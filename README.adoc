@@ -20,7 +20,7 @@
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
 :page-seo-title: Managing traffic in Java microservices using Istio
-:page-seo-description: A getting started tutorial on how to manage Java microservice traffic with an Istio service mesh and using Kubernetes blue-green deployment as an example.
+:page-seo-description: A getting started tutorial on how to manage Java microservice traffic with an Istio service mesh using Kubernetes blue-green deployment as an example.
 :guide-author: Open Liberty
 = Managing microservice traffic using Istio
 
