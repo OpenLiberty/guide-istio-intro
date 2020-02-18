@@ -349,14 +349,14 @@ x-app-version: 1.0-SNAPSHOT
 
 == Deploying version 2 of the system microservice
 
-[role="code_command", subs="quotes"]
+[role="code_command file=0", subs="quotes"]
 ----
 #Replace the `SystemResource` class.#
 `src/main/java/io/openliberty/guides/system/SystemResource.java`
 ----
 
 SystemResource.java
-[source, Java, linenums, role='code_column hide_tags=copyright', file=0]
+[source, Java, linenums, role='code_column hide_tags=copyright']
 ----
 include::finish/src/main/java/io/openliberty/guides/system/SystemResource.java[]
 ----
@@ -422,13 +422,13 @@ You'll see the new version in the `x-app-version` response header.
 x-app-version: 2.0-SNAPSHOT
 ----
 
-[role="code_command hotspot", subs="quotes"]
+[role="code_command hotspot file=1", subs="quotes"]
 ----
 #Update the `traffic.yaml` file.#
 `traffic.yaml`
 ----
 
-traffic.yaml
+finish/traffic.yaml
 [source, yaml, linenums, role='code_column', file=1]
 ----
 include::finish/traffic.yaml[tags=**;]
