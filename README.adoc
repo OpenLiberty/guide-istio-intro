@@ -257,7 +257,7 @@ include::finish/system.yaml[tags=**;]
 
 View the [hotspot file=0]`system.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=33 hotspot=39 hotspot=44 file=0]`blue` and the second deployment is labeled [hotspot=55 hotspot=61 hotspot=66 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
-start/traffic.yaml
+traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
 include::start/traffic.yaml[tags=**;]
@@ -315,7 +315,7 @@ into the URL bar. Next, switch to the `Headers` tab and add a header with key of
 Finally, click the blue `Send` button to make the request.
 --
 
-[.tab_content..mac_section]
+[.tab_content.mac_section]
 --
 [role=command]
 ```
@@ -349,7 +349,7 @@ x-app-version: 1.0-SNAPSHOT
 
 == Deploying version 2 of the system microservice
 
-[role="code_command", subs="quotes"]
+[role="code_command hotspot file=0", subs="quotes"]
 ----
 #Replace the `SystemResource` class.#
 `src/main/java/io/openliberty/guides/system/SystemResource.java`
@@ -414,7 +414,6 @@ curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
 
-
 You'll see the new version in the `x-app-version` response header.
 
 [source, role="no_copy"]
@@ -422,20 +421,20 @@ You'll see the new version in the `x-app-version` response header.
 x-app-version: 2.0-SNAPSHOT
 ----
 
-[role="code_command hotspot", subs="quotes"]
+[role="code_command hotspot file=1", subs="quotes"]
 ----
 #Update the `traffic.yaml` file.#
 `traffic.yaml`
 ----
 
 traffic.yaml
-[source, yaml, linenums, role='code_column hide_tags=copyright']
+[source, yaml, linenums, role='code_column', file=1]
 ----
-include::finish/traffic.yaml[]
+include::finish/traffic.yaml[tags=**;]
 ----
 
 [role="edit_command_text"]
-After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
+After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47 file=1]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
 
 
 Deploy the updated `traffic.yaml` file.
