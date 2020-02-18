@@ -257,7 +257,7 @@ include::finish/system.yaml[tags=**;]
 
 View the [hotspot file=0]`system.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=33 hotspot=39 hotspot=44 file=0]`blue` and the second deployment is labeled [hotspot=55 hotspot=61 hotspot=66 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
-start/traffic.yaml
+traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
 include::start/traffic.yaml[tags=**;]
@@ -427,7 +427,7 @@ x-app-version: 2.0-SNAPSHOT
 `traffic.yaml`
 ----
 
-finish/traffic.yaml
+traffic.yaml
 [source, yaml, linenums, role='code_column', file=1]
 ----
 include::finish/traffic.yaml[tags=**;]
