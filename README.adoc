@@ -74,17 +74,17 @@ of test traffic to green deployments. Then, you can shift the traffic to point t
 perform blue-green deployments.
 
 The microservice you'll deploy is called `system`.
-It responds with current system's JVM properties and it returns the app version in the response header.
-You will increment the version as part of updating the application.
-This number will allow you to view which version of the microservice is running in your production or test environments.
+It responds with your current system's JVM properties and it returns the app version in the response header.
+You will increment the version number when you update the application.
+With this number, you can determine which version of the microservice is running in your production or test environments.
 
 === What are blue-green deployments?
 
 Blue-green deployments are a way of deploying your applications such that you have two environments where your application runs.
 In this scenario, you will have a production environment and a test environment.
-At any point in time, the blue deployment can accept production traffic and the green deployment can accept test traffic, or vice-versa.
-When you want to deploy a new version of your application, you will deploy to the color that is acting as your test environment.
-After the new version is verified on the test environment, the traffic will be shifted over.
+At any point in time, the blue deployment can accept production traffic and the green deployment can accept test traffic, or vice versa.
+When you want to deploy a new version of your application, you deploy to the color that is acting as your test environment.
+After the new version is verified on the test environment, the traffic is shifted over.
 Thus, your live traffic is now being handled by what used to be the test site.
 
 // =================================================================================================
@@ -208,7 +208,7 @@ The command builds a {docker} image for the `system` microservice.
 The `-t` flag in the `docker build` command allows the Docker image to be labeled (tagged) in the `name[:tag]` format.
 The tag for an image describes the specific image version.
 If the optional `[:tag]` tag is not specified, the `latest` tag is created by default.
-You can verify that this image was created by running the following command. 
+You can verify that this image was created by running the following command: 
 
 [role=command]
 ```
@@ -362,7 +362,7 @@ include::finish/src/main/java/io/openliberty/guides/system/SystemResource.java[]
 ----
 
 The `system` microservice is set up to respond with the version that is set in the `SystemResource.java` file.
-The tag for the {docker} image is also dependent on the version specified in the `SystemResource.java` file.
+The tag for the {docker} image is also dependent on the version that is specified in the `SystemResource.java` file.
 Manually update the [hotspot=version]`APP_VERSION` field of the microservice to `2.0-SNAPSHOT`.
 
 Use Maven to repackage your microservice:
@@ -385,9 +385,9 @@ kubectl set image deployment/system-deployment-green system-container=system:2.0
 ```
 
 You will work with two environments.
-One of the environments is a test site located at `test.example.com`.
-The other environment is your production environment located at `example.com`.
-To start with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
+One of the environments is a test site that is located at `test.example.com`.
+The other environment is your production environment that is located at `example.com`.
+To begin with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
 
 Test the updated microservice by making requests to the test site.
 The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
