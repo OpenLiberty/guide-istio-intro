@@ -1,6 +1,6 @@
 // tag::copyright[]
 /*******************************************************************************
- * Copyright (c) 2019 IBM Corporation and others.
+ * Copyright (c) 2019, 2020 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,31 +12,36 @@
 // end::copyright[]
 package it.io.openliberty.guides.system;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.ws.rs.client.WebTarget;
+import io.openliberty.guides.system.SystemResource;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
-public class SystemEndpointTest {
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.AfterEach;
+
+@TestMethodOrder(OrderAnnotation.class)
+public class SystemEndpointIT {
 
     private static String clusterUrl;
 
     private Client client;
     private Response response;
 
-    @BeforeClass
+    @BeforeAll
     public static void oneTimeSetup() {
         // Allows for overriding the "Host" http header
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
@@ -47,7 +52,7 @@ public class SystemEndpointTest {
         clusterUrl = "http://" + clusterIp + ":" + nodePort + "/system/properties/";
     }
     
-    @Before
+    @BeforeEach
     public void setup() {
         response = null;
         client = ClientBuilder.newBuilder()
@@ -59,24 +64,13 @@ public class SystemEndpointTest {
                     .build();
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         client.close();
     }
 
-    // tag::testAppVersion[]
     @Test
-    public void testAppVersionMatchesPom() {
-        response = this.getResponse(clusterUrl);
-        
-        String expectedVersion = System.getProperty("app.name");
-        String actualVersion = response.getHeaderString("X-App-Version");
-
-        assertEquals(expectedVersion, actualVersion);
-    }
-    // end::testAppVersion[] 
-    
-    @Test
+    @Order(1)
     public void testPodNameNotNull() {
         response = this.getResponse(clusterUrl);
         this.assertResponse(clusterUrl, response);
@@ -85,12 +79,24 @@ public class SystemEndpointTest {
         String message = "Container name should not be null but it was. " +
             "The service is probably not running inside a container";
 
-        assertNotNull(
-            message,
-            greeting);
+        assertNotNull(greeting, message);
     }
 
     @Test
+    @Order(2)
+    // tag::testAppVersion[]
+    public void testAppVersion() {
+        response = this.getResponse(clusterUrl);
+
+        String expectedVersion = SystemResource.APP_VERSION;
+        String actualVersion = response.getHeaderString("X-App-Version");
+
+        assertEquals(expectedVersion, actualVersion);
+    }
+    // end::testAppVersion[]
+
+    @Test
+    @Order(3)
     public void testGetProperties() {
         Client client = ClientBuilder.newClient();
         client.register(JsrJsonpProvider.class);
@@ -101,9 +107,8 @@ public class SystemEndpointTest {
             .header("Host", System.getProperty("host-header"))
             .get();
 
-        assertEquals("Incorrect response code from " + clusterUrl,
-            200,
-            response.getStatus());
+        assertEquals(200, response.getStatus(),
+            "Incorrect response code from " + clusterUrl);
 
         response.close();
     }
@@ -117,9 +122,8 @@ public class SystemEndpointTest {
     }
 
     private void assertResponse(String url, Response response) {
-        assertEquals("Incorrect response code from " + url,
-            200,
-            response.getStatus());
+        assertEquals(200, response.getStatus(),
+            "Incorrect response code from " + url);
     }
 
 }
