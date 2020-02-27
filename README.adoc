@@ -19,8 +19,8 @@
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
 :source-highlighter: prettify
-:page-seo-title: Managing microservice traffic using Istio
-:page-seo-description: A tutorial on how to manage microservice traffic with Istio using blue-green deployment as an example
+:page-seo-title: Managing traffic in Java microservices using Istio
+:page-seo-description: A getting started tutorial on how to manage Java microservice traffic with an Istio service mesh using Kubernetes blue-green deployment as an example.
 :guide-author: Open Liberty
 = Managing microservice traffic using Istio
 
@@ -73,11 +73,19 @@ traffic to certain versions of services. You can use this feature to shift 100 p
 of test traffic to green deployments. Then, you can shift the traffic to point to the opposite deployments as necessary to
 perform blue-green deployments.
 
-The microservice you'll deploy is called `system`. It responds with current system's JVM properties and it returns the app version in the response header. The version will be automatically incremented when you update the `pom.xml` version. This number will allow you to view which version of the microservice is running in your production or test environments.
+The microservice you'll deploy is called `system`.
+It responds with your current system's JVM properties and it returns the app version in the response header.
+You will increment the version number when you update the application.
+With this number, you can determine which version of the microservice is running in your production or test environments.
 
 === What are blue-green deployments?
 
-Blue-green deployments are a way of deploying your applications such that you have two environments where your application runs. In this scenario, you will have a production environment and a test environment. At any point in time, the blue deployment can accept production traffic and the green deployment can accept test traffic, or vice-versa. When you want to deploy a new version of your application, you will deploy to the color that is acting as your test environment. After the new version is verified on the test environment, the traffic will be shifted over. Thus, your live traffic is now being handled by what used to be the test site.
+Blue-green deployments are a way of deploying your applications such that you have two environments where your application runs.
+In this scenario, you will have a production environment and a test environment.
+At any point in time, the blue deployment can accept production traffic and the green deployment can accept test traffic, or vice versa.
+When you want to deploy a new version of your application, you deploy to the color that is acting as your test environment.
+After the new version is verified on the test environment, the traffic is shifted over.
+Thus, your live traffic is now being handled by what used to be the test site.
 
 // =================================================================================================
 // Prerequisites
@@ -196,9 +204,11 @@ Next, run the `docker build` commands to build the container image for your appl
 docker build -t system:1.0-SNAPSHOT .
 ```
 
-The command builds a {docker} image for the `system` microservice. The `-t` flag in the `docker build` command allows the Docker image to be labeled (tagged) in the `name[:tag]` format. 
-The tag for an image describes the specific image version. If the optional `[:tag]` tag is not specified, the `latest` tag is created by default.
-You can verify that this image was created by running the following command. 
+The command builds a {docker} image for the `system` microservice.
+The `-t` flag in the `docker build` command allows the Docker image to be labeled (tagged) in the `name[:tag]` format.
+The tag for an image describes the specific image version.
+If the optional `[:tag]` tag is not specified, the `latest` tag is created by default.
+You can verify that this image was created by running the following command: 
 
 [role=command]
 ```
@@ -247,7 +257,7 @@ include::finish/system.yaml[tags=**;]
 
 View the [hotspot file=0]`system.yaml` file. It contains two [hotspot=30-72 file=0]`deployments`, a [hotspot=17-28 file=0]`service`, a [hotspot=1-15 file=0]`gateway`, and a [hotspot=74-87 file=0]`destination rule`. One of the deployments is labeled [hotspot=33 hotspot=39 hotspot=44 file=0]`blue` and the second deployment is labeled [hotspot=55 hotspot=61 hotspot=66 file=0]`green`. The service points to both of these deployments. The {istio} gateway is the entry point for HTTP requests to the cluster. A destination rule is used to apply policies post-routing, in this situation it is used to define service subsets that can be specifically routed to.
 
-start/traffic.yaml
+traffic.yaml
 [source, yaml, linenums, role='code_column no_copy']
 ----
 include::start/traffic.yaml[tags=**;]
@@ -305,7 +315,7 @@ into the URL bar. Next, switch to the `Headers` tab and add a header with key of
 Finally, click the blue `Send` button to make the request.
 --
 
-[.tab_content..mac_section]
+[.tab_content.mac_section]
 --
 [role=command]
 ```
@@ -339,12 +349,21 @@ x-app-version: 1.0-SNAPSHOT
 
 == Deploying version 2 of the system microservice
 
-The `system` microservice is set up to respond with the version that is set in the `pom.xml` file. The tag for the {docker} image is also dependent on the version specified in the `pom.xml` file. Use the {maven} command to bump the version of the microservice to `2.0-SNAPSHOT`.
+[role="code_command hotspot file=0", subs="quotes"]
+----
+#Replace the `SystemResource` class.#
+`src/main/java/io/openliberty/guides/system/SystemResource.java`
+----
 
-[role=command]
-```
-mvn versions:set -DnewVersion=2.0-SNAPSHOT
-```
+SystemResource.java
+[source, Java, linenums, role='code_column hide_tags=copyright']
+----
+include::finish/src/main/java/io/openliberty/guides/system/SystemResource.java[]
+----
+
+The `system` microservice is set up to respond with the version that is set in the `SystemResource.java` file.
+The tag for the {docker} image is also dependent on the version that is specified in the `SystemResource.java` file.
+Manually update the [hotspot=version]`APP_VERSION` field of the microservice to `2.0-SNAPSHOT`.
 
 Use Maven to repackage your microservice:
 [role=command]
@@ -365,9 +384,13 @@ Deploy the new image to the green deployment.
 kubectl set image deployment/system-deployment-green system-container=system:2.0-SNAPSHOT
 ```
 
-You will work with two environments. One of the environments is a test site located at `test.example.com`. The other environment is your production environment located at `example.com`. To start with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
+You will work with two environments.
+One of the environments is a test site that is located at `test.example.com`.
+The other environment is your production environment that is located at `example.com`.
+To begin with, the production environment is tied to the blue deployment and the test environment is tied to the green deployment.
 
-Test the updated microservice by making requests to the test site. The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
+Test the updated microservice by making requests to the test site.
+The `x-app-version` header now has a value of `2.0-SNAPSHOT` on the test site and is still `1.0-SNAPSHOT` on the live site.
 
 Make a request to the service by running the following `curl` command.
 
@@ -391,7 +414,6 @@ curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
 ```
 --
 
-
 You'll see the new version in the `x-app-version` response header.
 
 [source, role="no_copy"]
@@ -399,18 +421,20 @@ You'll see the new version in the `x-app-version` response header.
 x-app-version: 2.0-SNAPSHOT
 ----
 
-[role="code_command hotspot", subs="quotes"]
+[role="code_command hotspot file=1", subs="quotes"]
 ----
 #Update the `traffic.yaml` file.#
 `traffic.yaml`
 ----
-finish/traffic.yaml
-[source, yaml, linenums, role='code_column hide_tags=copyright']
+
+traffic.yaml
+[source, yaml, linenums, role='code_column', file=1]
 ----
-include::finish/traffic.yaml[]
+include::finish/traffic.yaml[tags=**;]
 ----
+
 [role="edit_command_text"]
-After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
+After you see that the microservice is working on the test site, modify the [hotspot=17 hotspot=23 hotspot=41 hotspot=47 file=1]`weights` in the `traffic.yaml` file to shift 100 percent of the `example.com` traffic to the green deployment, and 100 percent of the `test.example.com` traffic to the blue deployment.
 
 
 Deploy the updated `traffic.yaml` file.
@@ -467,16 +491,16 @@ Next, you will create a test to verify that the correct version of your microser
 
 [role="code_command hotspot", subs="quotes"]
 ----
-#Create the `SystemEndpointTest` class.#
-`src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java`
+#Create the `SystemEndpointIT` class.#
+`src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java`
 ----
-SystemEndpointTest.java
+SystemEndpointIT.java
 [source, Java, linenums, role='code_column hide_tags=copyright']
 ----
-include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointTest.java[]
+include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java[]
 ----
 
-The [hotspot=testAppVersion]`testAppVersionMatchesPom` test case verifies that the correct version number is returned in the response headers.
+The [hotspot=testAppVersion]`testAppVersion()` test case verifies that the correct version number is returned in the response headers.
 
 Run the command to start the tests:
 
@@ -486,7 +510,7 @@ include::{common-includes}/os-tabs.adoc[]
 --
 [role=command]
 ```
-mvn verify
+mvn failsafe:integration-test
 ```
 --
 
@@ -494,7 +518,7 @@ mvn verify
 --
 [role=command]
 ```
-mvn verify -Dcluster.ip=`minikube ip` -Dport=31380
+mvn failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=31380
 ```
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 --
@@ -506,8 +530,8 @@ If the tests pass, then you should see output similar to the following example:
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running it.io.openliberty.guides.system.SystemEndpointTest
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.503 s - in it.io.openliberty.guides.system.SystemEndpointTest
+Running it.io.openliberty.guides.system.SystemEndpointIT
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.503 s - in it.io.openliberty.guides.system.SystemEndpointIT
 
 Results:
 

@@ -26,7 +26,8 @@ curl http://`minikube ip`:31000/system/properties -I
 
 # Run tests
 
-mvn verify -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31000
+mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31000
+mvn failsafe:verify
 
 # Print logs
 
