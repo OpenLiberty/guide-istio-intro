@@ -230,7 +230,7 @@ istio/mixer                1.0.1          0d97b4000ed5   5 days ago       64.5MB
 istio/sidecar_injector     1.0.1          a122adc160b7   5 days ago       45.3MB
 istio/proxyv2              1.0.1          f1bf7b920fe1   5 days ago       352MB
 istio/pilot                1.0.1          46d3b4e95fc3   5 days ago       290MB
-open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
+openliberty/open-liberty:kernel-java8-openj9-ubi               latest         ed1ca62c4bd5   7 days ago       501MB
 prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
 ----
 
