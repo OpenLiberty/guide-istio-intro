@@ -1,4 +1,3 @@
-sudo: required
 language: java
 services:
 - docker
@@ -7,18 +6,17 @@ env:
 before_script:
 - unset _JAVA_OPTIONS
 - cd finish
+- chmod +x ../scripts/travisTest.sh
+script:
 - sudo mount --make-rshared /
 - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 - chmod +x kubectl
 - sudo ln -s $(pwd)/kubectl /usr/local/bin/kubectl
-- wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64
-  -q -O minikube
+- wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64 -q -O minikube
 - chmod +x minikube
 - sudo ln -s $(pwd)/minikube /usr/local/bin/minikube
 - sudo minikube start --vm-driver=none --bootstrapper=localkube
-- chmod +x ../scripts/travisTest.sh
-script:
-- "../scripts/travisTest.sh"
+- ../scripts/travisTest.sh
 notifications:
   slack:
     template:
