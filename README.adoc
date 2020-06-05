@@ -107,7 +107,7 @@ include::{common-includes}/gitclone.adoc[]
 // =================================================================================================
 
 :minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.13.0
-:docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
+:docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM. Ensure that Kubernetes is running on Docker Desktop and the context is set to docker-desktop.
 :minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM, then 4GB should be adequate.
 [role=command]
 include::{common-includes}/kube-start.adoc[]
@@ -198,6 +198,9 @@ Navigate to the `start` directory and run the following command to build the app
 ```
 mvn clean package
 ```
+
+include::{common-includes}/ol-kernel-docker-pull.adoc[]
+
 Next, run the `docker build` commands to build the container image for your application:
 [role='command']
 ```
@@ -219,16 +222,16 @@ You'll see an image called `system:1.0-SNAPSHOT` listed in a table similar to th
 
 [source, role="no_copy"]
 ----
-REPOSITORY                 TAG            IMAGE ID       CREATED          SIZE
-system                     1.0-SNAPSHOT   d316c2c2c6ba   9 seconds ago    501MB
-istio/galley               1.0.1          7ac6c7be3d3e   5 days ago       65.8MB
-istio/citadel              1.0.1          abcc721c2454   5 days ago       51.7MB
-istio/mixer                1.0.1          0d97b4000ed5   5 days ago       64.5MB
-istio/sidecar_injector     1.0.1          a122adc160b7   5 days ago       45.3MB
-istio/proxyv2              1.0.1          f1bf7b920fe1   5 days ago       352MB
-istio/pilot                1.0.1          46d3b4e95fc3   5 days ago       290MB
-open-liberty               latest         ed1ca62c4bd5   7 days ago       501MB
-prom/prometheus            v2.3.1         b82ef1f3aa07   2 months ago     119MB
+REPOSITORY                            TAG                       IMAGE ID        CREATED          SIZE
+system                                1.0-SNAPSHOT              d316c2c2c6ba    9 seconds ago    501MB
+istio/galley                          1.0.1                     7ac6c7be3d3e    5 days ago       65.8MB
+istio/citadel                         1.0.1                     abcc721c2454    5 days ago       51.7MB
+istio/mixer                           1.0.1                     0d97b4000ed5    5 days ago       64.5MB
+istio/sidecar_injector                1.0.1                     a122adc160b7    5 days ago       45.3MB
+istio/proxyv2                         1.0.1                     f1bf7b920fe1    5 days ago       352MB
+istio/pilot                           1.0.1                     46d3b4e95fc3    5 days ago       290MB
+openliberty/open-liberty              kernel-java8-openj9-ubi   013be378bb58    6 days ago       716MB
+prom/prometheus                       v2.3.1                    b82ef1f3aa07    2 months ago     119MB
 ----
 
 To deploy the `system` microservice to the {kube} cluster, use the following command to deploy the microservice.
