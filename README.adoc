@@ -17,7 +17,7 @@
 :page-tags: ['Kubernetes', 'Docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
-:common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/master
+:common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/k8preq
 :source-highlighter: prettify
 :page-seo-title: Managing traffic in Java microservices using Istio
 :page-seo-description: A getting started tutorial on how to manage Java microservice traffic with an Istio service mesh using Kubernetes blue-green deployment as an example.
