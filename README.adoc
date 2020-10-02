@@ -196,6 +196,7 @@ automatically be injected into your pods when you deploy your application.
 Navigate to the `start` directory and run the following command to build the application locally.
 [role=command]
 ```
+cd start
 mvn clean package
 ```
 
