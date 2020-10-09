@@ -118,9 +118,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
-
-Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
+First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add `istioctl` clien to your path by running the following:
 
 include::{common-includes}/os-tabs.adoc[]
 
@@ -136,7 +134,7 @@ FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -
 --
 [role=command]
 ```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+export PATH=$PWD/bin:$PATH
 ```
 --
 
@@ -145,8 +143,70 @@ Next, deploy {istio} resources to your cluster by running the `kubectl apply` co
 
 [role=command]
 ```
-kubectl apply -f install/kubernetes/istio-demo.yaml
+export PATH=$PWD/bin:$PATH
 ```
+
+Verify that `istioctl` path has been set successfully.
+
+```
+istioctl
+```
+
+[source, role="no_copy"]
+----
+Istio configuration command line utility for service operators to
+debug and diagnose their Istio mesh.
+
+Usage:
+  istioctl [command]
+
+Available Commands:
+  analyze         Analyze Istio configuration and print validation messages
+  authz           (authz is experimental. Use `istioctl experimental authz`)
+  convert-ingress Convert Ingress configuration into Istio VirtualService configuration
+  dashboard       Access to Istio web UIs
+  deregister      De-registers a service instance
+  experimental    Experimental commands that may be modified or deprecated
+  help            Help about any command
+  install         Applies an Istio manifest, installing or reconfiguring Istio on a cluster.
+  kube-inject     Inject Envoy sidecar into Kubernetes pod resources
+  manifest        Commands related to Istio manifests
+  operator        Commands related to Istio operator controller.
+  profile         Commands related to Istio configuration profiles
+  proxy-config    Retrieve information about proxy configuration from Envoy [kube only]
+  proxy-status    Retrieves the synchronization status of each Envoy in the mesh [kube only]
+  register        Registers a service instance (e.g. VM) joining the mesh
+  upgrade         Upgrade Istio control plane in-place
+  validate        Validate Istio policy and rules files
+  verify-install  Verifies Istio Installation Status
+  version         Prints out build version information
+
+Flags:
+      --context string          The name of the kubeconfig context to use
+  -h, --help                    help for istioctl
+  -i, --istioNamespace string   Istio system namespace (default "istio-system")
+  -c, --kubeconfig string       Kubernetes configuration file
+  -n, --namespace string        Config namespace
+
+Additional help topics:
+  istioctl options         Displays istioctl global options
+
+Use "istioctl [command] --help" for more information about a command.
+----
+
+We will use the following to configure the {istio} profile on {kube}
+```
+istioctl install --set profile=demo
+```
+
+[source, role="no_copy"]
+----
+✔ Istio core installed
+✔ Istiod installed
+✔ Egress gateways installed
+✔ Ingress gateways installed
+✔ Installation complete
+----
 
 Verify that Istio was successfully deployed by running the following command:
 
@@ -161,18 +221,9 @@ the deployment is complete.
 [source, role="no_copy"]
 ----
 NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
-grafana                  1/1     1            1           2m48s
-istio-citadel            1/1     1            1           2m48s
 istio-egressgateway      1/1     1            1           2m48s
-istio-galley             1/1     1            1           2m48s
 istio-ingressgateway     1/1     1            1           2m48s
-istio-pilot              1/1     1            1           2m48s
-istio-policy             1/1     1            1           2m48s
-istio-sidecar-injector   1/1     1            1           2m48s
-istio-telemetry          1/1     1            1           2m48s
-istio-tracing            1/1     1            1           2m48s
-kiali                    1/1     1            1           2m48s
-prometheus               1/1     1            1           2m48s
+istiod                   1/1     1            1           2m48s
 ----
  
 Ensure that the {istio} deployments are all available before you continue. The deployments might take a few minutes to become available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, you can increase the memory from your {docker} preferences. On {minikube}, you can increase the memory using the `--memory` flag.
@@ -562,59 +613,12 @@ after the label name indicates that the label should be deleted.
 kubectl label namespace default istio-injection-
 ```
 
-Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster:
+Delete all {istio} resources from the cluster:
 
 [role=command]
 ```
-kubectl delete -f install/kubernetes/istio-demo.yaml
+istioctl x uninstall --purge
 ```
-
-Next, delete the Istio custom resource definitions, by running the following command: 
-
-include::{common-includes}/os-tabs.adoc[]
-
-[.tab_content.windows_section]
---
-[role=command]
-```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
-```
-Nothing more needs to be done for Docker Desktop.
---
-
-[.tab_content.mac_section]
---
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
-Nothing more needs to be done for Docker Desktop.
---
-
-[.tab_content.linux_section]
---
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
-
-Perform the following steps to return your environment to a clean state.
-
-. Point the Docker daemon back to your local machine:
-+
-[role=command]
-```
-eval $(minikube docker-env -u)
-```
-
-. Stop and delete your Minikube cluster:
-+
-[role=command]
-```
-minikube stop
-minikube delete
-```
---
 
 // =================================================================================================
 // finish
