@@ -126,7 +126,8 @@ include::{common-includes}/os-tabs.adoc[]
 --
 [role=command]
 ```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
+cd bin
+setx /m istioctl "${pwd}"
 ```
 --
 
