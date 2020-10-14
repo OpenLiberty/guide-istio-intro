@@ -141,6 +141,7 @@ export PATH=$PWD/bin:$PATH
 
 Run the following command to verify that `istioctl` path has been set successfully:
 
+[role=command]
 ```
 istioctl version
 ```
@@ -152,6 +153,7 @@ no running Istio pods in "istio-system"
 ----
 
 We will use the following to configure the {istio} profile on {kube}
+[role=command]
 ```
 istioctl install --set profile=demo
 ```
