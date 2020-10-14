@@ -146,6 +146,7 @@ Run the following command to verify that `istioctl` path has been set successful
 istioctl version
 ```
 
+he output will be similar to the following example.
 [source, role="no_copy"]
 ----
 no running Istio pods in "istio-system"
