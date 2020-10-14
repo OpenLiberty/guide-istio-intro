@@ -118,7 +118,7 @@ include::{common-includes}/kube-start.adoc[]
 
 == Deploying Istio
 
-First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add `istioctl` clien to your path by running the following:
+First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files. Add `istioctl` client to your path by running the following:
 
 include::{common-includes}/os-tabs.adoc[]
 
@@ -139,14 +139,6 @@ export PATH=$PWD/bin:$PATH
 ```
 --
 
-Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
-{kube} resources defined in a yaml file.
-
-[role=command]
-```
-export PATH=$PWD/bin:$PATH
-```
-
 Run the following command to verify that `istioctl` path has been set successfully:
 
 ```
@@ -155,9 +147,8 @@ istioctl version
 
 [source, role="no_copy"]
 ----
-client version: 1.7.3
-control plane version: 1.7.3
-data plane version: 1.7.3 (2 proxies)
+no running Istio pods in "istio-system"
+1.7.3
 ----
 
 We will use the following to configure the {istio} profile on {kube}
