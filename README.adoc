@@ -152,12 +152,13 @@ no running Istio pods in "istio-system"
 1.7.3
 ----
 
-We will use the following to configure the {istio} profile on {kube}
+We will use the following command to configure the {istio} profile on {kube}
 [role=command]
 ```
 istioctl install --set profile=demo
 ```
 
+The following output should appear when the installation is complete:
 [source, role="no_copy"]
 ----
 ✔ Istio core installed
