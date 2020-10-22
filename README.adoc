@@ -186,10 +186,9 @@ automatically be injected into your pods when you deploy your application.
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `start` directory and run the following command to build the application locally.
+Navigate to the `guide-istio-intro\start` directory and run the following command to build the application locally.
 [role=command]
 ```
-cd start
 mvn clean package
 ```
 
@@ -217,15 +216,10 @@ You'll see an image called `system:1.0-SNAPSHOT` listed in a table similar to th
 [source, role="no_copy"]
 ----
 REPOSITORY                            TAG                       IMAGE ID        CREATED          SIZE
-system                                1.0-SNAPSHOT              d316c2c2c6ba    9 seconds ago    501MB
-istio/galley                          1.0.1                     7ac6c7be3d3e    5 days ago       65.8MB
-istio/citadel                         1.0.1                     abcc721c2454    5 days ago       51.7MB
-istio/mixer                           1.0.1                     0d97b4000ed5    5 days ago       64.5MB
-istio/sidecar_injector                1.0.1                     a122adc160b7    5 days ago       45.3MB
-istio/proxyv2                         1.0.1                     f1bf7b920fe1    5 days ago       352MB
-istio/pilot                           1.0.1                     46d3b4e95fc3    5 days ago       290MB
-openliberty/open-liberty              kernel-java8-openj9-ubi   013be378bb58    6 days ago       716MB
-prom/prometheus                       v2.3.1                    b82ef1f3aa07    2 months ago     119MB
+system                                1.0-SNAPSHOT              8856039f4c42    9 minutes ago    745MB
+istio/proxyv2                         1.7.3                     7a3aaffcf645    3 weeks ago      347MB
+istio/pilot                           1.7.3                     4974b5b22dcc    3 weeks ago      261MB
+openliberty/open-liberty              kernel-java8-openj9-ubi   d6ef646493e1    8 days ago       729MB
 ----
 
 To deploy the `system` microservice to the {kube} cluster, use the following command to deploy the microservice.
@@ -499,7 +493,7 @@ include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.j
 
 The [hotspot=testAppVersion]`testAppVersion()` test case verifies that the correct version number is returned in the response headers.
 
-Run the command to start the tests:
+Run the following commands to compile and start the tests:
 
 include::{common-includes}/os-tabs.adoc[]
 
@@ -507,6 +501,7 @@ include::{common-includes}/os-tabs.adoc[]
 --
 [role=command]
 ```
+mvn test-compile
 mvn failsafe:integration-test
 ```
 --
