@@ -134,7 +134,7 @@ no running Istio pods in "istio-system"
 1.7.3
 ----
 
-We will use the following command to configure the {istio} profile on {kube}
+Use the following command to configure the {istio} profile on {kube}
 [role=command]
 ```
 istioctl install --set profile=demo
@@ -186,7 +186,7 @@ automatically be injected into your pods when you deploy your application.
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `guide-istio-intro\start` directory and run the following command to build the application locally.
+Navigate to the `guide-{projectid}\start` directory and run the following command to build the application locally.
 [role=command]
 ```
 mvn clean package
