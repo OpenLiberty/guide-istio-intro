@@ -1,7 +1,7 @@
 // INSTRUCTION: Please remove all comments that start INSTRUCTION prior to commit. Most comments should be removed, although not the copyright.
 // INSTRUCTION: The copyright statement must appear at the top of the file
 //
-// Copyright (c) 2017, 2019 IBM Corporation and others.
+// Copyright (c) 2017, 2020 IBM Corporation and others.
 // Licensed under Creative Commons Attribution-NoDerivatives
 // 4.0 International (CC BY-ND 4.0)
 //   https://creativecommons.org/licenses/by-nd/4.0/
@@ -106,7 +106,7 @@ include::{common-includes}/gitclone.adoc[]
 // Staring and preparing your cluster for deployment
 // =================================================================================================
 
-:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.13.0
+:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.19.0
 :docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
 :minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM, then 4GB should be adequate.
 [role=command]
@@ -116,87 +116,16 @@ include::{common-includes}/kube-start.adoc[]
 // Deploying Istio
 // =================================================================================================
 
-== Deploying Istio
-
-First, go to the https://github.com/istio/istio/releases/latest[{istio} release page^] and download the latest stable release. Extract the archive and navigate to the directory with the extracted files.
-
-Next, deploy the {istio} custom resource definitions. Custom resource definitions allow {istio} to define custom {kube} resources that you can use in your resource definition files.
-
-include::{common-includes}/os-tabs.adoc[]
-
-[.tab_content.windows_section]
---
-[role=command]
-```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl apply -f %i
-```
---
-
-[.tab_content.mac_section.linux_section]
---
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
-```
---
-
-Next, deploy {istio} resources to your cluster by running the `kubectl apply` command, which creates or updates
-{kube} resources defined in a yaml file.
-
-[role=command]
-```
-kubectl apply -f install/kubernetes/istio-demo.yaml
-```
-
-Verify that Istio was successfully deployed by running the following command:
-
-[role=command]
-```
-kubectl get deployments -n istio-system
-```
-
-All the values in the `AVAILABLE` column will have a value of `1` after
-the deployment is complete.
-
-[source, role="no_copy"]
-----
-NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
-grafana                  1/1     1            1           2m48s
-istio-citadel            1/1     1            1           2m48s
-istio-egressgateway      1/1     1            1           2m48s
-istio-galley             1/1     1            1           2m48s
-istio-ingressgateway     1/1     1            1           2m48s
-istio-pilot              1/1     1            1           2m48s
-istio-policy             1/1     1            1           2m48s
-istio-sidecar-injector   1/1     1            1           2m48s
-istio-telemetry          1/1     1            1           2m48s
-istio-tracing            1/1     1            1           2m48s
-kiali                    1/1     1            1           2m48s
-prometheus               1/1     1            1           2m48s
-----
- 
-Ensure that the {istio} deployments are all available before you continue. The deployments might take a few minutes to become available. If the deployments aren't available after a few minutes, then increase the amount of memory available to your {kube} cluster. On Docker Desktop, you can increase the memory from your {docker} preferences. On {minikube}, you can increase the memory using the `--memory` flag.
-
-Finally, create the `istio-injection` label and set its value to `enabled`.
-
-[role=command]
-```
-kubectl label namespace default istio-injection=enabled
-```
-
-Adding this label enables automatic {istio} sidecar injection. Automatic injection means that sidecars will
-automatically be injected into your pods when you deploy your application.
-
+include::{common-includes}/istio-start.adoc[]
 // =================================================================================================
 // Deploying v1
 // =================================================================================================
 
 == Deploying version 1 of the system microservice
 
-Navigate to the `start` directory and run the following command to build the application locally.
+Navigate to the `guide-{projectid}/start` directory and run the following command to build the application locally.
 [role=command]
 ```
-cd start
 mvn clean package
 ```
 
@@ -224,15 +153,10 @@ You'll see an image called `system:1.0-SNAPSHOT` listed in a table similar to th
 [source, role="no_copy"]
 ----
 REPOSITORY                            TAG                       IMAGE ID        CREATED          SIZE
-system                                1.0-SNAPSHOT              d316c2c2c6ba    9 seconds ago    501MB
-istio/galley                          1.0.1                     7ac6c7be3d3e    5 days ago       65.8MB
-istio/citadel                         1.0.1                     abcc721c2454    5 days ago       51.7MB
-istio/mixer                           1.0.1                     0d97b4000ed5    5 days ago       64.5MB
-istio/sidecar_injector                1.0.1                     a122adc160b7    5 days ago       45.3MB
-istio/proxyv2                         1.0.1                     f1bf7b920fe1    5 days ago       352MB
-istio/pilot                           1.0.1                     46d3b4e95fc3    5 days ago       290MB
-openliberty/open-liberty              kernel-java8-openj9-ubi   013be378bb58    6 days ago       716MB
-prom/prometheus                       v2.3.1                    b82ef1f3aa07    2 months ago     119MB
+system                                1.0-SNAPSHOT              8856039f4c42    9 minutes ago    745MB
+istio/proxyv2                         1.7.3                     7a3aaffcf645    3 weeks ago      347MB
+istio/pilot                           1.7.3                     4974b5b22dcc    3 weeks ago      261MB
+openliberty/open-liberty              kernel-java8-openj9-ubi   d6ef646493e1    8 days ago       729MB
 ----
 
 To deploy the `system` microservice to the {kube} cluster, use the following command to deploy the microservice.
@@ -335,7 +259,8 @@ Finally, click the blue `Send` button to make the request.
 --
 [role=command]
 ```
-curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+curl -H "Host:example.com" -I http://`minikube ip`:$INGRESS_PORT/system/properties
 ```
 --
 
@@ -414,7 +339,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 //Make a request to the service by using `curl`.
 [role=command]
 ```
-curl -H "Host:test.example.com" -I http://`minikube ip`:31380/system/properties
+curl -H "Host:test.example.com" -I http://`minikube ip`:$INGRESS_PORT/system/properties
 ```
 --
 
@@ -477,7 +402,7 @@ If the `curl` command is unavailable, then use https://www.getpostman.com/[Postm
 --
 [role=command]
 ```
-curl -H "Host:example.com" -I http://`minikube ip`:31380/system/properties
+curl -H "Host:example.com" -I http://`minikube ip`:$INGRESS_PORT/system/properties
 ```
 --
 
@@ -506,7 +431,7 @@ include::finish/src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.j
 
 The [hotspot=testAppVersion]`testAppVersion()` test case verifies that the correct version number is returned in the response headers.
 
-Run the command to start the tests:
+Run the following commands to compile and start the tests:
 
 include::{common-includes}/os-tabs.adoc[]
 
@@ -514,6 +439,7 @@ include::{common-includes}/os-tabs.adoc[]
 --
 [role=command]
 ```
+mvn test-compile
 mvn failsafe:integration-test
 ```
 --
@@ -522,7 +448,8 @@ mvn failsafe:integration-test
 --
 [role=command]
 ```
-mvn failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=31380
+mvn test-compile
+mvn failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=$INGRESS_PORT
 ```
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 --
@@ -562,42 +489,27 @@ after the label name indicates that the label should be deleted.
 kubectl label namespace default istio-injection-
 ```
 
-Navigate to the directory where you extracted {istio} and delete the {istio} resources from the cluster:
+Delete all {istio} resources from the cluster:
 
 [role=command]
 ```
-kubectl delete -f install/kubernetes/istio-demo.yaml
+istioctl x uninstall --purge
 ```
-
-Next, delete the Istio custom resource definitions, by running the following command: 
 
 include::{common-includes}/os-tabs.adoc[]
 
 [.tab_content.windows_section]
 --
-[role=command]
-```
-FOR %i in (install\kubernetes\helm\istio-init\files\crd*yaml) DO kubectl delete -f %i
-```
 Nothing more needs to be done for Docker Desktop.
 --
 
 [.tab_content.mac_section]
 --
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
 Nothing more needs to be done for Docker Desktop.
 --
 
 [.tab_content.linux_section]
 --
-[role=command]
-```
-for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl delete -f $i; done
-```
-
 Perform the following steps to return your environment to a clean state.
 
 . Point the Docker daemon back to your local machine:
@@ -615,6 +527,7 @@ minikube stop
 minikube delete
 ```
 --
+
 
 // =================================================================================================
 // finish
