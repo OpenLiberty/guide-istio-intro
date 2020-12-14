@@ -19,6 +19,15 @@ cat Dockerfile
 
 ../scripts/testApp.sh
 
+kubectl delete -f services.yaml
+kubectl delete -f traffic.yaml
+kubectl label namespace default istio-injection-
+kubectl delete -f install/kubernetes/istio-demo.yaml
+istioctl x uninstall --purge
+eval $(minikube docker-env -u)
+minikube stop
+minikube delete
+
 echo "Testing daily Docker image"
 
 sed -i "s;FROM openliberty/open-liberty:kernel-java8-openj9-ubi;FROM openliberty/daily:latest;g" Dockerfile
