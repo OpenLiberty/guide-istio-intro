@@ -5,7 +5,7 @@ set -euxo pipefail
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod +x kubectl
-sudo ln -s $(pwd)/kubectl /usr/local/bin/kubectl
+sudo ln -s -f $(pwd)/kubectl /usr/local/bin/kubectl
 wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64 -q -O minikube
 chmod +x minikube
 
@@ -42,3 +42,12 @@ mvn failsafe:verify
 POD_NAME=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)
 
 kubectl logs $POD_NAME
+
+kubectl delete -f services.yaml
+kubectl delete -f traffic.yaml
+kubectl label namespace default istio-injection-
+kubectl delete -f install/kubernetes/istio-demo.yaml
+istioctl x uninstall --purge
+eval $(minikube docker-env -u)
+minikube stop
+minikube delete
