@@ -42,12 +42,3 @@ mvn failsafe:verify
 POD_NAME=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)
 
 kubectl logs $POD_NAME
-
-kubectl delete -f services.yaml
-kubectl delete -f traffic.yaml
-kubectl label namespace default istio-injection-
-kubectl delete -f install/kubernetes/istio-demo.yaml
-istioctl x uninstall --purge
-eval $(minikube docker-env -u)
-minikube stop
-minikube delete
