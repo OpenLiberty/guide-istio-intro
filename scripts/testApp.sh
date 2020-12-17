@@ -22,7 +22,7 @@ export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -
 
 echo $(minikube ip):$INGRESS_PORT
 
-curl http://`minikube ip`:$INGRESS_PORT/system/properties -I
+curl -H "Host:example.com" -I http://$(minikube ip):$INGRESS_PORT/system/properties
 
 # Run tests
 
