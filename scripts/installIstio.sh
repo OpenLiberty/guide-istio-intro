@@ -1,9 +1,11 @@
 #!/bin/bash
 ISTIO_LATEST=1.7.6
 
-curl -L https://github.com/istio/istio/releases/download/$ISTIO_LATEST/istio-$ISTIO_LATEST-linux-amd64.tar.gz | tar xzvf -
+curl -L https://github.com/istio/istio/releases/download/$ISTIO_LATEST/istio-$ISTIO_LATEST-linux-amd64.tar.gz | tar xzf -
 
 cd istio-$ISTIO_LATEST
+
+chmod +x bin/istioctl
 
 export PATH=$PWD/bin:$PATH
 

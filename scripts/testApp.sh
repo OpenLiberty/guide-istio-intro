@@ -1,19 +1,9 @@
 #!/bin/bash
 set -euxo pipefail
 
-# Set up and start Minikube
-
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-chmod +x kubectl
-sudo ln -s -f $(pwd)/kubectl /usr/local/bin/kubectl
-wget https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64 -q -O minikube
-chmod +x minikube
-
-sudo apt-get update -y
-sudo apt-get install -y conntrack
-sudo apt-get install jq
-
-sudo minikube start --vm-driver=none --bootstrapper=kubeadm
+# Set up
+. ../scripts/startMinikube.sh
+. ../scripts/installIstio.sh
 
 # Deploy
 
@@ -28,13 +18,15 @@ sleep 120
 
 kubectl get pods
 
-echo `minikube ip`
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
 
-curl http://`minikube ip`:31000/system/properties -I
+echo $(minikube ip):$INGRESS_PORT
+
+curl http://`minikube ip`:$INGRESS_PORT/system/properties -I
 
 # Run tests
 
-mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=31000
+mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=$INGRESS_PORT
 mvn failsafe:verify
 
 # Print logs
@@ -42,3 +34,7 @@ mvn failsafe:verify
 POD_NAME=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)
 
 kubectl logs $POD_NAME
+
+# Tear down
+
+. ../scripts/stopMinikube.sh
