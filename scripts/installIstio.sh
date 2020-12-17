@@ -9,7 +9,7 @@ chmod +x bin/istioctl
 
 export PATH=$PWD/bin:$PATH
 
-istioctl install --set profile=demo
+istioctl install --set profile=demo -y
 
 echo "Installed Istio $(istioctl version)"
 
@@ -17,6 +17,6 @@ sleep 240
 
 kubectl get deployments -n istio-system
 
-kubectl label --overwrite namespace default istio-injection=enabled
+kubectl label --overwrite=true namespace default istio-injection=enabled
 
 cd ..
