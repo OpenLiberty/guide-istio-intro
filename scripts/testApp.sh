@@ -15,6 +15,8 @@ docker build -t system:2.0-SNAPSHOT .
 kubectl apply -f system.yaml
 kubectl apply -f traffic.yaml
 
+kubectl set image deployment/system-deployment-green system-container=system:2.0-SNAPSHOT
+
 sleep 120
 
 kubectl get deployments
