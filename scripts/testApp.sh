@@ -12,7 +12,7 @@ mvn -q clean package
 docker pull openliberty/open-liberty:kernel-java8-openj9-ubi
 docker build -t system:2.0-SNAPSHOT .
 
-kubectl apply -f ../scripts/system.yaml
+kubectl apply -f system.yaml
 kubectl apply -f traffic.yaml
 
 sleep 120
