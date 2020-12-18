@@ -37,9 +37,11 @@ mvn failsafe:verify
 
 # Print logs
 
-POD_NAME=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)
+POD_NAMES=($(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system))
 
-kubectl logs $POD_NAME
+for pod in ${POD_NAMES[@]}; do
+    kubectl logs $pod --all-containers=true
+done
 
 # Tear down
 
