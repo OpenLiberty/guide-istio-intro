@@ -9,7 +9,7 @@ set -euxo pipefail
 
 mvn -q clean package
 
-docker pull openliberty/open-liberty:kernel-java8-openj9-ubi
+docker pull openliberty/open-liberty:full-java11-openj9-ubi
 docker build -t system:2.0-SNAPSHOT .
 
 kubectl apply -f system.yaml
