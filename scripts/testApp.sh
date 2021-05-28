@@ -24,7 +24,8 @@ kubectl get deployments
 
 kubectl get pods
 
-export INGRESS_PORT="$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')"
+export INGRESS_PORT
+INGRESS_PORT="$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')"
 
 echo "$(minikube ip)":"$INGRESS_PORT"
 
@@ -38,7 +39,6 @@ mvn failsafe:verify
 
 # Print logs
 
-local POD_NAMES
 POD_NAMES=("$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)")
 
 for pod in "${POD_NAMES[@]}"; do
