@@ -2,8 +2,8 @@
 set -euxo pipefail
 
 # Set up
-. ../scripts/startMinikube.sh
-. ../scripts/installIstio.sh
+../scripts/startMinikube.sh
+../scripts/installIstio.sh
 
 # Deploy
 
@@ -24,11 +24,11 @@ kubectl get deployments
 
 kubectl get pods
 
-export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+export INGRESS_PORT="$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')"
 
-echo $(minikube ip):$INGRESS_PORT
+echo "$(minikube ip)":"$INGRESS_PORT"
 
-curl -H "Host:example.com" -I http://$(minikube ip):$INGRESS_PORT/system/properties
+curl -H "Host:example.com" -I http://"$(minikube ip)":"$INGRESS_PORT"/system/properties
 
 # Run tests
 
@@ -38,12 +38,12 @@ mvn failsafe:verify
 
 # Print logs
 
-POD_NAMES=($(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system))
+POD_NAMES=("$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)")
 
-for pod in ${POD_NAMES[@]}; do
-    kubectl logs $pod --all-containers=true
+for pod in "${POD_NAMES[@]}"; do
+    kubectl logs "$pod" --all-containers=true
 done
 
 # Tear down
 
-. ../scripts/stopMinikube.sh
+../scripts/stopMinikube.sh
