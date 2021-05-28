@@ -33,11 +33,12 @@ curl -H "Host:example.com" -I http://"$(minikube ip)":"$INGRESS_PORT"/system/pro
 # Run tests
 
 mvn test-compile
-mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip=`minikube ip` -Dport=$INGRESS_PORT
+mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip="$(minikube ip)" -Dport="$INGRESS_PORT"
 mvn failsafe:verify
 
 # Print logs
 
+local POD_NAMES
 POD_NAMES=("$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system)")
 
 for pod in "${POD_NAMES[@]}"; do
