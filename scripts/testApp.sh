@@ -41,9 +41,8 @@ mvn failsafe:verify
 
 POD_NAMES=("$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep system)")
 
-for pod in "${POD_NAMES[@]}"; do
-    temp=($(echo "$pod"))
-    kubectl logs "$temp" --all-containers=true
+for pod in "$POD_NAMES"; do
+    kubectl logs "${pod%%|*}" --all-containers=true
 done
 
 # Tear down
