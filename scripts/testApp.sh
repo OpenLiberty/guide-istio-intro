@@ -39,8 +39,8 @@ mvn failsafe:verify
 
 # Print logs
 
-POD_NAMES=($(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | grep system))
-echo "POD_NAMES[@]";
+GENERAL_POD_NAMES=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}')
+POD_NAMES = ("$GENERAL_POD_NAMES" | grep system)
 
 for pod in "${POD_NAMES[@]}"; do
     kubectl logs "$pod" --all-containers=true
