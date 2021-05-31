@@ -39,7 +39,7 @@ mvn failsafe:verify
 
 # Print logs
 
-GENERAL_POD_NAMES=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}')
+GENERAL_POD_NAMES=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{" "}')
 POD_NAMES=$("$GENERAL_POD_NAMES" | grep system)
 
 for pod in "${POD_NAMES[@]}"; do
