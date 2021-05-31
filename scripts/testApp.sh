@@ -39,10 +39,10 @@ mvn failsafe:verify
 
 # Print logs
 
-POD_NAMES=($(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep system))
-
-for (( i=0; i<${#POD_NAMES[@]}; i++ )); do
-    kubectl logs ${POD_NAMES[$i]} --all-containers=true
+POD_NAMES=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep system)
+arr = ($POD_NAMES)
+for (( i=0; i<${#arr[@]}; i++ )); do
+    kubectl logs ${arr[$i]} --all-containers=true
 done
 
 # Tear down
