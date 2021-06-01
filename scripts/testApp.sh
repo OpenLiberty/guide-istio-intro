@@ -40,7 +40,7 @@ mvn failsafe:verify
 # Print logs
 
 POD_NAMES=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep system)
-arr=("$POD_NAMES")
+read -r -d '' -a arr <<<"${POD_NAMES}"
 for (( i=0; i<${#arr[@]}; i++ )); do
     kubectl logs "${arr[$i]}" --all-containers=true
 done
