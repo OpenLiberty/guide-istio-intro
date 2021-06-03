@@ -42,7 +42,9 @@ mvn failsafe:verify
 PODS=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{","}')
 IFS=',' read -r -a POD_NAMES <<< "$PODS"
 for pod in "${POD_NAMES[@]}"; do
-    kubectl logs "$pod" --all-containers=true
+    if grep -q system <<< "$pod"; then
+       kubectl logs "$pod" --all-containers=true
+    fi
 done
 
 #POD_NAMES=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep system)
