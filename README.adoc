@@ -156,7 +156,7 @@ REPOSITORY                            TAG                       IMAGE ID        
 system                                1.0-SNAPSHOT              8856039f4c42    9 minutes ago    745MB
 istio/proxyv2                         1.7.3                     7a3aaffcf645    3 weeks ago      347MB
 istio/pilot                           1.7.3                     4974b5b22dcc    3 weeks ago      261MB
-openliberty/open-liberty              full-java8-openj9-ubi   d6ef646493e1    8 days ago       729MB
+openliberty/open-liberty              full-java11-openj9-ubi    d6ef646493e1    8 days ago       729MB
 ----
 
 To deploy the `system` microservice to the {kube} cluster, use the following command to deploy the microservice.
@@ -537,11 +537,5 @@ minikube delete
 
 You have deployed a microservice that runs on Open Liberty to a Kubernetes cluster and used {istio} to implement a blue-green deployment scheme.
 
-// uncomment this when Istio guide is released
-//Feel free to check out our https://github.com/OpenLiberty/guide-istio[Istio guide], which builds on top of what you learned here.
-
 // Include the below from the guides-common repo to tell users how they can contribute to the guide
 include::{common-includes}/attribution.adoc[subs="attributes"]
-
-// DO NO CREATE ANYMORE SECTIONS AT THIS POINT
-// Related guides will be added in automatically here if you included them in ":page-related-guides"
