@@ -352,7 +352,7 @@ x-app-version: 2.0-SNAPSHOT
 
 [role="code_command hotspot file=1", subs="quotes"]
 ----
-#Update the `traffic.yaml` file.#
+#Update the `traffic.yaml` file in the `start` directory.#
 `traffic.yaml`
 ----
 
@@ -420,7 +420,7 @@ Next, you will create a test to verify that the correct version of your microser
 
 [role="code_command hotspot", subs="quotes"]
 ----
-#Create the `SystemEndpointIT` class.#
+#Create the `SystemEndpointIT` class in the `start` directory.#
 `src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java`
 ----
 SystemEndpointIT.java
