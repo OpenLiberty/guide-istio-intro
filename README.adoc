@@ -420,7 +420,7 @@ Next, you will create a test to verify that the correct version of your microser
 
 [role="code_command hotspot", subs="quotes"]
 ----
-#Create the `SystemEndpointIT` class in the `start` directory.#
+#Create the `SystemEndpointIT` class.#
 `src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java`
 ----
 SystemEndpointIT.java
