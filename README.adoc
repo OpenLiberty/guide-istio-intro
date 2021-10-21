@@ -352,7 +352,7 @@ x-app-version: 2.0-SNAPSHOT
 
 [role="code_command hotspot file=1", subs="quotes"]
 ----
-#Update the `traffic.yaml` file.#
+#Update the `traffic.yaml` file in the `start` directory.#
 `traffic.yaml`
 ----
 
