@@ -129,7 +129,7 @@ Navigate to the `guide-{projectid}/start` directory and run the following comman
 mvn clean package
 ```
 
-include::{common-includes}/ol-full-docker-pull.adoc[]
+include::{common-includes}/ol-icr-full-docker-pull.adoc[]
 
 Next, run the `docker build` commands to build the container image for your application:
 [role='command']
