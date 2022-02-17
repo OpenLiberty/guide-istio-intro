@@ -26,7 +26,7 @@ import jakarta.ws.rs.core.Response;
 public class SystemResource {
 
   // tag::version[]
-  public static String APP_VERSION = "2.0-SNAPSHOT";
+  public static String appVersion = "2.0-SNAPSHOT";
   // end::version[]
 
   @GET
@@ -34,7 +34,7 @@ public class SystemResource {
   public Response getProperties() {
     return Response.ok(System.getProperties())
       .header("X-Pod-Name", System.getenv("HOSTNAME"))
-      .header("X-App-Version", APP_VERSION)
+      .header("X-App-Version", appVersion)
       .build();
   }
 }

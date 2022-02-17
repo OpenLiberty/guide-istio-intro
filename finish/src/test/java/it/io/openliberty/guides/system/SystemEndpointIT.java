@@ -75,8 +75,8 @@ public class SystemEndpointIT {
         this.assertResponse(clusterUrl, response);
         String greeting = response.getHeaderString("X-Pod-Name");
 
-        String message = "Container name should not be null but it was. " +
-            "The service is probably not running inside a container";
+        String message = "Container name should not be null but it was. "
+            + "The service is probably not running inside a container";
 
         assertNotNull(greeting, message);
     }
