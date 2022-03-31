@@ -1,6 +1,6 @@
 // tag::copyright[]
 /*******************************************************************************
- * Copyright (c) 2019, 2020 IBM Corporation and others.
+ * Copyright (c) 2019, 2022 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,13 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 import io.openliberty.guides.system.SystemResource;
-import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Order;
@@ -51,7 +50,7 @@ public class SystemEndpointIT {
 
         clusterUrl = "http://" + clusterIp + ":" + nodePort + "/system/properties/";
     }
-    
+
     @BeforeEach
     public void setup() {
         response = null;
@@ -75,9 +74,9 @@ public class SystemEndpointIT {
         response = this.getResponse(clusterUrl);
         this.assertResponse(clusterUrl, response);
         String greeting = response.getHeaderString("X-Pod-Name");
-        
-        String message = "Container name should not be null but it was. " +
-            "The service is probably not running inside a container";
+
+        String message = "Container name should not be null but it was. "
+            + "The service is probably not running inside a container";
 
         assertNotNull(greeting, message);
     }
@@ -88,7 +87,7 @@ public class SystemEndpointIT {
     public void testAppVersion() {
         response = this.getResponse(clusterUrl);
 
-        String expectedVersion = SystemResource.APP_VERSION;
+        String expectedVersion = SystemResource.appVersion;
         String actualVersion = response.getHeaderString("X-App-Version");
 
         assertEquals(expectedVersion, actualVersion);
@@ -99,7 +98,6 @@ public class SystemEndpointIT {
     @Order(3)
     public void testGetProperties() {
         Client client = ClientBuilder.newClient();
-        client.register(JsrJsonpProvider.class);
 
         WebTarget target = client.target(clusterUrl);
         Response response = target
