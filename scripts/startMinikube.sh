@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # install Minikube prereqs for none driver
