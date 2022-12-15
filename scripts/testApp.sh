@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # Set up
 #../scripts/startMinikube.sh
-inikube start
+minikube start
 minikube status
 #kubectl cluster-info
 #kubectl get services --all-namespaces
