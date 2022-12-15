@@ -2,7 +2,14 @@
 set -euxo pipefail
 
 # Set up
-../scripts/startMinikube.sh
+#../scripts/startMinikube.sh
+minikube start
+minikube status
+#kubectl cluster-info
+#kubectl get services --all-namespaces
+#kubectl config view
+eval "$(minikube docker-env)"
+
 ../scripts/installIstio.sh
 
 # Deploy
@@ -12,7 +19,7 @@ mvn -Dhttp.keepAlive=false \
     -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
     -q clean package
 
-docker pull icr.io/appcafe/open-liberty:full-java11-openj9-ubi
+docker pull -q icr.io/appcafe/open-liberty:full-java11-openj9-ubi
 docker build -t system:2.0-SNAPSHOT .
 
 kubectl apply -f system.yaml
@@ -32,9 +39,9 @@ echo "$(minikube ip)":"$INGRESS_PORT"
 curl -H "Host:example.com" -I http://"$(minikube ip)":"$INGRESS_PORT"/system/properties
 
 # Run tests
-mvn test-compile
-mvn failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip="$(minikube ip)" -Dport="$INGRESS_PORT"
-mvn failsafe:verify
+mvn -ntp test-compile
+mvn -ntp failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip="$(minikube ip)" -Dport="$INGRESS_PORT"
+mvn -ntp failsafe:verify
 
 # Print logs
 PODS=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{","}')
@@ -46,4 +53,6 @@ for pod in "${POD_NAMES[@]}"; do
 done
 
 # Tear down
-../scripts/stopMinikube.sh
+#../scripts/stopMinikube.sh
+eval "$(minikube docker-env -u)"
+minikube stop
