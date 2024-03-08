@@ -493,7 +493,7 @@ Delete all {istio} resources from the cluster:
 
 [role=command]
 ```
-istioctl x uninstall --purge
+istioctl uninstall --purge
 ```
 
 include::{common-includes}/os-tabs.adoc[]
