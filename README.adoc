@@ -154,8 +154,8 @@ You'll see an image called `system:1.0-SNAPSHOT` listed in a table similar to th
 ----
 REPOSITORY                     TAG                              IMAGE ID        CREATED          SIZE
 system                         1.0-SNAPSHOT                     8856039f4c42    9 minutes ago    745MB
-istio/proxyv2                  1.7.3                            7a3aaffcf645    3 weeks ago      347MB
-istio/pilot                    1.7.3                            4974b5b22dcc    3 weeks ago      261MB
+istio/proxyv2                  1.20.3                           7a3aaffcf645    3 weeks ago      347MB
+istio/pilot                    1.20.3                           4974b5b22dcc    3 weeks ago      261MB
 icr.io/appcafe/open-liberty    kernel-slim-java11-openj9-ubi    d6ef646493e1    8 days ago       729MB
 ----
 
