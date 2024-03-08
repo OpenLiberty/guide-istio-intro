@@ -1,5 +1,5 @@
 #!/bin/bash
-ISTIO_LATEST=1.20.0
+ISTIO_LATEST=1.20.3
 
 apt install socat
 
