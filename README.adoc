@@ -1,7 +1,7 @@
 // INSTRUCTION: Please remove all comments that start INSTRUCTION prior to commit. Most comments should be removed, although not the copyright.
 // INSTRUCTION: The copyright statement must appear at the top of the file
 //
-// Copyright (c) 2017, 2023 IBM Corporation and others.
+// Copyright (c) 2017, 2024 IBM Corporation and others.
 // Licensed under Creative Commons Attribution-NoDerivatives
 // 4.0 International (CC BY-ND 4.0)
 //   https://creativecommons.org/licenses/by-nd/4.0/
@@ -14,7 +14,7 @@
 :page-duration: 30 minutes
 :page-releasedate: 2019-02-01
 :page-description: Explore how to manage microservice traffic using Istio.
-:page-tags: ['Kubernetes', 'Docker']
+:page-tags: ['kubernetes', 'docker']
 :page-permalink: /guides/{projectid}
 :page-related-guides: ['docker', 'kubernetes-intro', 'kubernetes-microprofile-config', 'kubernetes-microprofile-health']
 :common-includes: https://raw.githubusercontent.com/OpenLiberty/guides-common/prod
@@ -105,8 +105,9 @@ include::{common-includes}/gitclone.adoc[]
 // =================================================================================================
 // Staring and preparing your cluster for deployment
 // =================================================================================================
+// visit https://cdn.dl.k8s.io/release/stable.txt to get the latest stable version
 
-:minikube-start: minikube start --memory=8192 --cpus=4 --kubernetes-version=v1.19.0
+:minikube-start: minikube start --memory=8192 --cpus=4
 :docker-desktop-description: Check your settings to ensure that you have an adequate amount of memory allocated to your Docker Desktop enviornment, 8GB is recommended but 4GB should be adequate if you don't have enough RAM.
 :minikube-description: The memory flag allocates 8GB of memory to your Minikube cluster. If you don't have enough RAM, then 4GB should be adequate.
 [role=command]
@@ -154,8 +155,8 @@ You'll see an image called `system:1.0-SNAPSHOT` listed in a table similar to th
 ----
 REPOSITORY                     TAG                              IMAGE ID        CREATED          SIZE
 system                         1.0-SNAPSHOT                     8856039f4c42    9 minutes ago    745MB
-istio/proxyv2                  1.7.3                            7a3aaffcf645    3 weeks ago      347MB
-istio/pilot                    1.7.3                            4974b5b22dcc    3 weeks ago      261MB
+istio/proxyv2                  1.20.3                           7a3aaffcf645    3 weeks ago      347MB
+istio/pilot                    1.20.3                           4974b5b22dcc    3 weeks ago      261MB
 icr.io/appcafe/open-liberty    kernel-slim-java11-openj9-ubi    d6ef646493e1    8 days ago       729MB
 ----
 
@@ -493,7 +494,7 @@ Delete all {istio} resources from the cluster:
 
 [role=command]
 ```
-istioctl x uninstall --purge
+istioctl uninstall --purge
 ```
 
 include::{common-includes}/os-tabs.adoc[]

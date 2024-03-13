@@ -11,13 +11,13 @@ spec:
   - route:
     - destination:
         port:
-          number: 9080
+          number: 9090
         host: system-service
         subset: blue
       weight: 0
     - destination:
         port:
-          number: 9080
+          number: 9090
         host: system-service
         subset: green
       weight: 100
@@ -35,13 +35,13 @@ spec:
   - route:
     - destination:
         port:
-          number: 9080
+          number: 9090
         host: system-service
         subset: blue
       weight: 100
     - destination:
         port:
-          number: 9080
+          number: 9090
         host: system-service
         subset: green
       weight: 0
