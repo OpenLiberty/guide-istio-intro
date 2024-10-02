@@ -4,6 +4,7 @@ do
     case "${flag}" in
         t) DATE="${OPTARG}";;
         d) DRIVER="${OPTARG}";;
+        v) OL_LEVEL="${OPTARG}";;
         *) echo "Invalid option";;
     esac
 done
