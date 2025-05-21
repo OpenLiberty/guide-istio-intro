@@ -125,10 +125,31 @@ include::{common-includes}/istio-start.adoc[]
 == Deploying version 1 of the system microservice
 
 Navigate to the `guide-{projectid}/start` directory and run the following command to build the application locally.
-[role=command]
+include::{common-includes}/os-tabs.adoc[]
+
+[.tab_content.windows_section]
+--
+[role='command']
 ```
-mvn clean package
+mvnw.cmd clean package
 ```
+--
+
+[.tab_content.mac_section]
+--
+[role='command']
+```
+./mvnw clean package
+```
+--
+
+[.tab_content.linux_section]
+--
+[role='command']
+```
+./mvnw clean package
+```
+--
 
 
 
@@ -296,10 +317,31 @@ The tag for the {docker} image is also dependent on the version that is specifie
 Manually update the [hotspot=version]`APP_VERSION` field of the microservice to `2.0-SNAPSHOT`.
 
 Use Maven to repackage your microservice:
-[role=command]
+include::{common-includes}/os-tabs.adoc[]
+
+[.tab_content.windows_section]
+--
+[role='command']
 ```
-mvn clean package
+mvnw.cmd clean package
 ```
+--
+
+[.tab_content.mac_section]
+--
+[role='command']
+```
+./mvnw clean package
+```
+--
+
+[.tab_content.linux_section]
+--
+[role='command']
+```
+./mvnw clean package
+```
+--
 
 Next, build the new version of the container image as `2.0-SNAPSHOT`:
 [role=command]
@@ -436,12 +478,21 @@ Run the following commands to compile and start the tests:
 
 include::{common-includes}/os-tabs.adoc[]
 
-[.tab_content.windows_section.mac_section]
+[.tab_content.windows_section]
 --
 [role=command]
 ```
-mvn test-compile
-mvn failsafe:integration-test
+mvnw.cmd test-compile
+mvnw.cmd failsafe:integration-test
+```
+--
+
+[.tab_content.mac_section]
+--
+[role='command']
+```
+./mvnw test-compile
+./mvnw failsafe:integration-test
 ```
 --
 
@@ -449,8 +500,8 @@ mvn failsafe:integration-test
 --
 [role=command]
 ```
-mvn test-compile
-mvn failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=$INGRESS_PORT
+./mvnw test-compile
+./mvnw failsafe:integration-test -Dcluster.ip=`minikube ip` -Dport=$INGRESS_PORT
 ```
 The `cluster.ip` and `port` parameters refer to the IP address and port for the {istio} gateway.
 --
