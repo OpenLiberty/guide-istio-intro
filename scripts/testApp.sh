@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
+./mvnw -version
 
 # Set up
 #../scripts/startMinikube.sh
@@ -14,7 +15,7 @@ eval "$(minikube docker-env)"
 
 # Deploy
 
-mvn -ntp -Dhttp.keepAlive=false \
+./mvnw -ntp -Dhttp.keepAlive=false \
     -Dmaven.wagon.http.pool=false \
     -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
     -q clean package
@@ -39,9 +40,9 @@ echo "$(minikube ip)":"$INGRESS_PORT"
 curl -H "Host:example.com" -I http://"$(minikube ip)":"$INGRESS_PORT"/system/properties
 
 # Run tests
-mvn -ntp test-compile
-mvn -ntp failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip="$(minikube ip)" -Dport="$INGRESS_PORT"
-mvn -ntp failsafe:verify
+./mvnw -ntp test-compile
+./mvnw -ntp failsafe:integration-test -Ddockerfile.skip=true -Dcluster.ip="$(minikube ip)" -Dport="$INGRESS_PORT"
+./mvnw -ntp failsafe:verify
 
 # Print logs
 PODS=$(kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{","}')
