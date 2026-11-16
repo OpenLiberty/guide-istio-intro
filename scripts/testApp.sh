@@ -20,7 +20,7 @@ eval "$(minikube docker-env)"
     -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
     -q clean package
 
-docker pull -q icr.io/appcafe/open-liberty:kernel-slim-java11-openj9-ubi
+docker pull -q icr.io/appcafe/open-liberty:kernel-slim-java25-openj9-ubi-minimal
 docker build -t system:2.0-SNAPSHOT .
 
 kubectl apply -f system.yaml
